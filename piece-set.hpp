@@ -12,6 +12,8 @@ class PieceSet
 public:
     PieceSet(QString StyleName);
     ~PieceSet();
+    PieceSet(const PieceSet&) = delete;
+    PieceSet& operator=(const PieceSet&) = delete;
 
     /* Returns ready to use svg piece renderer */
     QSvgRenderer& getPieceRenderer(Piece piece, Player Owner) {

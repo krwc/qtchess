@@ -48,7 +48,7 @@ public:
     }
 
     PieceSet& getPieceSet() {
-        return mPieceSet;
+        return *mPieceSet;
     }
 
     void setPieceStyleName(QString Name) {
@@ -61,6 +61,10 @@ public:
 
     void setDSColor(QColor Color) {
         mConfig.DarkSquareColor = Color;
+    }
+
+    void setSelectionColor(QColor Color) {
+        mConfig.SelectionColor = Color;
     }
 
     void setShouldDrawCoords(bool Value) {
@@ -81,7 +85,7 @@ private:
     void load();
     Settings mConfig;
     QSettings mSettings;
-    PieceSet mPieceSet;
+    PieceSet* mPieceSet;
 };
 
 #endif // SETTINGSMANAGER_HPP

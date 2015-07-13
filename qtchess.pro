@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     common.cpp \
     board-widget-state.cpp \
     piece-set.cpp \
-    promotion-dialog.cpp
+    promotion-dialog.cpp \
+    settings-dialog.cpp
 
 HEADERS  += main-window.hpp \
     board-widget.hpp \
@@ -35,7 +36,9 @@ HEADERS  += main-window.hpp \
     common.hpp \
     board-widget-state.hpp \
     piece-set.hpp \
-    promotion-dialog.hpp
+    promotion-dialog.hpp \
+    settings-dialog.hpp
 
 FORMS    += main-window.ui \
-    promotiondialog.ui
+    promotiondialog.ui \
+    settingsdialog.ui

@@ -27,7 +27,7 @@ static const Settings Default = {
 SettingsManager::SettingsManager()
   : mConfig(Default)
   , mSettings("Home", "QtChess")
-  , mPieceSet(Default.PieceStyleName)
+  , mPieceSet(new PieceSet(Default.PieceStyleName))
 {
 
 }
@@ -36,8 +36,9 @@ void SettingsManager::reset()
 {
     // Simply reload from file.
     load();
+    delete mPieceSet;
     // Replace piece set if needed
-    mPieceSet = PieceSet(mConfig.PieceStyleName);
+    mPieceSet = new PieceSet(mConfig.PieceStyleName);
 }
 
 void SettingsManager::save()
