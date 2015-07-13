@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PromotionDialog</class>
+ <widget class="QDialog" name="PromotionDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>100</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Select promotion piece</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="Queen">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Queen</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Rook">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Rook</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Bishop">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Bishop</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Knight">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Knight</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>Knight</sender>
+   <signal>clicked()</signal>
+   <receiver>PromotionDialog</receiver>
+   <slot>selectedKnight()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>348</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>289</x>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Bishop</sender>
+   <signal>clicked()</signal>
+   <receiver>PromotionDialog</receiver>
+   <slot>selectedBishop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Rook</sender>
+   <signal>clicked()</signal>
+   <receiver>PromotionDialog</receiver>
+   <slot>selectedRook()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>148</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>394</x>
+     <y>5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Queen</sender>
+   <signal>clicked()</signal>
+   <receiver>PromotionDialog</receiver>
+   <slot>selectedQueen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>44</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>selectedKnight()</slot>
+  <slot>selectedBishop()</slot>
+  <slot>selectedRook()</slot>
+  <slot>selectedQueen()</slot>
+ </slots>
+</ui>
