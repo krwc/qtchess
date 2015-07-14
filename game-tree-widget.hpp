@@ -17,7 +17,7 @@ private slots:
     void onMoveClick(const QUrl& Link);
 
 signals:
-    void positionChanged();
+    void positionChanged(GameTreeNode*);
 public slots:
 
 private:

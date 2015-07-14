@@ -6,6 +6,7 @@
 #include "game-model.hpp"
 #include <QMainWindow>
 
+struct GameTreeNode;
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,7 @@ private slots:
     void closeSettings();
     void settingsChanged();
     void flipBoard();
+    void positionChanged(GameTreeNode*);
 
 private:
     Ui::MainWindow *ui;

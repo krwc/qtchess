@@ -14,38 +14,29 @@ public:
 
     QString html() const {
         QString Ret;
-        /*
-        QQueue<GameTreeNode*> Q;
-
-        Q.enqueue(mTree.getRoot());
-        int Depth = 0;
-
-        while (!Q.isEmpty()) {
-            GameTreeNode* Node = Q.dequeue();
-
-            for (auto& Entry : Node->Next) {
-                Ret += makeFullMove()
-               /* Current = drawMove(Painter, Entry.first, Current);*
-            }
-        }*/
+        traverse(Ret, mTree.getIterator(), 0, 1, 0);
+        return Ret;
     }
 private:
-    QString makeMove(Move Move) {
-        return "xD ";
+    void traverse(QString& Ret, GameTreeIterator It, int SubvariationDepth,
+                  int HalfMoveNumber, int MoveNumber) const {
+
+        while (It.hasNext()) {
+            It.next();
+            // Half move is odd, it's a next full move.
+            if (HalfMoveNumber % 2) {
+                Ret += QString::number(MoveNumber+1) + ". ";
+                MoveNumber++;
+            }
+            HalfMoveNumber++;
+
+            Ret += makeUrl(It.getLastMove().toString(),
+                           QString::number(size_t(It.getNode())));
+            Ret += ' ';
+        }
     }
 
-    QString makeFullMove(Move move, Move reply, int Depth) {
-      /* Html::TagBuilder& Builder = Html::TagBuilder("div")
-                .appendInnerText(QString().setNum(Depth) + ". ")
-                .appendInnerText(makeUrl(makeMove(move), QString("#")));
-
-        if (reply.From == Coord2D<int>(-1,-1))
-            return Builder;
-        else
-            return Builder.appendInnerText(makeUrl(makeMove(reply)));*/
-    }
-
-    QString makeUrl(QString Text, QString Ref) {
+    QString makeUrl(QString Text, QString Ref) const {
         QString Style = Html::StyleSheetBuilder()
                 .setFontWeight(Html::Bold)
                 .setFontDecoration(Html::None)
@@ -72,9 +63,10 @@ GameTreeWidget::GameTreeWidget(QWidget* parent)
 
 void GameTreeWidget::addMove(Move move) {
     mCurrentMove = mTree.addVariation(mTree.getLast(), move);
-    //emit setHtml(TreeToHtmlConverter(mTree).html());
+    emit setHtml(TreeToHtmlConverter(mTree).html());
 }
 
 void GameTreeWidget::onMoveClick(const QUrl& Link) {
-    qDebug() << "Link clicked: " << Link;
+    size_t NodeAddress = Link.toString(QUrl::None).toLongLong();
+    emit positionChanged(reinterpret_cast<GameTreeNode*>(NodeAddress));
 }

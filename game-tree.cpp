@@ -1,8 +1,62 @@
 #include "game-tree.hpp"
-
+#include <QDebug>
 GameTreeNode::~GameTreeNode() {
     for (const auto& It : Next)
         delete It.second;
+}
+
+GameTreeIterator::GameTreeIterator(const GameTreeNode* Root, Move StartMove)
+  : mLastMove(StartMove)
+  , mRoot(Root)
+  , mCurrent(Root)
+{
+
+}
+
+bool GameTreeIterator::hasNext() const {
+    return mCurrent->MainLine;
+}
+
+bool GameTreeIterator::hasPrev() const {
+    return mCurrent->Parent;
+}
+
+bool GameTreeIterator::hasChildren() const {
+    return mCurrent->Next.size() > 1;
+}
+
+bool GameTreeIterator::next() {
+    if (!hasNext())
+        return false;
+    for (auto& Entry : mCurrent->Next)
+        if (Entry.second == mCurrent->MainLine) {
+            mLastMove = Entry.first;
+            break;
+        }
+    ////mLastMove =
+    mCurrent = mCurrent->MainLine;
+    return true;
+}
+
+bool GameTreeIterator::prev() {
+    if (!hasPrev())
+        return false;
+    mCurrent = mCurrent->Parent;
+    return false;
+}
+
+Move GameTreeIterator::getLastMove() const {
+    return mLastMove;
+}
+
+std::vector<GameTreeIterator> GameTreeIterator::getChildren() const {
+    std::vector<GameTreeIterator> List;
+    for (auto& Entry : mCurrent->Next) {
+        if (Entry.second == mCurrent->MainLine)
+            continue;
+        List.push_back(GameTreeIterator(Entry.second, Entry.first));
+    }
+    return List;
 }
 
 GameTree::GameTree() {
@@ -13,6 +67,10 @@ GameTree::GameTree() {
 
 GameTree::~GameTree() {
 
+}
+
+GameTreeIterator GameTree::getIterator() const {
+    return GameTreeIterator(&mRoot, Move::NullMove);
 }
 
 GameTreeNode* GameTree::getRoot() {
@@ -28,14 +86,16 @@ GameTreeNode* GameTree::getLast() {
 GameTreeNode* GameTree::addVariation(GameTreeNode* Current, Move Move) {
     GameTreeNode* NextNode = new GameTreeNode();
     NextNode->Parent = Current;
-    NextNode->MainLine = NULL;
+    NextNode->MainLine = nullptr;
     NextNode->Game = Current->Game;
     NextNode->Game.makeMove(Move);
 
     Current->Next.emplace_back(Move, NextNode);
 
-    if (Current->MainLine == NULL)
+    if (Current->MainLine == nullptr)
         Current->MainLine = NextNode;
+
+    mLast = NextNode;
 
     return NextNode;
 }

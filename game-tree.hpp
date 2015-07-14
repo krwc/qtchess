@@ -16,12 +16,33 @@ struct GameTreeNode {
     std::vector<std::pair<Move, GameTreeNode*>> Next;
 };
 
+class GameTreeIterator {
+public:
+    GameTreeIterator(const GameTreeNode* Root, Move StartMove);
+
+    bool hasNext() const;
+    bool hasPrev() const;
+    bool hasChildren() const;
+    bool next();
+    bool prev();
+    Move getLastMove() const;
+    const GameTreeNode* getNode() const { return mCurrent; }
+    std::vector<GameTreeIterator> getChildren() const;
+private:
+    // Move that leads to mCurrent
+    Move mLastMove;
+    const GameTreeNode* mRoot;
+    const GameTreeNode* mCurrent;
+};
+
 class GameTree {
 public:
-
+    friend class GameTreeIterator;
 
     GameTree();
     ~GameTree();
+    // Returns iterator
+    GameTreeIterator getIterator() const;
     // Returns game root node
     GameTreeNode* getRoot();
     // Returns last node that was added

@@ -26,6 +26,7 @@ BoardWidget::BoardWidget(QWidget *parent)
 
 void BoardWidget::setModel(GameModel* Model) {
     mModel = Model;
+    redraw();
 }
 
 void BoardWidget::setManager(SettingsManager* Manager) {
