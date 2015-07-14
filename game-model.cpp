@@ -133,7 +133,7 @@ bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) {
         return false;
 
     bool Legal;
-    bool MoveIsCastle;
+    bool MoveIsCastle = false;
     MoveType NonStandardMove = MOVE_NONSPECIAL;
     Coord2D<int> EnPassantCoords;
     switch (Src.Piece) {

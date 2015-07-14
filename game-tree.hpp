@@ -18,6 +18,8 @@ struct GameTreeNode {
 
 class GameTree {
 public:
+
+
     GameTree();
     ~GameTree();
     // Returns game root node
