@@ -1,4 +1,4 @@
 qtchess
 Makefile
 !build/.gitignore
-.qtchess.pro.user
+qtchess.pro.user
