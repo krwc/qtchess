@@ -1,6 +1,6 @@
 #include "settings-dialog.hpp"
 #include "settings-manager.hpp"
-#include "ui_settingsdialog.h"
+#include "ui_settings-dialog.h"
 #include <QColorDialog>
 #include <QDebug>
 #include <iostream>
@@ -93,7 +93,7 @@ void SettingsDialog::readSettings() {
     QStringList PiecesList = PieceSet::getAvailableSets();
     PiecesList.removeOne(mManager->getPieceStyleName());
     PiecesList.push_front(mManager->getPieceStyleName());
-    ui->PieceSetList->addItems(PieceSet::getAvailableSets());
+    ui->PieceSetList->addItems(PiecesList);
 
     emit settingsChanged();
 }

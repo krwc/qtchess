@@ -1,5 +1,5 @@
 #include "promotion-dialog.hpp"
-#include "ui_promotiondialog.h"
+#include "ui_promotion-dialog.h"
 
 PromotionDialog::PromotionDialog(QWidget *parent)
     : QDialog(parent)

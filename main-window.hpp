@@ -18,11 +18,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent, SettingsManager &Manager);
     ~MainWindow();
-public slots:
+private slots:
     void moveMade(Move move);
     void showSettings();
     void closeSettings();
     void settingsChanged();
+
 private:
     Ui::MainWindow *ui;
     // Settings manager

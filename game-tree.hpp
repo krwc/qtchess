@@ -1,11 +1,33 @@
-#ifndef GAMETREE_HPP
-#define GAMETREE_HPP
+#ifndef GAME_TREE_HPP
+#define GAME_TREE_HPP
+#include <vector>
+#include "game-model.hpp"
 
-
-class GameTree
-{
-public:
-    GameTree();
+struct GameTreeNode {
+    ~GameTreeNode();
+    // Model will represent current state, as it encapsulates position
+    // and logic behind it.
+    GameModel Game;
+    // Parent node
+    GameTreeNode* Parent;
+    // Main line
+    GameTreeNode* MainLine;
+    // Next moves from the current node
+    std::vector<std::pair<Move, GameTreeNode*>> Next;
 };
 
-#endif // GAMETREE_HPP
+class GameTree {
+public:
+    GameTree();
+    ~GameTree();
+    // Returns game root node
+    GameTreeNode* getRoot();
+    // Adds edge with new move from the Current vertex
+    GameTreeNode* addVariation(GameTreeNode* Current, Move Move);
+    // Removes Current variation and its children recursively
+    void delVariation(GameTreeNode* Root);
+private:
+    GameTreeNode mRoot;
+};
+
+#endif

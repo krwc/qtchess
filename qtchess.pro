@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     piece-set.cpp \
     promotion-dialog.cpp \
     settings-dialog.cpp \
-    game-tree.cpp
+    game-tree.cpp \
+    game-tree-widget.cpp
 
 HEADERS  += main-window.hpp \
     board-widget.hpp \
@@ -39,8 +40,9 @@ HEADERS  += main-window.hpp \
     piece-set.hpp \
     promotion-dialog.hpp \
     settings-dialog.hpp \
-    game-tree.hpp
+    game-tree.hpp \
+    game-tree-widget.hpp
 
 FORMS    += main-window.ui \
-    promotiondialog.ui \
-    settingsdialog.ui
+    promotion-dialog.ui \
+    settings-dialog.ui
