@@ -1,4 +1,5 @@
 #include "settings-manager.hpp"
+#include <QDebug>
 
 static const QString KEY_PIECE_STYLE_NAME = "piece_style_name";
 static const QString KEY_LIGHT_SQUARE_COLOR_R = "light_square_color_r";
@@ -27,7 +28,7 @@ static const Settings Default = {
 SettingsManager::SettingsManager()
   : mConfig(Default)
   , mSettings("QtChess", "QtChess")
-  , mPieceSet(new PieceSet(Default.PieceStyleName))
+  , mPieceSet(nullptr)
 {
     load();
 }
@@ -36,9 +37,6 @@ void SettingsManager::reset()
 {
     // Simply reload from file.
     load();
-    delete mPieceSet;
-    // Replace piece set if needed
-    mPieceSet = new PieceSet(mConfig.PieceStyleName);
 }
 
 void SettingsManager::save()
@@ -87,5 +85,5 @@ void SettingsManager::load()
     mConfig.DarkSquareColor.setBlue(mSettings.value(KEY_DARK_SQUARE_COLOR_B,
                                                     Default.DarkSquareColor.blue()).toInt());
 
-    mConfig.PieceStyleName = mSettings.value(KEY_PIECE_STYLE_NAME, Default.PieceStyleName).toString();
+    setPieceStyleName(mSettings.value(KEY_PIECE_STYLE_NAME, Default.PieceStyleName).toString());
 }

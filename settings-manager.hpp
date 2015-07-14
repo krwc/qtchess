@@ -3,6 +3,7 @@
 #include "piece-set.hpp"
 #include <QSettings>
 #include <QColor>
+#include <QDebug>
 
 struct Settings {
     QString PieceStyleName;

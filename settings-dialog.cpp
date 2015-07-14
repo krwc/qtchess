@@ -91,8 +91,7 @@ void SettingsDialog::readSettings() {
     ui->CoordsCheckBox->setChecked(mManager->getShouldDrawCoords());
 
     QStringList PiecesList = PieceSet::getAvailableSets();
-    PiecesList.removeOne(mManager->getPieceStyleName());
-    PiecesList.push_front(mManager->getPieceStyleName());
+    PiecesList.swap(0, PiecesList.indexOf(mManager->getPieceStyleName()));
     ui->PieceSetList->addItems(PiecesList);
 
     emit settingsChanged();
