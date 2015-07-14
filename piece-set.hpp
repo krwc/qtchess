@@ -10,6 +10,9 @@
 class PieceSet
 {
 public:
+    // Returns list of available sets names
+    static QStringList getAvailableSets();
+public:
     PieceSet(QString StyleName);
     ~PieceSet();
     PieceSet(const PieceSet&) = delete;

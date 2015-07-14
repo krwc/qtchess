@@ -53,6 +53,8 @@ public:
 
     void setPieceStyleName(QString Name) {
         mConfig.PieceStyleName = Name;
+        delete mPieceSet;
+        mPieceSet = new PieceSet(Name);
     }
 
     void setLSColor(QColor Color) {

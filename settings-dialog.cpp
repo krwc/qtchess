@@ -2,10 +2,19 @@
 #include "settings-manager.hpp"
 #include "ui_settingsdialog.h"
 #include <QColorDialog>
+#include <QDebug>
 #include <iostream>
 
 static void SetColor(QPushButton* Button, QColor Color) {
     Button->setStyleSheet("background-color: " + Color.name());
+}
+
+static bool SelectColor(QWidget* Parent, QColor& SelectedColor) {
+    QColorDialog Dialog(Parent);
+    if (Dialog.exec() == QDialog::Rejected)
+        return false;
+    SelectedColor = Dialog.selectedColor();
+    return true;
 }
 
 SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* Manager)
@@ -23,26 +32,29 @@ SettingsDialog::~SettingsDialog()
 }
 
 void SettingsDialog::lightSquaresColorClicked() {
-    QColorDialog Dialog(this);
-    Dialog.exec();
-    SetColor(ui->LSColorButton, Dialog.selectedColor());
-    mManager->setLSColor(Dialog.selectedColor());
+    QColor Ret;
+    if (SelectColor(this, Ret)) {
+        SetColor(ui->LSColorButton, Ret);
+        mManager->setLSColor(Ret);
+    }
     emit settingsChanged();
 }
 
 void SettingsDialog::darkSquaresColorClicked() {
-    QColorDialog Dialog(this);
-    Dialog.exec();
-    SetColor(ui->DSColorButton, Dialog.selectedColor());
-    mManager->setDSColor(Dialog.selectedColor());
+    QColor Ret;
+    if (SelectColor(this, Ret)) {
+        SetColor(ui->DSColorButton, Ret);
+        mManager->setDSColor(Ret);
+    }
     emit settingsChanged();
 }
 
 void SettingsDialog::selectionColorClicked() {
-    QColorDialog Dialog(this);
-    Dialog.exec();
-    SetColor(ui->SelectionColorButton, Dialog.selectedColor());
-    mManager->setSelectionColor(Dialog.selectedColor());
+    QColor Ret;
+    if (SelectColor(this, Ret)) {
+        SetColor(ui->SelectionColorButton, Ret);
+        mManager->setSelectionColor(Ret);
+    }
     emit settingsChanged();
 }
 
@@ -52,6 +64,7 @@ void SettingsDialog::checkBoxToggled(bool checked) {
 }
 
 void SettingsDialog::saveClicked() {
+    mManager->save();
     close();
 }
 
@@ -61,10 +74,26 @@ void SettingsDialog::resetClicked() {
     readSettings();
 }
 
+void SettingsDialog::pieceSetChanged(const QString& Value)
+{
+    if (Value == "")
+        return;
+
+    mManager->setPieceStyleName(Value);
+    emit settingsChanged();
+}
+
 void SettingsDialog::readSettings() {
+    ui->PieceSetList->clear();
     SetColor(ui->LSColorButton, mManager->getLSColor());
     SetColor(ui->DSColorButton, mManager->getDSColor());
     SetColor(ui->SelectionColorButton, mManager->getSelectionColor());
     ui->CoordsCheckBox->setChecked(mManager->getShouldDrawCoords());
+
+    QStringList PiecesList = PieceSet::getAvailableSets();
+    PiecesList.removeOne(mManager->getPieceStyleName());
+    PiecesList.push_front(mManager->getPieceStyleName());
+    ui->PieceSetList->addItems(PieceSet::getAvailableSets());
+
     emit settingsChanged();
 }

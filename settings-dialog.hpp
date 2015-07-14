@@ -21,8 +21,11 @@ private slots:
     void darkSquaresColorClicked();
     void selectionColorClicked();
     void checkBoxToggled(bool checked);
+    void pieceSetChanged(const QString&);
     void saveClicked();
     void resetClicked();
+
+
 signals:
     void settingsChanged();
 private:

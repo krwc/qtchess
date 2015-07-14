@@ -26,10 +26,10 @@ static const Settings Default = {
 
 SettingsManager::SettingsManager()
   : mConfig(Default)
-  , mSettings("Home", "QtChess")
+  , mSettings("QtChess", "QtChess")
   , mPieceSet(new PieceSet(Default.PieceStyleName))
 {
-
+    load();
 }
 
 void SettingsManager::reset()

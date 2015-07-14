@@ -1,8 +1,8 @@
 #include "piece-set.hpp"
 #include <QString>
 #include <QPainter>
+#include <QDir>
 #include <algorithm>
-#include <iostream>
 
 static const QString PieceAssetsPathPrefix = "assets/pieces";
 static const QString PieceName[] = {
@@ -37,6 +37,10 @@ static QPixmap* RenderPiece(QSvgRenderer* R, int Size) {
     return Pixmap;
 }
 
+QStringList PieceSet::getAvailableSets() {
+    return QDir(PieceAssetsPathPrefix).entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+}
+
 PieceSet::PieceSet(QString PieceStyleName)
 {
     for (int i = 0; i < 6; i++) {
@@ -50,16 +54,11 @@ PieceSet::PieceSet(QString PieceStyleName)
 PieceSet::~PieceSet()
 {
     // Free renderers
-    for (auto entry : mPieceRenderers) {
-        std::cout << "Attempt to delete " << entry.second << std::endl;
+    for (auto entry : mPieceRenderers)
         delete entry.second;
-    }
     // Free pixmaps too
-    for (auto entry : mPixmap) {
-        std::cout << "Attempt to delete " << entry.second << std::endl;
+    for (auto entry : mPixmap)
         delete entry.second;
-    }
-    std::cout << std::endl;
 }
 
 QPixmap& PieceSet::getPiecePixmap(Piece Piece, Player Owner, int Size) {
@@ -72,5 +71,3 @@ QPixmap& PieceSet::getPiecePixmap(Piece Piece, Player Owner, int Size) {
     }
     return *mPixmap[R];
 }
-
-
