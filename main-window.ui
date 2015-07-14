@@ -47,13 +47,34 @@
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QSplitter" name="splitter_2">
+           <widget class="QScrollArea" name="scrollArea">
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="GameTreeWidget" name="GameTextWidget">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>410</width>
+               <height>284</height>
+              </rect>
+             </property>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
-            <widget class="GameTreeWidget" name="GameTree" native="true"/>
-            <widget class="QWidget" name="widget" native="true"/>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -81,6 +102,8 @@
     <addaction name="actionPosition"/>
     <addaction name="actionPaste_PGN_from_clipboard"/>
     <addaction name="actionPaste_FEN_from_clipboard"/>
+    <addaction name="separator"/>
+    <addaction name="actionFlip"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -122,6 +145,11 @@
   <action name="actionPaste_FEN_from_clipboard">
    <property name="text">
     <string>Paste FEN from clipboard</string>
+   </property>
+  </action>
+  <action name="actionFlip">
+   <property name="text">
+    <string>Flip</string>
    </property>
   </action>
  </widget>

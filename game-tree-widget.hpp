@@ -2,21 +2,26 @@
 #define GAME_TREE_WIDGET_HPP
 #include "game-tree.hpp"
 #include <QWidget>
+#include <QTextBrowser>
+#include <QList>
+#include <QMap>
 
-class GameTreeWidget : public QWidget
+class GameTreeWidget : public QTextBrowser
 {
     Q_OBJECT
 public:
     explicit GameTreeWidget(QWidget *parent = 0);
 
-protected:
-    virtual void resizeEvent(QResizeEvent*) override;
-    virtual void paintEvent(QPaintEvent *) override;
-    virtual void mousePressEvent(QMouseEvent *) override;
-signals:
+    void addMove(Move move);
+private slots:
+    void onMoveClick(const QUrl& Link);
 
+signals:
+    void positionChanged();
 public slots:
+
 private:
+    // Game tree
     GameTree mTree;
     // Currently selected move
     GameTreeNode* mCurrentMove;

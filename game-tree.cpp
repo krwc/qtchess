@@ -6,8 +6,9 @@ GameTreeNode::~GameTreeNode() {
 }
 
 GameTree::GameTree() {
-    mRoot.Parent = NULL;
-    mRoot.MainLine = NULL;
+    mRoot.Parent = nullptr;
+    mRoot.MainLine = nullptr;
+    mLast = nullptr;
 }
 
 GameTree::~GameTree() {
@@ -16,6 +17,12 @@ GameTree::~GameTree() {
 
 GameTreeNode* GameTree::getRoot() {
     return &mRoot;
+}
+
+GameTreeNode* GameTree::getLast() {
+    if (!mLast)
+        return getRoot();
+    return mLast;
 }
 
 GameTreeNode* GameTree::addVariation(GameTreeNode* Current, Move Move) {

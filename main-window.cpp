@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent, SettingsManager &Manager)
     ui->Board->setManager(&mManager);
     QObject::connect(ui->Board, SIGNAL(moveMade(Move)), this, SLOT(moveMade(Move)));
     QObject::connect(ui->actionSettings, SIGNAL(triggered()), this, SLOT(showSettings()));
+    QObject::connect(ui->actionFlip, SIGNAL(triggered()), this, SLOT(flipBoard()));
 }
 
 MainWindow::~MainWindow()
@@ -31,6 +32,7 @@ void MainWindow::moveMade(Move move) {
             move.PromotionPiece = dialog.getSelectedPiece();
         }
         mModel.makeMove(move);
+        ui->GameTextWidget->addMove(move);
     }
 }
 
@@ -51,4 +53,8 @@ void MainWindow::closeSettings() {
 void MainWindow::settingsChanged() {
     ui->Board->update();
     ui->Board->redraw();
+}
+
+void MainWindow::flipBoard() {
+    ui->Board->flip();
 }

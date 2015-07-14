@@ -23,6 +23,7 @@ private slots:
     void showSettings();
     void closeSettings();
     void settingsChanged();
+    void flipBoard();
 
 private:
     Ui::MainWindow *ui;

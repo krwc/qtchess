@@ -22,12 +22,15 @@ public:
     ~GameTree();
     // Returns game root node
     GameTreeNode* getRoot();
+    // Returns last node that was added
+    GameTreeNode* getLast();
     // Adds edge with new move from the Current vertex
     GameTreeNode* addVariation(GameTreeNode* Current, Move Move);
     // Removes Current variation and its children recursively
     void delVariation(GameTreeNode* Root);
 private:
     GameTreeNode mRoot;
+    GameTreeNode* mLast;
 };
 
 #endif

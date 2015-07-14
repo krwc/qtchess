@@ -2,8 +2,12 @@
 #define MOVE_HPP
 #include "common.hpp"
 #include "pieces.hpp"
+#include <QString>
 
 struct Move {
+    // Null move
+    static const Move NullMove;
+
     Coord2D<int> From;
     Coord2D<int> To;
     Piece PromotionPiece;
@@ -14,6 +18,14 @@ struct Move {
       , To(To)
       , PromotionPiece(PromotionTo)
     { }
+
+    // XXX: This does not belong here.
+    QString toString() {
+        QString Ret;
+        Ret += QString(From.x + 'a') + QString(7-From.y + '1');
+        Ret += QString(To.x + 'a') + QString(7-To.y + '1');
+        return Ret;
+    }
 };
 
 #endif // MOVE_HPP
