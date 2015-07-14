@@ -19,8 +19,8 @@ static bool SelectColor(QWidget* Parent, QColor& SelectedColor) {
 
 SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* Manager)
     : QDialog(parent)
-    , mManager(Manager)
     , ui(new Ui::SettingsDialog)
+    , mManager(Manager)
 {
     ui->setupUi(this);
     readSettings();
