@@ -41,18 +41,15 @@ private:
             }
             HalfMoveNumber++;
 
-            if (SubvariationDepth)
-                Ret += makeSubVariation(MoveNumber + MoveStr);
-            else
-                Ret += MoveNumber + MoveStr;
-
+            Ret += MoveNumber + MoveStr;
             Ret += ' ';
 
             for (auto& ChildIt : It.getChildren()) {
                 QString ChildRet;
                 traverse(ChildRet, ChildIt, SubvariationDepth+1,
                          HalfMoveNumber);
-                Ret += ChildRet;
+                Ret += makeSubVariation(ChildRet);
+
             }
         }
     }
