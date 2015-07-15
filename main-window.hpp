@@ -3,7 +3,7 @@
 
 #include "settings-manager.hpp"
 #include "settings-dialog.hpp"
-#include "game-model.hpp"
+#include "game-tree.hpp"
 #include <QMainWindow>
 
 struct GameTreeNode;
@@ -25,14 +25,14 @@ private slots:
     void closeSettings();
     void settingsChanged();
     void flipBoard();
-    void positionChanged(GameTreeNode*);
 
+    void setPosition(GameTreeNode*);
 private:
     Ui::MainWindow *ui;
     // Settings manager
     SettingsManager& mManager;
-    // Game model
-    GameModel mModel;
+    // Game tree
+    GameTree mGameTree;
     // Settings dialog
     SettingsDialog* mSettings;
 

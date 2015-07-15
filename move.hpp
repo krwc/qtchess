@@ -26,7 +26,13 @@ struct Move {
         Ret += QString(To.x + 'a') + QString(7-To.y + '1');
         return Ret;
     }
+
+    bool operator== (const Move& Move) const {
+        return Move.From == From && Move.To == To;
+    }
 };
+
+
 
 #endif // MOVE_HPP
 

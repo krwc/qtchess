@@ -1,6 +1,7 @@
 #ifndef GAME_TREE_HPP
 #define GAME_TREE_HPP
 #include <vector>
+#include <map>
 #include "game-model.hpp"
 
 struct GameTreeNode {
@@ -14,6 +15,8 @@ struct GameTreeNode {
     GameTreeNode* MainLine;
     // Next moves from the current node
     std::vector<std::pair<Move, GameTreeNode*>> Next;
+
+    bool hasMove(Move move) const ;
 };
 
 class GameTreeIterator {
@@ -51,6 +54,8 @@ public:
     GameTreeNode* addVariation(GameTreeNode* Current, Move Move);
     // Removes Current variation and its children recursively
     void delVariation(GameTreeNode* Root);
+
+    void setLast(GameTreeNode* Node);
 private:
     GameTreeNode mRoot;
     GameTreeNode* mLast;

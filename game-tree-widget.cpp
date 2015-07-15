@@ -7,14 +7,14 @@
 
 class TreeToHtmlConverter {
 public:
-    TreeToHtmlConverter(const GameTree& Tree)
+    TreeToHtmlConverter(const GameTree* Tree)
       : mTree(Tree) {
 
     }
 
     QString html() const {
         QString Ret;
-        traverse(Ret, mTree.getIterator(), 0, 1, 0);
+        traverse(Ret, mTree->getIterator(), 0, 1, 0);
         return Ret;
     }
 private:
@@ -49,24 +49,28 @@ private:
     }
 
 private:
-    const GameTree& mTree;
+    const GameTree* mTree;
 };
 
 GameTreeWidget::GameTreeWidget(QWidget* parent)
     : QTextBrowser(parent)
-    , mCurrentMove(nullptr)
+    , mTree(nullptr)
 {
     setOpenLinks(false);
     QObject::connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(onMoveClick(QUrl)));
 
 }
 
-void GameTreeWidget::addMove(Move move) {
-    mCurrentMove = mTree.addVariation(mTree.getLast(), move);
+void GameTreeWidget::setGameTree(GameTree* Tree) {
+    mTree = Tree;
+    redraw();
+}
+
+void GameTreeWidget::redraw() {
     emit setHtml(TreeToHtmlConverter(mTree).html());
 }
 
 void GameTreeWidget::onMoveClick(const QUrl& Link) {
-    size_t NodeAddress = Link.toString(QUrl::None).toLongLong();
-    emit positionChanged(reinterpret_cast<GameTreeNode*>(NodeAddress));
+    size_t NodeAddress = Link.toString(QUrl::None).toULongLong();
+    emit positionSelected(reinterpret_cast<GameTreeNode*>(NodeAddress));
 }

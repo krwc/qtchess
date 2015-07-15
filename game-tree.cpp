@@ -1,8 +1,16 @@
 #include "game-tree.hpp"
 #include <QDebug>
+
 GameTreeNode::~GameTreeNode() {
     for (const auto& It : Next)
         delete It.second;
+}
+
+bool GameTreeNode::hasMove(Move move) const {
+    for (auto& Entry : Next)
+        if (Entry.first == move)
+            return true;
+    return false;
 }
 
 GameTreeIterator::GameTreeIterator(const GameTreeNode* Root, Move StartMove)
@@ -83,6 +91,7 @@ GameTreeNode* GameTree::getLast() {
     return mLast;
 }
 
+
 GameTreeNode* GameTree::addVariation(GameTreeNode* Current, Move Move) {
     GameTreeNode* NextNode = new GameTreeNode();
     NextNode->Parent = Current;
@@ -120,4 +129,8 @@ void GameTree::delVariation(GameTreeNode* Root) {
         for (auto& It : Root->Next)
             delVariation(It.second);
     }
+}
+
+void GameTree::setLast(GameTreeNode* Node) {
+    mLast = Node;
 }

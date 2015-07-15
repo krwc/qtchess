@@ -11,14 +11,15 @@ MainWindow::MainWindow(QWidget *parent, SettingsManager &Manager)
     , mSettings(nullptr)
 {
     ui->setupUi(this);
-    ui->Board->setModel(&mModel);
+    ui->Board->setModel(&mGameTree.getLast()->Game);
     ui->Board->setManager(&mManager);
+    ui->GameTextWidget->setGameTree(&mGameTree);
     QObject::connect(ui->Board, SIGNAL(moveMade(Move)), this, SLOT(moveMade(Move)));
-    QObject::connect(ui->GameTextWidget, SIGNAL(positionChanged(GameTreeNode*)),
-                     SLOT(positionChanged(GameTreeNode*)));
     QObject::connect(ui->actionSettings, SIGNAL(triggered()), this,
                      SLOT(showSettings()));
     QObject::connect(ui->actionFlip, SIGNAL(triggered()), this, SLOT(flipBoard()));
+    QObject::connect(ui->GameTextWidget, SIGNAL(positionSelected(GameTreeNode*)),
+                     this, SLOT(setPosition(GameTreeNode*)));
 }
 
 MainWindow::~MainWindow()
@@ -28,14 +29,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::moveMade(Move move) {
     MoveType Type = MOVE_NONSPECIAL;
-    if (mModel.isLegal(move, NULL, &Type)) {
+    GameModel& Model = mGameTree.getLast()->Game;
+
+    if (Model.isLegal(move, NULL, &Type)) {
         if (Type == MOVE_PROMOTION) {
             PromotionDialog dialog(this);
             dialog.exec();
             move.PromotionPiece = dialog.getSelectedPiece();
         }
-        mModel.makeMove(move);
-        ui->GameTextWidget->addMove(move);
+        setPosition(mGameTree.addVariation(mGameTree.getLast(), move));
+        ui->GameTextWidget->redraw();
     }
 }
 
@@ -62,6 +65,7 @@ void MainWindow::flipBoard() {
     ui->Board->flip();
 }
 
-void MainWindow::positionChanged(GameTreeNode* Node) {
-    ui->Board->setModel(&Node->Game);
+void MainWindow::setPosition(GameTreeNode* Node) {
+    mGameTree.setLast(Node);
+    ui->Board->setModel(&mGameTree.getLast()->Game);
 }

@@ -12,19 +12,15 @@ class GameTreeWidget : public QTextBrowser
 public:
     explicit GameTreeWidget(QWidget *parent = 0);
 
-    void addMove(Move move);
+    void redraw();
+    void setGameTree(GameTree* Tree);
 private slots:
     void onMoveClick(const QUrl& Link);
-
 signals:
-    void positionChanged(GameTreeNode*);
-public slots:
+    void positionSelected(GameTreeNode*);
 
 private:
-    // Game tree
-    GameTree mTree;
-    // Currently selected move
-    GameTreeNode* mCurrentMove;
+    GameTree* mTree;
 };
 
 #endif // GAME_TREE_WIDGET_HPP
