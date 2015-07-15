@@ -42,11 +42,17 @@ private:
             }
             HalfMoveNumber++;
 
-            Ret +=  MoveNumber + MoveStr;
+            Ret += MoveNumber;
+            if (It.getNode() == ((GameTree*)mTree)->getLast())
+                Ret += "<span style='background-color:#96c2cd;'>";
+            Ret += MoveStr;
+            if (It.getNode() == ((GameTree*)mTree)->getLast())
+                Ret += "</span>";
+
             Ret += ' ';
 
             if (It.hasChildren())
-                Ret += "<ul style='padding-left: 10px; list-style-type: none;'>";
+                Ret += "<ul style='font-size:12px; color: #0000FF; padding-left: 10px; list-style-type: none;'>";
             for (auto& ChildIt : It.getChildren()) {
                 QString ChildRet;
                 traverse(ChildRet, ChildIt, VariantDepth+1, HalfMoveNumber);
@@ -91,4 +97,5 @@ void GameTreeWidget::redraw() {
 void GameTreeWidget::onMoveClick(const QUrl& Link) {
     size_t NodeAddress = Link.toString(QUrl::None).toULongLong();
     emit positionSelected(reinterpret_cast<GameTreeNode*>(NodeAddress));
+    redraw();
 }
