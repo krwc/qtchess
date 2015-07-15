@@ -14,11 +14,16 @@ enum FontDecoration {
     None
 };
 
-class StyleSheetBuilder {
+static QString LineBreak = "<br>";
+
+class StyleBuilder {
 private:
     static const QString FONT_WEIGHT;
     static const QString FONT_COLOR;
     static const QString TEXT_DECORATION;
+    static const QString FONT_FAMILY;
+    static const QString FONT_SIZE;
+    static const QString LINE_HEIGHT;
 
     static QString fontWeight(FontWeight Weight) {
         QString Ret = FONT_WEIGHT;
@@ -38,19 +43,34 @@ private:
         }
     }
 public:
-    StyleSheetBuilder() { }
+    StyleBuilder() { }
 
-    StyleSheetBuilder& setFontWeight(FontWeight Weight) {
+    StyleBuilder& setFontWeight(FontWeight Weight) {
         mStr += fontWeight(Weight);
         return *this;
     }
 
-    StyleSheetBuilder& setFontDecoration(FontDecoration Decoration) {
+    StyleBuilder& setFontDecoration(FontDecoration Decoration) {
         mStr += fontDecoration(Decoration);
         return *this;
     }
 
-    StyleSheetBuilder& setFontColor(QColor Color) {
+    StyleBuilder& setFontFamily(QString Family) {
+        mStr += FONT_FAMILY + Family + ";";
+        return *this;
+    }
+
+    StyleBuilder& setFontSizeInPx(int Pixels) {
+        mStr += FONT_SIZE + QString::number(Pixels) + "px;";
+        return *this;
+    }
+
+    StyleBuilder& setLineHeight(int Percentage) {
+        mStr += LINE_HEIGHT + QString::number(Percentage) + "%;";
+        return *this;
+    }
+
+    StyleBuilder& setFontColor(QColor Color) {
         mStr += FONT_COLOR + Color.name();
         return *this;
     }
