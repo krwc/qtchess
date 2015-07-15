@@ -122,12 +122,14 @@ void GameTree::delVariation(GameTreeNode* Root) {
         // Check whether this was main line
         if (Root->Parent->MainLine == Root)
             Root->Parent->MainLine = NULL;
+        mLast = Root->Parent;
         delete Root;
     } else {
         // Otherwise an attempt to delete root node is made,
         // in such case we delete only its children
         for (auto& It : Root->Next)
             delVariation(It.second);
+        mLast = getRoot();
     }
 }
 

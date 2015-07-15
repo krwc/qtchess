@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent, SettingsManager &Manager)
     QObject::connect(ui->actionSettings, SIGNAL(triggered()), this,
                      SLOT(showSettings()));
     QObject::connect(ui->actionFlip, SIGNAL(triggered()), this, SLOT(flipBoard()));
+    QObject::connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(resetBoard()));
     QObject::connect(ui->GameTextWidget, SIGNAL(positionSelected(GameTreeNode*)),
                      this, SLOT(setPosition(GameTreeNode*)));
 }
@@ -63,6 +64,12 @@ void MainWindow::settingsChanged() {
 
 void MainWindow::flipBoard() {
     ui->Board->flip();
+}
+
+void MainWindow::resetBoard() {
+    mGameTree.delVariation(mGameTree.getRoot());
+    ui->Board->setModel(&mGameTree.getLast()->Game);
+    ui->GameTextWidget->redraw();
 }
 
 void MainWindow::setPosition(GameTreeNode* Node) {

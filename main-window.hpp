@@ -25,6 +25,7 @@ private slots:
     void closeSettings();
     void settingsChanged();
     void flipBoard();
+    void resetBoard();
 
     void setPosition(GameTreeNode*);
 private:

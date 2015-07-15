@@ -28,7 +28,8 @@ struct Move {
     }
 
     bool operator== (const Move& Move) const {
-        return Move.From == From && Move.To == To;
+        return Move.From == From && Move.To == To &&
+               Move.PromotionPiece == PromotionPiece;
     }
 };
 
