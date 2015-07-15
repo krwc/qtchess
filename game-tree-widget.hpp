@@ -2,11 +2,11 @@
 #define GAME_TREE_WIDGET_HPP
 #include "game-tree.hpp"
 #include <QWidget>
-#include <QTextBrowser>
+#include <QWebView>
 #include <QList>
 #include <QMap>
 
-class GameTreeWidget : public QTextBrowser
+class GameTreeWidget : public QWebView
 {
     Q_OBJECT
 public:
@@ -14,6 +14,10 @@ public:
 
     void redraw();
     void setGameTree(GameTree* Tree);
+
+    virtual QSize sizeHint() const override {
+        return QSize(100, 100);
+    }
 private slots:
     void onMoveClick(const QUrl& Link);
 signals:

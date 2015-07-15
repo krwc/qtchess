@@ -1,5 +1,4 @@
 #include "game-tree-widget.hpp"
-#include "html-util.hpp"
 #include <QDebug>
 #include <QPainter>
 #include <QStack>
@@ -15,14 +14,9 @@ public:
     QString html() const {
         QString Ret;
         traverse(Ret, mTree->getIterator(), 0, 1);
-        qDebug() << Ret;
-        return Html::TagBuilder("div")
-                   .setProperty("style",
-                       Html::StyleBuilder()
-                           .setFontSizeInPx(14)
-                           .setLineHeight(140)
-                           .setFontFamily("monospace"))
-                   .appendInnerText(Ret);
+        return QString("<div style='font-size:%1px; "
+                       "line-height:%2%; font-family:monospace'>%3</div>")
+                .arg("14", "160", Ret);
     }
 private:
     void traverse(QString& Ret, GameTreeIterator It, int VariantDepth,
@@ -51,41 +45,38 @@ private:
             Ret +=  MoveNumber + MoveStr;
             Ret += ' ';
 
+            if (It.hasChildren())
+                Ret += "<ul style='padding-left: 10px; list-style-type: none;'>";
             for (auto& ChildIt : It.getChildren()) {
                 QString ChildRet;
                 traverse(ChildRet, ChildIt, VariantDepth+1, HalfMoveNumber);
 
-                Ret += makeVariant(ChildRet, VariantDepth * VARIANT_OFFSET_PX);
+                Ret += makeVariant(ChildRet, (VariantDepth+1) * VARIANT_OFFSET_PX);
             }
+            if (It.hasChildren())
+                Ret += "</ul>";
         }
     }
 
     QString makeVariant(QString Str, int VariantOffset) const {
-        return "<p style='margin-left:20px; line-height:inherit;'>(" + Str + ")</p>\n";
+        return QString("<li>(%1)</li>").arg(Str);
     }
 
     QString makeUrl(QString Text, QString Ref) const {
-        Html::StyleBuilder StyleBuilder = Html::StyleBuilder()
-                .setFontWeight(Html::Bold)
-                .setFontDecoration(Html::None)
-                .setFontColor(Qt::GlobalColor::black);
-
-        return Html::TagBuilder("a")
-                .setProperty("href", Ref)
-                .setProperty("style", StyleBuilder)
-                .appendInnerText(Text);
+        return QString("<a href='%1' style='font-weight:bold; "
+                       "text-decoration: none; color: #000'>%2</a>")
+                .arg(Ref, Text);
     }
 private:
     const GameTree* mTree;
 };
 
 GameTreeWidget::GameTreeWidget(QWidget* parent)
-    : QTextBrowser(parent)
+    : QWebView(parent)
     , mTree(nullptr)
 {
-    setOpenLinks(false);
-    QObject::connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(onMoveClick(QUrl)));
-
+    page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    QObject::connect(this, SIGNAL(linkClicked(QUrl)), this, SLOT(onMoveClick(QUrl)));
 }
 
 void GameTreeWidget::setGameTree(GameTree* Tree) {
@@ -94,7 +85,7 @@ void GameTreeWidget::setGameTree(GameTree* Tree) {
 }
 
 void GameTreeWidget::redraw() {
-    emit setHtml(TreeToHtmlConverter(mTree).html());
+    setHtml(TreeToHtmlConverter(mTree).html());
 }
 
 void GameTreeWidget::onMoveClick(const QUrl& Link) {

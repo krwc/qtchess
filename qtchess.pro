@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg
+QT       += core gui svg webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,8 +27,7 @@ SOURCES += main.cpp\
     promotion-dialog.cpp \
     settings-dialog.cpp \
     game-tree.cpp \
-    game-tree-widget.cpp \
-    html-util.cpp
+    game-tree-widget.cpp
 
 HEADERS  += main-window.hpp \
     board-widget.hpp \
@@ -42,8 +41,7 @@ HEADERS  += main-window.hpp \
     promotion-dialog.hpp \
     settings-dialog.hpp \
     game-tree.hpp \
-    game-tree-widget.hpp \
-    html-util.hpp
+    game-tree-widget.hpp
 
 FORMS    += main-window.ui \
     promotion-dialog.ui \
