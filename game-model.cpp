@@ -176,6 +176,11 @@ bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) {
             NextState.EnPassantPlayer = PLAYER_NONE;
     }
 
+    if (move.To == A1) NextState.LongCastlingRight[PLAYER_WHITE] = false;
+    else if (move.To == A8) NextState.LongCastlingRight[PLAYER_BLACK] = false;
+    else if (move.To == H1) NextState.ShortCastlingRight[PLAYER_WHITE] = false;
+    else if (move.To == H8) NextState.ShortCastlingRight[PLAYER_BLACK] = false;
+
     NextState.WhoIsPlaying = Player(!NextState.WhoIsPlaying);
 
     if (RetState)
