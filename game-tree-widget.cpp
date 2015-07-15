@@ -14,26 +14,56 @@ public:
 
     QString html() const {
         QString Ret;
-        traverse(Ret, mTree->getIterator(), 0, 1, 0);
+        traverse(Ret, mTree->getIterator(), 0, 1);
         return Ret;
     }
 private:
     void traverse(QString& Ret, GameTreeIterator It, int SubvariationDepth,
-                  int HalfMoveNumber, int MoveNumber) const {
+                  int HalfMoveNumber) const {
+        static const int SUB_OFFSET_PX = 5;
 
         while (It.hasNext()) {
             It.next();
-            // Half move is odd, it's a next full move.
-            if (HalfMoveNumber % 2) {
-                Ret += QString::number(MoveNumber+1) + ". ";
-                MoveNumber++;
+            QString NodeHash = QString::number(size_t(It.getNode()));
+            QString MoveStr = makeUrl(It.getLastMove().toString(), NodeHash);
+            QString MoveId = QString::number((HalfMoveNumber + 1) / 2);
+            QString MoveNumber;
+
+            if (HalfMoveNumber % 2)
+                MoveNumber = MoveId + ". ";
+            else if (It.hasPrev()) {
+                It.prev();
+
+                if (It.hasChildren())
+                    MoveNumber = MoveId + "... ";
+
+                It.next();
             }
             HalfMoveNumber++;
 
-            Ret += makeUrl(It.getLastMove().toString(),
-                           QString::number(size_t(It.getNode())));
+            if (SubvariationDepth)
+                Ret += makeSubVariation(MoveNumber + MoveStr);
+            else
+                Ret += MoveNumber + MoveStr;
+
             Ret += ' ';
+
+            for (auto& ChildIt : It.getChildren()) {
+                QString ChildRet;
+                traverse(ChildRet, ChildIt, SubvariationDepth+1,
+                         HalfMoveNumber);
+                Ret += ChildRet;
+            }
         }
+    }
+
+    QString makeSubVariation(QString Str) const {
+        QString Style = Html::StyleSheetBuilder()
+                .setFontDecoration(Html::None)
+                .setFontColor(Qt::GlobalColor::blue);
+        return Html::TagBuilder("p")
+                .setProperty("style", Style)
+                .appendInnerText('[' + Str + ']');
     }
 
     QString makeUrl(QString Text, QString Ref) const {
@@ -47,6 +77,13 @@ private:
                 .setProperty("style", Style)
                 .appendInnerText(Text);
     }
+
+/*    QString makeSubVariation(int Offset) {
+        QString Style = Html::StyleSheetBuilder()
+                .setFontDecoration(Html::None)
+                .setFontColor(Qt::GlobalColor::blue);
+
+    }*/
 
 private:
     const GameTree* mTree;

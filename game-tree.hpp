@@ -21,7 +21,8 @@ struct GameTreeNode {
 
 class GameTreeIterator {
 public:
-    GameTreeIterator(const GameTreeNode* Root, Move StartMove);
+    GameTreeIterator(Move StartMove, const GameTreeNode* Root,
+                     const GameTreeNode* Next);
 
     bool hasNext() const;
     bool hasPrev() const;
@@ -36,6 +37,7 @@ private:
     Move mLastMove;
     const GameTreeNode* mRoot;
     const GameTreeNode* mCurrent;
+    const GameTreeNode* mNext;
 };
 
 class GameTree {

@@ -13,16 +13,18 @@ bool GameTreeNode::hasMove(Move move) const {
     return false;
 }
 
-GameTreeIterator::GameTreeIterator(const GameTreeNode* Root, Move StartMove)
+GameTreeIterator::GameTreeIterator(Move StartMove, const GameTreeNode* Root,
+                                   const GameTreeNode* Next)
   : mLastMove(StartMove)
   , mRoot(Root)
   , mCurrent(Root)
+  , mNext(Next)
 {
 
 }
 
 bool GameTreeIterator::hasNext() const {
-    return mCurrent->MainLine;
+    return mNext;
 }
 
 bool GameTreeIterator::hasPrev() const {
@@ -36,19 +38,22 @@ bool GameTreeIterator::hasChildren() const {
 bool GameTreeIterator::next() {
     if (!hasNext())
         return false;
-    for (auto& Entry : mCurrent->Next)
-        if (Entry.second == mCurrent->MainLine) {
+
+    for (auto& Entry : mCurrent->Next) {
+        if (Entry.second == mNext) {
             mLastMove = Entry.first;
             break;
         }
-    ////mLastMove =
-    mCurrent = mCurrent->MainLine;
+    }
+    mCurrent = mNext;
+    mNext = mCurrent->MainLine;
     return true;
 }
 
-bool GameTreeIterator::prev() {
+bool GameTreeIterator::prev() { 
     if (!hasPrev())
         return false;
+    mNext = mCurrent;
     mCurrent = mCurrent->Parent;
     return false;
 }
@@ -62,7 +67,7 @@ std::vector<GameTreeIterator> GameTreeIterator::getChildren() const {
     for (auto& Entry : mCurrent->Next) {
         if (Entry.second == mCurrent->MainLine)
             continue;
-        List.push_back(GameTreeIterator(Entry.second, Entry.first));
+        List.push_back(GameTreeIterator(Entry.first, mCurrent, Entry.second));
     }
     return List;
 }
@@ -78,7 +83,7 @@ GameTree::~GameTree() {
 }
 
 GameTreeIterator GameTree::getIterator() const {
-    return GameTreeIterator(&mRoot, Move::NullMove);
+    return GameTreeIterator(Move::NullMove, &mRoot, mRoot.MainLine);
 }
 
 GameTreeNode* GameTree::getRoot() {
@@ -112,21 +117,21 @@ GameTreeNode* GameTree::addVariation(GameTreeNode* Current, Move Move) {
 void GameTree::delVariation(GameTreeNode* Root) {
     if (Root->Parent) {
         auto It = Root->Parent->Next.begin();
-        // Delete move from parent
+        // Delete move from the parent node
         while (It != Root->Parent->Next.end()) {
             if ((*It).second == Root)
                 It = Root->Parent->Next.erase(It);
             else
                 ++It;
         }
-        // Check whether this was main line
+        // Check whether this was the main line
         if (Root->Parent->MainLine == Root)
             Root->Parent->MainLine = NULL;
         mLast = Root->Parent;
         delete Root;
     } else {
         // Otherwise an attempt to delete root node is made,
-        // in such case we delete only its children
+        // in such case we delete its children only
         for (auto& It : Root->Next)
             delVariation(It.second);
         mLast = getRoot();
