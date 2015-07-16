@@ -4,78 +4,83 @@
 #include <QStack>
 #include <QQueue>
 
+// TODO: This should be part of the skin system.
+static QString StyleSheet =
+        "<style>\n"
+        ".TreeBody { font-size: 14px; line-height: 140%; font-family: monospace; }\n"
+        ".TreeMove { font-weight: bold; text-decoration: none; color: #000; }\n"
+        "ul.TreeVariant { font-size: 12px; color: #0000FF; padding-left: 15px; list-style-type: none; }\n"
+        "li.TreeVariant { }\n"
+        ".TreeCurrentMove { background-color:#96c2cd; }\n"
+        "</style>\n";
+
+static QString BodyFormat = "<div class='TreeBody'>%1</div>";
+static QString MoveFormat = "<a class='TreeMove' href='%1'>%2</a>";
+static QString VariantLiFormat = "<li class='TreeVariant'>(%1)</li>";
+static QString VariantUlFormat = "<ul class='TreeVariant'>%1</ul>";
+static QString CurrentMoveFormat = "<span class='TreeCurrentMove'>%1</span>";
+
+
 class TreeToHtmlConverter {
 public:
-    TreeToHtmlConverter(const GameTree* Tree)
-      : mTree(Tree) {
-
-    }
-
-    QString html() const {
-        QString Ret;
-        traverse(Ret, mTree->getIterator(), 0, 1);
-        return QString("<div style='font-size:%1px; "
-                       "line-height:%2%; font-family:monospace'>%3</div>")
-                .arg("14", "160", Ret);
-    }
+    TreeToHtmlConverter(GameTree* Tree);
+    QString html() const;
 private:
-    void traverse(QString& Ret, GameTreeIterator It, int VariantDepth,
-                  int HalfMoveNumber) const {
-        static const int VARIANT_OFFSET_PX = 10;
-
-        while (It.next()) {
-            QString NodeHash = QString::number(size_t(It.getNode()));
-            QString MoveStr = makeUrl(It.getLastMove().toString(), NodeHash);
-            QString MoveId = QString::number((HalfMoveNumber + 1) / 2);
-            QString MoveNumber;
-
-            /* Non-even numbers indicate new full-move */
-            if (HalfMoveNumber % 2)
-                MoveNumber = MoveId + ". ";
-            else if (It.hasPrev()) {
-                It.prev();
-
-                if (It.hasChildren())
-                    MoveNumber = MoveId + "... ";
-
-                It.next();
-            }
-            HalfMoveNumber++;
-
-            Ret += MoveNumber;
-            if (It.getNode() == ((GameTree*)mTree)->getLast())
-                Ret += "<span style='background-color:#96c2cd;'>";
-            Ret += MoveStr;
-            if (It.getNode() == ((GameTree*)mTree)->getLast())
-                Ret += "</span>";
-
-            Ret += ' ';
-
-            if (It.hasChildren())
-                Ret += "<ul style='font-size:12px; color: #0000FF; padding-left: 10px; list-style-type: none;'>";
-            for (auto& ChildIt : It.getChildren()) {
-                QString ChildRet;
-                traverse(ChildRet, ChildIt, VariantDepth+1, HalfMoveNumber);
-
-                Ret += makeVariant(ChildRet, (VariantDepth+1) * VARIANT_OFFSET_PX);
-            }
-            if (It.hasChildren())
-                Ret += "</ul>";
-        }
-    }
-
-    QString makeVariant(QString Str, int VariantOffset) const {
-        return QString("<li>(%1)</li>").arg(Str);
-    }
-
-    QString makeUrl(QString Text, QString Ref) const {
-        return QString("<a href='%1' style='font-weight:bold; "
-                       "text-decoration: none; color: #000'>%2</a>")
-                .arg(Ref, Text);
-    }
-private:
-    const GameTree* mTree;
+    void traverse(QString& Result, GameTreeIterator It, int VariantDepth,
+                  int HalfMoveNumber) const;
+    GameTree* mTree;
 };
+
+TreeToHtmlConverter::TreeToHtmlConverter(GameTree* Tree)
+  : mTree(Tree)
+{
+
+}
+
+QString TreeToHtmlConverter::html() const {
+    QString Result;
+    traverse(Result, mTree->getIterator(), 0, 1);
+    return StyleSheet + BodyFormat.arg(Result);
+}
+
+void TreeToHtmlConverter::traverse(QString &Ret, GameTreeIterator It, int VariantDepth,
+                                   int HalfMoveNumber) const
+{
+    while (It.next()) {
+        QString Hash = QString::number(size_t(It.getNode()));
+        QString MoveString = MoveFormat.arg(Hash, It.getLastMove().toString());
+        QString MoveId = QString::number((HalfMoveNumber + 1) / 2);
+        QString MoveNumber;
+
+        if (HalfMoveNumber % 2)
+            MoveNumber = MoveId + ". ";
+        else if (It.hasPrev()) {
+            It.prev();
+            if (It.hasChildren())
+                MoveNumber = MoveId + "... ";
+            It.next();
+        }
+        ++HalfMoveNumber;
+
+        Ret += MoveNumber;
+        if (It.getNode() == mTree->getLast())
+            Ret += CurrentMoveFormat.arg(MoveString);
+        else
+            Ret += MoveString;
+        Ret += ' ';
+
+        QString ChildrenResult;
+        for (auto& ChildIt: It.getChildren()) {
+            QString ChildRet;
+            traverse(ChildRet, ChildIt, VariantDepth+1, HalfMoveNumber);
+            ChildrenResult += VariantLiFormat.arg(ChildRet);
+        }
+
+        if (It.hasChildren())
+            Ret += VariantUlFormat.arg(ChildrenResult);
+    }
+}
+
 
 GameTreeWidget::GameTreeWidget(QWidget* parent)
     : QWebView(parent)
