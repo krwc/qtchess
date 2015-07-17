@@ -18,6 +18,8 @@ public:
     virtual QSize sizeHint() const override {
         return QSize(100, 100);
     }
+protected:
+    virtual void contextMenuEvent(QContextMenuEvent *);
 private slots:
     void onMoveClick(const QUrl& Link);
 signals:

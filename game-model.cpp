@@ -6,7 +6,7 @@
 const GameState GameModel::InitialGameState = {
     .ShortCastlingRight = { true, true },
     .LongCastlingRight = { true, true },
-    .CheckedPlayer = PLAYER_NONE,
+    .IsCheck = false,
     .WhoIsPlaying = PLAYER_WHITE
 };
 
@@ -91,37 +91,50 @@ void GameModel::movePieces(Move move, MoveType Type) {
         mFields[move.To.y][move.To.x].Piece = move.PromotionPiece;
 }
 
-bool GameModel::isCheckAfterTheMove(Move move, MoveType Type) {
-    Field Backup[8][8];
-    Player Curr = mState.WhoIsPlaying;
-    Player Next = Player(!mState.WhoIsPlaying);
+bool GameModel::canCastle(Player CurrentPlayer, MoveType CastleType) const {
+    static Coord2D<int> Short[][2] = {
+        [PLAYER_WHITE] = { F1, G1 },
+        [PLAYER_BLACK] = { F8, G8 }
+    };
+    static Coord2D<int> Long[][2] = {
+        [PLAYER_WHITE] = { D1, C1 },
+        [PLAYER_BLACK] = { D8, C8 }
+    };
 
-    if (Type == MOVE_CASTLE_SHORT) {
-        if (Curr == PLAYER_WHITE)
-            return countAttacksFor(F1, Next) + countAttacksFor(G1, Next);
-        else
-            return countAttacksFor(F8, Next) + countAttacksFor(G8, Next);
-    } else if (Type == MOVE_CASTLE_LONG) {
-        if (Curr == PLAYER_WHITE)
-            return countAttacksFor(D1, Next) + countAttacksFor(C1, Next);
-        else
-            return countAttacksFor(D8, Next) + countAttacksFor(C8, Next);
+    Player Attacker = Player(!CurrentPlayer);
+
+    if (CastleType == MOVE_CASTLE_SHORT) {
+        if (mState.ShortCastlingRight[CurrentPlayer]) {
+            for (Coord2D<int>& C : Short[CurrentPlayer])
+                if (countAttacksFor(C, Attacker)) return false;
+        }
+    } else {
+        if (mState.LongCastlingRight[CurrentPlayer]) {
+            for (Coord2D<int>& C : Long[CurrentPlayer])
+                if (countAttacksFor(C, Attacker)) return false;
+        }
     }
+    return true;
+}
 
+bool GameModel::isCheckAfterTheMove(Player Player, Move move, MoveType Type) const {
+    Field Backup[8][8];
     // Try the move
     for (int i = 0; i < 8; i++)
     for (int j = 0; j < 8; j++)
         Backup[i][j] = mFields[i][j];
-    movePieces(move, Type);
-    int NumChecks = countChecksFor(Curr);
+    // Yes, I call a non-const method, but after this I restore saved
+    // state.
+    const_cast<GameModel*>(this)->movePieces(move, Type);
+    int NumChecks = countChecksFor(Player);
     // Restore board state
     for (int i = 0; i < 8; i++)
     for (int j = 0; j < 8; j++)
         mFields[i][j] = Backup[i][j];
-    return NumChecks;
+    return NumChecks > 0;
 }
 
-bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) {
+bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) const {
     GameState NextState = mState;
     const Field& Dst = mFields[move.To.y][move.To.x];
     const Field& Src = mFields[move.From.y][move.From.x];
@@ -152,9 +165,11 @@ bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) {
         default:
             Legal = false;
     }
-    if (!Legal || isCheckAfterTheMove(move, NonStandardMove))
+    if (!Legal || isCheckAfterTheMove(mState.WhoIsPlaying, move, NonStandardMove))
         return false;
-    if (isCheck() && MoveIsCastle)
+    if (MoveIsCastle && isCheck())
+        return false;
+    if (MoveIsCastle && !canCastle(mState.WhoIsPlaying, NonStandardMove))
         return false;
 
     // King move takes away castling rights
@@ -182,6 +197,7 @@ bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) {
     else if (move.To == H8) NextState.ShortCastlingRight[PLAYER_BLACK] = false;
 
     NextState.WhoIsPlaying = Player(!NextState.WhoIsPlaying);
+    NextState.IsCheck = isCheckAfterTheMove(NextState.WhoIsPlaying, move, NonStandardMove);
 
     if (RetState)
         *RetState = NextState;

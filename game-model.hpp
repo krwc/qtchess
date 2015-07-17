@@ -23,7 +23,7 @@ enum MoveType {
 struct GameState {
     bool ShortCastlingRight[2];
     bool LongCastlingRight[2];
-    Player CheckedPlayer;
+    bool IsCheck;
     Player WhoIsPlaying;
     // Player who can do an en-passant capture
     Player EnPassantPlayer;
@@ -55,7 +55,7 @@ public:
     /* Checks if move is legal, passed GameState and MoveType are optional,
        and whey they're passed function sets state to after-the-move state
        and type to one of the MoveType values */
-    bool isLegal(Move move, GameState* RetState, MoveType* Type);
+    bool isLegal(Move move, GameState* RetState, MoveType* Type) const;
     /* Makes the move */
     bool makeMove(Move move);
     /* Tests if current position is a check for a current side */
@@ -64,8 +64,8 @@ public:
     bool isCheckmate() const;
 private:
     void movePieces(Move move, MoveType Type);
-    /* Test whether after given move player who makes it will be in check */
-    bool isCheckAfterTheMove(Move move, MoveType Type);
+    /* Test whether after given move passed Player is in check */
+    bool isCheckAfterTheMove(Player Player, Move move, MoveType Type) const;
     /* Check unaware functions, they just test if move has right "geometry" */
     bool isLegalPawnMove(Move move, MoveType& Special, Coord2D<int>& EnPassantCoords) const;
     bool isLegalKnightMove(Move move) const;
@@ -75,6 +75,7 @@ private:
     bool isLegalKingMove(Move move, bool& MoveIsCastle, MoveType& Side) const;
     bool isLegalCoord(Coord2D<int> Coord) const;
     bool isLegalCoord(int x, int y) const;
+    bool canCastle(Player CurrentPlayer, MoveType CastleType) const;
     int countAttacksFor(Coord2D<int> Coord, Player Attacker) const;
     int countChecksFor(Player player) const;
 

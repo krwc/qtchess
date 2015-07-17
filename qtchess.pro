@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     promotion-dialog.cpp \
     settings-dialog.cpp \
     game-tree.cpp \
-    game-tree-widget.cpp
+    game-tree-widget.cpp \
+    notation.cpp
 
 HEADERS  += main-window.hpp \
     board-widget.hpp \
@@ -41,7 +42,8 @@ HEADERS  += main-window.hpp \
     promotion-dialog.hpp \
     settings-dialog.hpp \
     game-tree.hpp \
-    game-tree-widget.hpp
+    game-tree-widget.hpp \
+    notation.hpp
 
 FORMS    += main-window.ui \
     promotion-dialog.ui \

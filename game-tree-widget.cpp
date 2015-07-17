@@ -1,4 +1,5 @@
 #include "game-tree-widget.hpp"
+#include "notation.hpp"
 #include <QDebug>
 #include <QPainter>
 #include <QStack>
@@ -48,7 +49,13 @@ void TreeToHtmlConverter::traverse(QString &Ret, GameTreeIterator It, int Varian
 {
     while (It.next()) {
         QString Hash = QString::number(size_t(It.getNode()));
-        QString MoveString = MoveFormat.arg(Hash, It.getLastMove().toString());
+        // We are in the node after the last move was played. This means
+        // it is impossible to convert last move to algebraic notation, because
+        // it requires previous game snapshot. This is why this ugly one step
+        // in reverse direction is made. It should be designed better, I know.
+        It.prev();
+        QString MoveString = MoveFormat.arg(Hash, Notation::moveToAlgebraicNotation(It.getNode()->Game, It.getLastMove()));
+        It.next();
         QString MoveId = QString::number((HalfMoveNumber + 1) / 2);
         QString MoveNumber;
 
@@ -70,14 +77,11 @@ void TreeToHtmlConverter::traverse(QString &Ret, GameTreeIterator It, int Varian
         Ret += ' ';
 
         QString ChildrenResult;
-        for (auto& ChildIt: It.getChildren()) {
-            QString ChildRet;
-            traverse(ChildRet, ChildIt, VariantDepth+1, HalfMoveNumber);
-            ChildrenResult += VariantLiFormat.arg(ChildRet);
-        }
+        for (auto& ChildIt: It.getChildren())
+            traverse(ChildrenResult, ChildIt, VariantDepth+1, HalfMoveNumber);
 
         if (It.hasChildren())
-            Ret += VariantUlFormat.arg(ChildrenResult);
+            Ret += VariantUlFormat.arg(VariantLiFormat.arg(ChildrenResult));
     }
 }
 
@@ -100,7 +104,10 @@ void GameTreeWidget::redraw() {
 }
 
 void GameTreeWidget::onMoveClick(const QUrl& Link) {
-    size_t NodeAddress = Link.toString(QUrl::None).toULongLong();
-    emit positionSelected(reinterpret_cast<GameTreeNode*>(NodeAddress));
+    emit positionSelected(reinterpret_cast<GameTreeNode*>(Link.toString(QUrl::None).toULongLong()));
     redraw();
+}
+
+void GameTreeWidget::contextMenuEvent(QContextMenuEvent *) {
+    qDebug() << "GameTreeWidget: context menu not implemented yet";
 }
