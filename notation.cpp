@@ -39,7 +39,6 @@ QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
     QString FileTo = File(Move.To.x);
     QString RankTo = Rank(Move.To.y);
 
-    // TODO We need to know about checks;
     // Not interested in illegal moves
     if (!Model.isLegal(Move, &State, &Type))
         return "";

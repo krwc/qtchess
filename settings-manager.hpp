@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QColor>
 #include <QDebug>
+#include <QList>
 
 struct Settings {
     QString PieceStyleName;
@@ -13,6 +14,9 @@ struct Settings {
     bool ShouldDrawCoords;
     int BorderSize;
     int MarginSize;
+
+    QString EnginePath;
+    QString ThemeName;
 };
 
 class SettingsManager
@@ -48,8 +52,21 @@ public:
         return mConfig.MarginSize;
     }
 
+    QString getEnginePath() const {
+        return mConfig.EnginePath;
+    }
+
+    QString getThemeName() const {
+        return mConfig.ThemeName;
+    }
+
     PieceSet& getPieceSet() {
         return *mPieceSet;
+    }
+
+    QList<QString> getThemes() const {
+        // TODO: Implement.
+        return {};
     }
 
     void setPieceStyleName(QString Name) {
@@ -80,6 +97,14 @@ public:
 
     void setMarginSize(int Size) {
         mConfig.MarginSize = Size;
+    }
+
+    void setEnginePath(QString Value) {
+        mConfig.EnginePath = Value;
+    }
+
+    void setThemeName(QString Value) {
+        mConfig.ThemeName = Value;
     }
 
     void reset();

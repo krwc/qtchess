@@ -21,12 +21,16 @@ public:
 protected:
     virtual void contextMenuEvent(QContextMenuEvent *);
 private slots:
-    void onMoveClick(const QUrl& Link);
+    void onMoveClick(const QUrl&);
+    void onLinkHover(const QString& Url);
 signals:
     void positionSelected(GameTreeNode*);
 
 private:
     GameTree* mTree;
+    // Currently hovered node by the mouse. Nullptr if no node
+    // is hovered.
+    GameTreeNode* mHoveredNode;
 };
 
 #endif // GAME_TREE_WIDGET_HPP

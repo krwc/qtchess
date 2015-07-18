@@ -91,7 +91,7 @@ void GameModel::movePieces(Move move, MoveType Type) {
         mFields[move.To.y][move.To.x].Piece = move.PromotionPiece;
 }
 
-bool GameModel::canCastle(Player CurrentPlayer, MoveType CastleType) const {
+bool GameModel::canCastle(MoveType CastleType) const {
     static Coord2D<int> Short[][2] = {
         [PLAYER_WHITE] = { F1, G1 },
         [PLAYER_BLACK] = { F8, G8 }
@@ -101,6 +101,10 @@ bool GameModel::canCastle(Player CurrentPlayer, MoveType CastleType) const {
         [PLAYER_BLACK] = { D8, C8 }
     };
 
+    if (isCheck())
+        return false;
+
+    Player CurrentPlayer = mState.WhoIsPlaying;
     Player Attacker = Player(!CurrentPlayer);
 
     if (CastleType == MOVE_CASTLE_SHORT) {
@@ -147,11 +151,11 @@ bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) const {
 
     bool Legal;
     bool MoveIsCastle = false;
-    MoveType NonStandardMove = MOVE_NONSPECIAL;
+    MoveType MoveType = MOVE_NONSPECIAL;
     Coord2D<int> EnPassantCoords;
     switch (Src.Piece) {
         case PIECE_PAWN:
-            Legal = isLegalPawnMove(move, NonStandardMove, EnPassantCoords); break;
+            Legal = isLegalPawnMove(move, MoveType, EnPassantCoords); break;
         case PIECE_KNIGHT:
             Legal = isLegalKnightMove(move); break;
         case PIECE_BISHOP:
@@ -159,17 +163,17 @@ bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) const {
         case PIECE_ROOK:
             Legal = isLegalRookMove(move); break;
         case PIECE_KING:
-            Legal = isLegalKingMove(move, MoveIsCastle, NonStandardMove); break;
+            Legal = isLegalKingMove(move, MoveIsCastle, MoveType); break;
         case PIECE_QUEEN:
             Legal = isLegalQueenMove(move); break;
         default:
             Legal = false;
     }
-    if (!Legal || isCheckAfterTheMove(mState.WhoIsPlaying, move, NonStandardMove))
+    if (!Legal || isCheckAfterTheMove(mState.WhoIsPlaying, move, MoveType))
         return false;
     if (MoveIsCastle && isCheck())
         return false;
-    if (MoveIsCastle && !canCastle(mState.WhoIsPlaying, NonStandardMove))
+    if (MoveIsCastle && !canCastle(MoveType))
         return false;
 
     // King move takes away castling rights
@@ -184,7 +188,7 @@ bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) const {
         else if (move.From == H8) NextState.ShortCastlingRight[PLAYER_BLACK] = false;
         else if (move.From == A8) NextState.LongCastlingRight[PLAYER_BLACK] = false;
     } else if (Src.Piece == PIECE_PAWN) {
-        if (NonStandardMove == MOVE_ENPASSANT_GENERATE) {
+        if (MoveType == MOVE_ENPASSANT_GENERATE) {
             NextState.EnPassantPlayer = Player(!NextState.WhoIsPlaying);
             NextState.EnPassantCoords = EnPassantCoords;
         } else
@@ -197,12 +201,12 @@ bool GameModel::isLegal(Move move, GameState* RetState, MoveType* Type) const {
     else if (move.To == H8) NextState.ShortCastlingRight[PLAYER_BLACK] = false;
 
     NextState.WhoIsPlaying = Player(!NextState.WhoIsPlaying);
-    NextState.IsCheck = isCheckAfterTheMove(NextState.WhoIsPlaying, move, NonStandardMove);
+    NextState.IsCheck = isCheckAfterTheMove(NextState.WhoIsPlaying, move, MoveType);
 
     if (RetState)
         *RetState = NextState;
     if (Type)
-        *Type = NonStandardMove;
+        *Type = MoveType;
     return true;
 }
 
@@ -235,7 +239,7 @@ bool GameModel::isLegalPawnMove(Move move, MoveType& Type,
                 EnPassantCoords.x = move.To.x;
                 EnPassantCoords.y = move.To.y +
                                     (mState.WhoIsPlaying == PLAYER_WHITE ? +1 : -1);
-                // We just generated en-passant opportunity
+                // Yes, we did
                 Type = MOVE_ENPASSANT_GENERATE;
             }
         }
@@ -272,8 +276,8 @@ bool GameModel::isLegalPawnMove(Move move, MoveType& Type,
 }
 
 bool GameModel::isLegalKnightMove(Move move) const {
-    // It is unbeliveable that the most tricky piece has that
-    // easy moving rules.
+    // It is unbeliveable that the most tricky piece has such
+    // an easy moving rules.
     for (Coord2D<int> Jump : getKnightAttack(move.From.x, move.From.y))
         if (Jump == move.To)
             return true;

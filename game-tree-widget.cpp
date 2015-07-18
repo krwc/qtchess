@@ -2,9 +2,8 @@
 #include "notation.hpp"
 #include <QDebug>
 #include <QPainter>
-#include <QStack>
-#include <QQueue>
-
+#include <QMenu>
+#include <QContextMenuEvent>
 // TODO: This should be part of the skin system.
 static QString StyleSheet =
         "<style>\n"
@@ -49,6 +48,7 @@ void TreeToHtmlConverter::traverse(QString &Ret, GameTreeIterator It, int Varian
 {
     while (It.next()) {
         QString Hash = QString::number(size_t(It.getNode()));
+        // TODO: Re-think and re-project this code.
         // We are in the node after the last move was played. This means
         // it is impossible to convert last move to algebraic notation, because
         // it requires previous game snapshot. This is why this ugly one step
@@ -85,13 +85,15 @@ void TreeToHtmlConverter::traverse(QString &Ret, GameTreeIterator It, int Varian
     }
 }
 
-
 GameTreeWidget::GameTreeWidget(QWidget* parent)
     : QWebView(parent)
     , mTree(nullptr)
+    , mHoveredNode(nullptr)
 {
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     QObject::connect(this, SIGNAL(linkClicked(QUrl)), this, SLOT(onMoveClick(QUrl)));
+    QObject::connect(page(), SIGNAL(linkHovered(QString,QString,QString)), this,
+                     SLOT(onLinkHover(QString)));
 }
 
 void GameTreeWidget::setGameTree(GameTree* Tree) {
@@ -103,11 +105,30 @@ void GameTreeWidget::redraw() {
     setHtml(TreeToHtmlConverter(mTree).html());
 }
 
-void GameTreeWidget::onMoveClick(const QUrl& Link) {
-    emit positionSelected(reinterpret_cast<GameTreeNode*>(Link.toString(QUrl::None).toULongLong()));
+void GameTreeWidget::onMoveClick(const QUrl&) {
+    emit positionSelected(mHoveredNode);
     redraw();
 }
 
-void GameTreeWidget::contextMenuEvent(QContextMenuEvent *) {
-    qDebug() << "GameTreeWidget: context menu not implemented yet";
+void GameTreeWidget::onLinkHover(const QString& Url) {
+    if (Url.isEmpty())
+        mHoveredNode = nullptr;
+    else
+        mHoveredNode = reinterpret_cast<GameTreeNode*>(Url.toULongLong());
+}
+
+void GameTreeWidget::contextMenuEvent(QContextMenuEvent* Event) {
+    // Don't care if no node has been hovered.
+    if (!mHoveredNode)
+        return;
+
+    // TODO: Make this work.
+    QMenu Menu;
+    Menu.addAction("Promote up");
+    Menu.addAction("Promote to mainline");
+    Menu.addSeparator();
+    Menu.addAction("Delete branch from this move");
+
+    Menu.exec(Event->globalPos());
+    redraw();
 }

@@ -75,7 +75,7 @@ private:
     bool isLegalKingMove(Move move, bool& MoveIsCastle, MoveType& Side) const;
     bool isLegalCoord(Coord2D<int> Coord) const;
     bool isLegalCoord(int x, int y) const;
-    bool canCastle(Player CurrentPlayer, MoveType CastleType) const;
+    bool canCastle(MoveType CastleType) const;
     int countAttacksFor(Coord2D<int> Coord, Player Attacker) const;
     int countChecksFor(Player player) const;
 
