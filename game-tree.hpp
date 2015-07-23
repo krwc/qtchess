@@ -62,5 +62,4 @@ private:
     GameTreeNode mRoot;
     GameTreeNode* mLast;
 };
-
 #endif

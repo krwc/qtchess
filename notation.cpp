@@ -24,10 +24,8 @@ QString PieceString(Piece Piece) {
 
 QString moveToBasicNotation(Move Move)
 {
-    QString Ret;
-    Ret += QString(Move.From.x + 'a') + QString(7-Move.From.y + '1');
-    Ret += QString(Move.To.x + 'a') + QString(7-Move.To.y + '1');
-    return Ret;
+    return QString(Move.From.x + 'a') + QString(7-Move.From.y + '1') +
+           QString(Move.To.x + 'a') + QString(7-Move.To.y + '1');
 }
 
 QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
@@ -58,7 +56,13 @@ QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
         break;
     }
 
-    /* TODO: Avoid move ambiguity for pieces in the same file, rank, and diagonal */
+    /* TODO: Avoid move ambiguity for pieces in the same file, rank, and diagonal and so on. */
+    for (int rank = 0; rank < 8; rank++) {
+        for (int file = 0; file < 8; file++) {
+
+        }
+    }
+
 
     // Still it might be a capture.
     if (Model.getField(Move.To).Piece != PIECE_NONE)

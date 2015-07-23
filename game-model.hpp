@@ -62,6 +62,13 @@ public:
     bool isCheck() const;
     /* Tests if current position is a check-mate */
     bool isCheckmate() const;
+
+    std::vector<Coord2D<int>> getPawnAttack(int x, int y, Player Owner) const;
+    std::vector<Coord2D<int>> getBishopAttack(int x, int y) const;
+    std::vector<Coord2D<int>> getKnightAttack(int x, int y) const;
+    std::vector<Coord2D<int>> getRookAttack(int x, int y) const;
+    std::vector<Coord2D<int>> getQueenAttack(int x, int y) const;
+    std::vector<Coord2D<int>> getKingAttack(int x, int y) const;
 private:
     void movePieces(Move move, MoveType Type);
     /* Test whether after given move passed Player is in check */
@@ -77,15 +84,8 @@ private:
     bool isLegalCoord(int x, int y) const;
     bool canCastle(MoveType CastleType) const;
     int countAttacksFor(Coord2D<int> Coord, Player Attacker) const;
-    int countChecksFor(Player player) const;
-
-    std::vector<Coord2D<int>> getPawnAttack(int x, int y, Player Owner) const;
-    std::vector<Coord2D<int>> getBishopAttack(int x, int y) const;
-    std::vector<Coord2D<int>> getKnightAttack(int x, int y) const;
-    std::vector<Coord2D<int>> getRookAttack(int x, int y) const;
-    std::vector<Coord2D<int>> getQueenAttack(int x, int y) const;
-    std::vector<Coord2D<int>> getKingAttack(int x, int y) const;
-
+    int countChecksFor(Player player) const;  
+private:
 
     GameState mState;
     /* Some explanation about representation and field coordinates
