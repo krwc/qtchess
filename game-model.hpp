@@ -63,12 +63,12 @@ public:
     /* Tests if current position is a check-mate */
     bool isCheckmate() const;
 
-    std::vector<Coord2D<int>> getPawnAttack(int x, int y, Player Owner) const;
-    std::vector<Coord2D<int>> getBishopAttack(int x, int y) const;
-    std::vector<Coord2D<int>> getKnightAttack(int x, int y) const;
-    std::vector<Coord2D<int>> getRookAttack(int x, int y) const;
-    std::vector<Coord2D<int>> getQueenAttack(int x, int y) const;
-    std::vector<Coord2D<int>> getKingAttack(int x, int y) const;
+    CoordsVector getPawnAttack(int x, int y, Player Owner) const;
+    CoordsVector getBishopAttack(int x, int y) const;
+    CoordsVector getKnightAttack(int x, int y) const;
+    CoordsVector getRookAttack(int x, int y) const;
+    CoordsVector getQueenAttack(int x, int y) const;
+    CoordsVector getKingAttack(int x, int y) const;
 private:
     void movePieces(Move move, MoveType Type);
     /* Test whether after given move passed Player is in check */

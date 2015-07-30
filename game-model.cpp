@@ -245,7 +245,7 @@ bool GameModel::isLegalPawnMove(Move move, MoveType& Type,
         }
         return true;
     } else if (Distance == 1) {
-        std::vector<Coord2D<int>> Attacks = getPawnAttack(move.From.x, move.From.y,
+        CoordsVector Attacks = getPawnAttack(move.From.x, move.From.y,
                                                           mState.WhoIsPlaying);
         bool Promotion = (mState.WhoIsPlaying == PLAYER_WHITE && move.To.y == 0) ||
                          (mState.WhoIsPlaying == PLAYER_BLACK && move.To.y == 7);
@@ -286,7 +286,7 @@ bool GameModel::isLegalKnightMove(Move move) const {
 
 bool GameModel::isLegalBishopMove(Move move) const {
     // Legal moves from current position of the bishop.
-    std::vector<Coord2D<int>> LegalMoves;
+    CoordsVector LegalMoves;
     // Iterate till no other move can be generated
     int D = 1;
     size_t NumMoves = 0;
@@ -419,8 +419,8 @@ int GameModel::countChecksFor(Player player) const {
     return 0;
 }
 
-std::vector<Coord2D<int>> GameModel::getPawnAttack(int x, int y, Player Owner) const {
-    std::vector<Coord2D<int>> AttackedCoords;
+CoordsVector GameModel::getPawnAttack(int x, int y, Player Owner) const {
+    CoordsVector AttackedCoords;
     if (Owner == PLAYER_WHITE) {
         if (isLegalCoord(x+1, y-1)) AttackedCoords.emplace_back(x+1, y-1);
         if (isLegalCoord(x-1, y-1)) AttackedCoords.emplace_back(x-1, y-1);
@@ -431,8 +431,8 @@ std::vector<Coord2D<int>> GameModel::getPawnAttack(int x, int y, Player Owner) c
     return AttackedCoords;
 }
 
-std::vector<Coord2D<int>> GameModel::getBishopAttack(int x, int y) const {
-    std::vector<Coord2D<int>> AttackedCoords;
+CoordsVector GameModel::getBishopAttack(int x, int y) const {
+    CoordsVector AttackedCoords;
     Coord2D<int> Src(x,y);
     for (int j = 0; j < 8; j++) {
     for (int i = 0; i < 8; i++) {
@@ -444,20 +444,20 @@ std::vector<Coord2D<int>> GameModel::getBishopAttack(int x, int y) const {
     return AttackedCoords;
 }
 
-std::vector<Coord2D<int>> GameModel::getKnightAttack(int x, int y) const {
-    static std::vector<Coord2D<int>> Jumps = {
+CoordsVector GameModel::getKnightAttack(int x, int y) const {
+    static CoordsVector Jumps = {
         { 1,  2 }, { -1,  2 }, {  2, 1 }, {  2, -1 },
         { 1, -2 }, { -1, -2 }, { -2, 1 }, { -2, -1 }
     };
-    std::vector<Coord2D<int>> AttackedCoords;
+    CoordsVector AttackedCoords;
     for (Coord2D<int>& Coord : Jumps)
         if (isLegalCoord(Coord.x+x, Coord.y+y))
             AttackedCoords.emplace_back(Coord.x+x, Coord.y+y);
     return AttackedCoords;
 }
 
-std::vector<Coord2D<int>> GameModel::getRookAttack(int x, int y) const {
-    std::vector<Coord2D<int>> AttackedCoords;
+CoordsVector GameModel::getRookAttack(int x, int y) const {
+    CoordsVector AttackedCoords;
     Coord2D<int> Src(x,y);
     for (int j = 0; j < 8; j++) {
     for (int i = 0; i < 8; i++) {
@@ -469,19 +469,19 @@ std::vector<Coord2D<int>> GameModel::getRookAttack(int x, int y) const {
     return AttackedCoords;
 }
 
-std::vector<Coord2D<int>> GameModel::getQueenAttack(int x, int y) const {
-    std::vector<Coord2D<int>> Attacks = getRookAttack(x, y);
-    std::vector<Coord2D<int>> BishopAttacks = getBishopAttack(x, y);
+CoordsVector GameModel::getQueenAttack(int x, int y) const {
+    CoordsVector Attacks = getRookAttack(x, y);
+    CoordsVector BishopAttacks = getBishopAttack(x, y);
     Attacks.insert(Attacks.end(), BishopAttacks.begin(), BishopAttacks.end());
     return Attacks;
 }
 
-std::vector<Coord2D<int>> GameModel::getKingAttack(int x, int y) const {
-    static std::vector<Coord2D<int>> Moves = {
+CoordsVector GameModel::getKingAttack(int x, int y) const {
+    static CoordsVector Moves = {
         { 0,  1 }, {  0, -1 }, {  1, 0 }, { -1, 0 },
         { 1, -1 }, { -1, -1 }, { -1, 1 }, {  1, 1 }
     };
-    std::vector<Coord2D<int>> AttackedCoords;
+    CoordsVector AttackedCoords;
     for (Coord2D<int>& Coord : Moves)
         if (isLegalCoord(Coord.x+x, Coord.y+y))
             AttackedCoords.emplace_back(Coord.x+x, Coord.y+y);

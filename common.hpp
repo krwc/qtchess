@@ -37,5 +37,7 @@ bool Contains(const Container& C, const Needle& N) {
     return false;
 }
 
+typedef std::vector<Coord2D<int>> CoordsVector;
+
 #endif // COMMON_HPP
 

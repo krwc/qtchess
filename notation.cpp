@@ -1,5 +1,5 @@
 #include "notation.hpp"
-
+#include <QDebug>
 namespace Notation {
 
 QString File(int file) {
@@ -29,7 +29,8 @@ QString moveToBasicNotation(Move Move)
 }
 
 QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
-    Piece Piece = Model.getField(Move.From).Piece;
+    Piece MovedPiece = Model.getField(Move.From).Piece;
+    Player PieceOwner = Model.getField(Move.From).Owner;
     MoveType Type;
     GameState State;
     QString FileFrom = File(Move.From.x);
@@ -52,24 +53,59 @@ QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
     case MOVE_PROMOTION:
         return FileTo + RankTo + "=" + PieceString(Move.PromotionPiece) + Check;
     default:
-        // Move is not exactly interesting.
         break;
     }
 
-    /* TODO: Avoid move ambiguity for pieces in the same file, rank, and diagonal and so on. */
-    for (int rank = 0; rank < 8; rank++) {
+    QString Uniqueness;
+
+    /* Avoid move ambiguity */
+    if (MovedPiece != PIECE_KING || MovedPiece != PIECE_PAWN) {
+        CoordsVector Attackers;
+
+        for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
+            Coord2D<int> Current(file, rank);
+            if (Current == Move.From)
+                continue;
 
+            if (Model.getField(Current).Piece == MovedPiece &&
+                Model.getField(Current).Owner == PieceOwner) {
+                if (MovedPiece == PIECE_KNIGHT && Contains(Model.getKnightAttack(file, rank), Move.To)) {
+                    Attackers.push_back(Current);
+                } else if (MovedPiece == PIECE_BISHOP && Contains(Model.getBishopAttack(file, rank), Move.To)) {
+                    Attackers.push_back(Current);
+                } else if (MovedPiece == PIECE_ROOK && Contains(Model.getRookAttack(file, rank), Move.To)) {
+                    Attackers.push_back(Current);
+                } else if (MovedPiece == PIECE_QUEEN && Contains(Model.getQueenAttack(file, rank), Move.To)) {
+                    Attackers.push_back(Current);
+                }
+            }
+        }}
+        int AttackersInSameFile = 0;
+        int AttackersInSameRank = 0;
+
+        for (auto& Item : Attackers) {
+            if (Item.x == Move.From.x)
+                ++AttackersInSameFile;
+            if (Item.y == Move.From.y)
+                ++AttackersInSameRank;
         }
-    }
 
+        if (AttackersInSameRank)
+            Uniqueness += FileFrom;
+        if (AttackersInSameFile)
+            Uniqueness += RankFrom;
+
+        if (!AttackersInSameRank && !AttackersInSameFile && Attackers.size())
+            Uniqueness += FileFrom;
+    }
 
     // Still it might be a capture.
     if (Model.getField(Move.To).Piece != PIECE_NONE)
-        return (Piece == PIECE_PAWN ? FileFrom : PieceString(Piece)) + "x" + FileTo + RankTo + Check;
+        return (MovedPiece == PIECE_PAWN ? FileFrom : PieceString(MovedPiece)) + Uniqueness + "x" + FileTo + RankTo + Check;
 
     // Normal move
-    return PieceString(Piece) + FileTo + RankTo + Check;
+    return PieceString(MovedPiece) + Uniqueness + FileTo + RankTo + Check;
 }
 
 }
