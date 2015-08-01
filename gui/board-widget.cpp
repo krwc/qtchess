@@ -72,13 +72,8 @@ bool BoardWidget::isFieldAt(double x, double y, int* file, int* rank) {
     y -= mFirstFieldY;
     // Clicked inside field
     if (x >= 0 && x <= Size && y >= 0 && y <= Size) {
-        if (mFlipped) {
-            *file = 7 - int(x / mFieldSize);
-            *rank = 7 - int(y / mFieldSize);
-        } else {
-            *file = int(x / mFieldSize);
-            *rank = int(y / mFieldSize);
-        }
+        *file = absolute(int(x / mFieldSize));
+        *rank = absolute(int(y / mFieldSize));
         return true;
     }
     return false;
@@ -154,7 +149,7 @@ void BoardWidget::drawBorder(QPainter& ctx) {
     ctx.setFont(Font);
 
     for (int i = 0; i < 8; i++) {
-        int j = mFlipped ? 7 - i : i;
+        int j = absolute(i);
         QRectF FileRect(getFileOffset(i), getRankOffset(8), mFieldSize, size);
         QRectF RankRect(getFileOffset(0) - size, getRankOffset(i), size, mFieldSize);
         ctx.drawText(FileRect, Qt::AlignCenter, Files[j]);
@@ -166,8 +161,8 @@ void BoardWidget::drawDraggedPiece(QPainter& ctx) {
     if (mDraggedField == Coord2D<int>(-1, -1))
         return;
 
-    int FieldX = mFlipped ? 7 - mDraggedField.x : mDraggedField.x;
-    int FieldY = mFlipped ? 7 - mDraggedField.y : mDraggedField.y;
+    int FieldX = absolute(mDraggedField.x);
+    int FieldY = absolute(mDraggedField.y);
     QRect Dest(FieldX * mFieldSize + mFirstFieldX + mDragOffset.x,
                FieldY * mFieldSize + mFirstFieldY + mDragOffset.y,
                mFieldSize, mFieldSize);
@@ -199,8 +194,8 @@ void BoardWidget::drawPiece(QPainter& ctx, QRectF Dst, Piece Piece, Player Owner
 }
 
 void BoardWidget::drawPiece(QPainter& ctx, int rank, int file) {
-    int x = mFlipped ? 7 - file : file;
-    int y = mFlipped ? 7 - rank : rank;
+    int x = absolute(file);
+    int y = absolute(rank);
     Piece Piece = mModel->piece(x, y);
     Player Owner = mModel->owner(x, y);
 
@@ -214,8 +209,8 @@ void BoardWidget::drawPiece(QPainter& ctx, int rank, int file) {
 void BoardWidget::drawSelection(QPainter& ctx) {
     if (mSelectedField == Coord2D<int>(-1, -1))
         return;
-    int file = mFlipped ? 7 - mSelectedField.x : mSelectedField.x;
-    int rank = mFlipped ? 7 - mSelectedField.y : mSelectedField.y;
+    int file = absolute(mSelectedField.x);
+    int rank = absolute(mSelectedField.y);
     int size = 2*int(double(std::min(mWidth,mHeight)) / MinSize);
     QBrush Brush = QBrush(QColor(0, 0, 0, 0));
     QPen Pen;
@@ -242,4 +237,10 @@ void BoardWidget::setState(BoardWidgetState *State) {
         return;
     delete mState;
     mState = State;
+}
+
+int BoardWidget::absolute(int coord) const {
+    if (mFlipped)
+        return 7 - coord;
+    return coord;
 }

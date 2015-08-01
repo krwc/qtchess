@@ -62,6 +62,8 @@ private:
     int getFileOffset(int file) const;
     /* Sets state if passed State is not null */
     void setState(BoardWidgetState* State);
+    /* Returns absolute coordinate depending on board rotation. */
+    int absolute(int coord) const;
 private:
     BoardWidgetState* mState;
     Settings* mSettings;

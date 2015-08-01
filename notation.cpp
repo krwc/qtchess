@@ -60,7 +60,7 @@ QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
     QString Uniqueness;
 
     /* Avoid move ambiguity */
-    if (MovedPiece != PIECE_KING || MovedPiece != PIECE_PAWN) {
+    if (MovedPiece != PIECE_KING && MovedPiece != PIECE_PAWN) {
         CoordsVector Attackers;
 
         for (int rank = 0; rank < 8; rank++) {
@@ -71,7 +71,7 @@ QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
 
             if (Model.piece(Current) == MovedPiece &&
                 Model.owner(Current) == PieceOwner) {
-                if (Contains(Model.getAttackedCoords(Model.piece(Current), Model.owner(Current), Current), Move.To))
+                if (Contains(Model.getAttackedCoords(MovedPiece, PieceOwner, Current), Move.To))
                     Attackers.push_back(Current);
             }
         }}
