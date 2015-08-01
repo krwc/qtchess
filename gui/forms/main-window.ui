@@ -159,15 +159,15 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>BoardWidget</class>
+   <class>GameTreeWidget</class>
    <extends>QWidget</extends>
-   <header location="global">board-widget.hpp</header>
+   <header>gui/game-tree-widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>GameTreeWidget</class>
+   <class>BoardWidget</class>
    <extends>QWidget</extends>
-   <header>game-tree-widget.hpp</header>
+   <header>gui/board-widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
