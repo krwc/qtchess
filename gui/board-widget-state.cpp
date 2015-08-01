@@ -1,6 +1,6 @@
-#include "board-widget-state.hpp"
-#include "board-widget.hpp"
-#include "game-model.hpp"
+#include "gui/board-widget-state.hpp"
+#include "gui/board-widget.hpp"
+#include "game/game-model.hpp"
 #include <iostream>
 
 BoardWidgetState*

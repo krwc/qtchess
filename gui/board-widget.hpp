@@ -1,7 +1,7 @@
 #ifndef BOARDWIDGET_HPP
 #define BOARDWIDGET_HPP
 
-#include "game-model.hpp"
+#include "game/game-model.hpp"
 #include <QWidget>
 
 class SettingsManager;

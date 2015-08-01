@@ -1,5 +1,5 @@
 #include "notation.hpp"
-#include <QDebug>
+
 namespace Notation {
 
 QString File(int file) {
@@ -20,6 +20,7 @@ QString PieceString(Piece Piece) {
     default:
         return "";
     }
+    return "";
 }
 
 QString moveToBasicNotation(Move Move)
@@ -29,8 +30,8 @@ QString moveToBasicNotation(Move Move)
 }
 
 QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
-    Piece MovedPiece = Model.getField(Move.From).Piece;
-    Player PieceOwner = Model.getField(Move.From).Owner;
+    Piece MovedPiece = Model.piece(Move.From);
+    Player PieceOwner = Model.owner(Move.From);
     MoveType Type;
     GameState State;
     QString FileFrom = File(Move.From.x);
@@ -68,17 +69,10 @@ QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
             if (Current == Move.From)
                 continue;
 
-            if (Model.getField(Current).Piece == MovedPiece &&
-                Model.getField(Current).Owner == PieceOwner) {
-                if (MovedPiece == PIECE_KNIGHT && Contains(Model.getKnightAttack(file, rank), Move.To)) {
+            if (Model.piece(Current) == MovedPiece &&
+                Model.owner(Current) == PieceOwner) {
+                if (Contains(Model.getAttackedCoords(Model.piece(Current), Model.owner(Current), Current), Move.To))
                     Attackers.push_back(Current);
-                } else if (MovedPiece == PIECE_BISHOP && Contains(Model.getBishopAttack(file, rank), Move.To)) {
-                    Attackers.push_back(Current);
-                } else if (MovedPiece == PIECE_ROOK && Contains(Model.getRookAttack(file, rank), Move.To)) {
-                    Attackers.push_back(Current);
-                } else if (MovedPiece == PIECE_QUEEN && Contains(Model.getQueenAttack(file, rank), Move.To)) {
-                    Attackers.push_back(Current);
-                }
             }
         }}
         int AttackersInSameFile = 0;
@@ -101,7 +95,7 @@ QString moveToAlgebraicNotation(const GameModel& Model, Move Move) {
     }
 
     // Still it might be a capture.
-    if (Model.getField(Move.To).Piece != PIECE_NONE)
+    if (Model.piece(Move.To) != PIECE_NONE)
         return (MovedPiece == PIECE_PAWN ? FileFrom : PieceString(MovedPiece)) + Uniqueness + "x" + FileTo + RankTo + Check;
 
     // Normal move

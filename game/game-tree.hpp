@@ -2,7 +2,7 @@
 #define GAME_TREE_HPP
 #include <vector>
 #include <map>
-#include "game-model.hpp"
+#include "game/game-model.hpp"
 
 struct GameTreeNode {
     ~GameTreeNode();

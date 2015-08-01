@@ -3,7 +3,7 @@
 
 #include "settings-manager.hpp"
 #include "settings-dialog.hpp"
-#include "game-tree.hpp"
+#include "game/game-tree.hpp"
 #include <QMainWindow>
 
 struct GameTreeNode;

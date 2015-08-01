@@ -1,0 +1,26 @@
+.TreeBody {
+    font-size: 14px;
+    line-height: 140%;
+    font-family: monospace;
+}
+
+.TreeMove {
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+}
+
+ul .TreeVariant {
+    font-size: 12px;
+    color: #0000FF;
+    padding-left: 15px;
+    list-style-type: none;
+}
+
+li .TreeVariant {
+}
+
+.TreeCurrentMove {
+    background-color: #96c2cd; 
+}
+

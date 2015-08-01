@@ -1,7 +1,7 @@
-#include "board-widget.hpp"
-#include "board-widget-state.hpp"
+#include "gui/board-widget.hpp"
+#include "gui/board-widget-state.hpp"
 #include "settings-manager.hpp"
-#include "game-model.hpp"
+#include "game/game-model.hpp"
 #include "piece-set.hpp"
 #include <cstdlib>
 #include <cstdio>
@@ -171,8 +171,9 @@ void BoardWidget::drawDraggedPiece(QPainter& ctx) {
     QRect Dest(FieldX * mFieldSize + mFirstFieldX + mDragOffset.x,
                FieldY * mFieldSize + mFirstFieldY + mDragOffset.y,
                mFieldSize, mFieldSize);
-    Piece Piece  = mModel->getField(mDraggedField).Piece;
-    Player Owner = mModel->getField(mDraggedField).Owner;
+
+    Piece Piece  = mModel->piece(mDraggedField);
+    Player Owner = mModel->owner(mDraggedField);
 
     if (Piece == PIECE_NONE)
         return;
@@ -200,8 +201,8 @@ void BoardWidget::drawPiece(QPainter& ctx, QRectF Dst, Piece Piece, Player Owner
 void BoardWidget::drawPiece(QPainter& ctx, int rank, int file) {
     int x = mFlipped ? 7 - file : file;
     int y = mFlipped ? 7 - rank : rank;
-    Piece Piece = mModel->getField(x, y).Piece;
-    Player Owner = mModel->getField(x, y).Owner;
+    Piece Piece = mModel->piece(x, y);
+    Player Owner = mModel->owner(x, y);
 
     if (Piece == PIECE_NONE || mDraggedField == Coord2D<int>(x, y))
         return;

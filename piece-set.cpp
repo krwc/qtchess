@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QDir>
 #include <algorithm>
+#include <QDebug>
 
 static const QString PieceAssetsPathPrefix = "assets/pieces";
 static const QString PieceName[] = {
@@ -17,7 +18,7 @@ static const QString PieceName[] = {
 static QSvgRenderer* MakeSvgRenderer(std::pair<Piece, Player> Kind, QString Style) {
     QString Path = PieceAssetsPathPrefix + "/" + Style + "/";
 
-    if (Kind.second == PLAYER_WHITE)
+    if (Kind.second.isWhite())
         Path += "white_";
     else
         Path += "black_";
@@ -44,8 +45,8 @@ QStringList PieceSet::getAvailableSets() {
 PieceSet::PieceSet(QString PieceStyleName)
 {
     for (int i = 0; i < 6; i++) {
-        auto white = std::make_pair(Piece(i), PLAYER_WHITE);
-        auto black = std::make_pair(Piece(i), PLAYER_BLACK);
+        auto white = std::make_pair(Piece(i), Player::white());
+        auto black = std::make_pair(Piece(i), Player::black());
         mPieceRenderers[white] = MakeSvgRenderer(white, PieceStyleName);
         mPieceRenderers[black] = MakeSvgRenderer(black, PieceStyleName);
     }

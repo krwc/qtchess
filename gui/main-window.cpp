@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent, SettingsManager &Manager)
     QObject::connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(resetBoard()));
     QObject::connect(ui->GameTextWidget, SIGNAL(positionSelected(GameTreeNode*)),
                      this, SLOT(setPosition(GameTreeNode*)));
+    settingsChanged();
 }
 
 MainWindow::~MainWindow()
@@ -58,6 +59,8 @@ void MainWindow::closeSettings() {
 }
 
 void MainWindow::settingsChanged() {
+    qApp->setStyleSheet(mManager.getTheme().getSource());
+
     ui->Board->update();
     ui->Board->redraw();
 }

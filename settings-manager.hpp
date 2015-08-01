@@ -1,6 +1,7 @@
 #ifndef SETTINGSMANAGER_HPP
 #define SETTINGSMANAGER_HPP
-#include "piece-set.hpp"
+#include <piece-set.hpp>
+#include <gui/theme.hpp>
 #include <QSettings>
 #include <QColor>
 #include <QDebug>
@@ -64,9 +65,8 @@ public:
         return *mPieceSet;
     }
 
-    QList<QString> getThemes() const {
-        // TODO: Implement.
-        return {};
+    Theme& getTheme() {
+        return *mTheme;
     }
 
     void setPieceStyleName(QString Name) {
@@ -104,7 +104,9 @@ public:
     }
 
     void setThemeName(QString Value) {
-        mConfig.ThemeName = Value;
+        mConfig.PieceStyleName = Value;
+        delete mTheme;
+        mTheme = new Theme(Value);
     }
 
     void reset();
@@ -114,6 +116,7 @@ private:
     Settings mConfig;
     QSettings mSettings;
     PieceSet* mPieceSet;
+    Theme* mTheme;
 };
 
 #endif // SETTINGSMANAGER_HPP

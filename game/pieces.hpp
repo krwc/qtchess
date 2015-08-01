@@ -1,5 +1,7 @@
 #ifndef PIECES_HPP
 #define PIECES_HPP
+#include "game/player.hpp"
+#include "common.hpp"
 
 enum Piece {
     PIECE_NONE   = -1, /* empty piece */

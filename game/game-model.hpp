@@ -2,14 +2,10 @@
 #define GAME_MODEL_HPP
 #include "pieces.hpp"
 #include "move.hpp"
+#include "player.hpp"
+#include <map>
 #include <vector>
 #include <cassert>
-
-enum Player {
-    PLAYER_NONE = -1, /* empty player "seat" */
-    PLAYER_WHITE = 0,
-    PLAYER_BLACK = 1
-};
 
 enum MoveType {
     MOVE_NONSPECIAL,
@@ -21,8 +17,8 @@ enum MoveType {
 };
 
 struct GameState {
-    bool ShortCastlingRight[2];
-    bool LongCastlingRight[2];
+    std::map<Player, bool> ShortCastlingRight;
+    std::map<Player, bool> LongCastlingRight;
     bool IsCheck;
     Player WhoIsPlaying;
     // Player who can do an en-passant capture
@@ -33,7 +29,7 @@ struct GameState {
 
 struct Field {
     enum Piece Piece;
-    enum Player Owner;
+    Player Owner;
 };
 
 class GameModel {
@@ -45,13 +41,12 @@ public:
 
     GameModel();
 
-    const Field& getField(int column, int row) const {
-        assert(row < 8 && column < 8 && row >= 0 && column >= 0);
-        return mFields[row][column];
-    }
-    const Field& getField(Coord2D<int> Coord) const {
-        return getField(Coord.x, Coord.y);
-    }
+    Player owner(int column, int row) const { return mFields[row][column].Owner; }
+    Piece piece(int column, int row) const { return mFields[row][column].Piece; }
+
+    Player owner(Coord2D<int> coord) const { return owner(coord.x, coord.y); }
+    Piece piece(Coord2D<int> coord) const { return piece(coord.x, coord.y); }
+
     /* Checks if move is legal, passed GameState and MoveType are optional,
        and whey they're passed function sets state to after-the-move state
        and type to one of the MoveType values */
@@ -62,17 +57,27 @@ public:
     bool isCheck() const;
     /* Tests if current position is a check-mate */
     bool isCheckmate() const;
+    /** Returns true if given player has short castling rights */
+    bool hasShortCastlingRights(Player player) const;
+    /** Returns true if given player has long castling rights */
+    bool hasLongCastlingRights(Player player) const;
 
+    /** Returns list of attacked coordinates by given piece owned by owner on given position. */
+    CoordsVector getAttackedCoords(Piece piece, Player owner, Coord2D<int> position) const;
+
+    Player getCurrentPlayer() const { return mState.WhoIsPlaying; }
+
+private:
     CoordsVector getPawnAttack(int x, int y, Player Owner) const;
     CoordsVector getBishopAttack(int x, int y) const;
     CoordsVector getKnightAttack(int x, int y) const;
     CoordsVector getRookAttack(int x, int y) const;
     CoordsVector getQueenAttack(int x, int y) const;
     CoordsVector getKingAttack(int x, int y) const;
-private:
+
     void movePieces(Move move, MoveType Type);
-    /* Test whether after given move passed Player is in check */
-    bool isCheckAfterTheMove(Player Player, Move move, MoveType Type) const;
+    /* Tests whether given player is in check after given move */
+    bool isInCheckAfterTheMove(Player victim, Move move, MoveType type) const;
     /* Check unaware functions, they just test if move has right "geometry" */
     bool isLegalPawnMove(Move move, MoveType& Special, Coord2D<int>& EnPassantCoords) const;
     bool isLegalKnightMove(Move move) const;
@@ -82,9 +87,9 @@ private:
     bool isLegalKingMove(Move move, bool& MoveIsCastle, MoveType& Side) const;
     bool isLegalCoord(Coord2D<int> Coord) const;
     bool isLegalCoord(int x, int y) const;
-    bool canCastle(MoveType CastleType) const;
-    int countAttacksFor(Coord2D<int> Coord, Player Attacker) const;
-    int countChecksFor(Player player) const;  
+    bool canCastle(MoveType castleType) const;
+    int countAttacksFor(Coord2D<int> coord, Player attacker) const;
+    int countChecksFor(Player player) const;
 private:
 
     GameState mState;

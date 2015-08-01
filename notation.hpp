@@ -1,7 +1,7 @@
 #ifndef NOTATION_HPP
 #define NOTATION_HPP
 #include <QString>
-#include "game-model.hpp"
+#include "game/game-model.hpp"
 
 namespace Notation {
     // Converts move to basic notation string.

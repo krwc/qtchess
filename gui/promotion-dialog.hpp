@@ -1,6 +1,6 @@
 #ifndef PROMOTIONDIALOG_HPP
 #define PROMOTIONDIALOG_HPP
-#include "pieces.hpp"
+#include "game/pieces.hpp"
 #include <QDialog>
 
 namespace Ui {

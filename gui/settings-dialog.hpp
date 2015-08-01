@@ -24,12 +24,11 @@ private slots:
     void pieceSetChanged(const QString&);
     void saveClicked();
     void resetClicked();
-
-
 signals:
     void settingsChanged();
 private:
     Ui::SettingsDialog *ui;
+
     SettingsManager* mManager;
     // Reads settings and updates widgets to represent current settings state.
     void readSettings();

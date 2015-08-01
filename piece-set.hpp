@@ -1,10 +1,11 @@
 #ifndef PIECESET_HPP
 #define PIECESET_HPP
-#include "pieces.hpp"
-#include "game-model.hpp"
+#include <game/pieces.hpp>
+#include <game/game-model.hpp>
 #include <QString>
 #include <QtSvg/QSvgRenderer>
 #include <QPixmap>
+#include <QDebug>
 #include <map>
 
 class PieceSet

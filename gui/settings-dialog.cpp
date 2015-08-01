@@ -94,5 +94,9 @@ void SettingsDialog::readSettings() {
     PiecesList.swap(0, PiecesList.indexOf(mManager->getPieceStyleName()));
     ui->PieceSetList->addItems(PiecesList);
 
+    QStringList ThemesList = Theme::getAvailableThemes();
+    ThemesList.swap(0, ThemesList.indexOf(mManager->getThemeName()));
+    ui->ThemeList->addItems(ThemesList);
+
     emit settingsChanged();
 }

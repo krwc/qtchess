@@ -1,5 +1,6 @@
 #include "settings-manager.hpp"
 #include <QDebug>
+#include <QDir>
 
 static const QString KEY_PIECE_STYLE_NAME = "piece_style_name";
 static const QString KEY_LIGHT_SQUARE_COLOR_R = "light_square_color_r";
@@ -14,6 +15,9 @@ static const QString KEY_SELECTION_COLOR_B = "selection_color_b";
 static const QString KEY_SHOULD_DRAW_COORDS = "should_draw_coords";
 static const QString KEY_BORDER_SIZE = "border_size";
 static const QString KEY_MARGIN_SIZE = "margin_size";
+static const QString KEY_THEME_NAME = "theme_name";
+
+static const QString ThemesPath = "assets/themes";
 
 static const Settings Default = {
     .PieceStyleName = "default",
@@ -22,13 +26,15 @@ static const Settings Default = {
     .SelectionColor = QColor(10, 28, 160),
     .ShouldDrawCoords = true,
     .BorderSize = 20,
-    .MarginSize = 5
+    .MarginSize = 5,
+    .ThemeName = "dark.css"
 };
 
 SettingsManager::SettingsManager()
   : mConfig(Default)
   , mSettings("QtChess", "QtChess")
   , mPieceSet(nullptr)
+  , mTheme(nullptr)
 {
     load();
 }
@@ -54,6 +60,7 @@ void SettingsManager::save()
     mSettings.setValue(KEY_SHOULD_DRAW_COORDS, mConfig.ShouldDrawCoords);
     mSettings.setValue(KEY_BORDER_SIZE, mConfig.BorderSize);
     mSettings.setValue(KEY_MARGIN_SIZE, mConfig.MarginSize);
+    mSettings.setValue(KEY_THEME_NAME, mConfig.ThemeName);
 }
 
 void SettingsManager::load()
@@ -85,5 +92,6 @@ void SettingsManager::load()
     mConfig.DarkSquareColor.setBlue(mSettings.value(KEY_DARK_SQUARE_COLOR_B,
                                                     Default.DarkSquareColor.blue()).toInt());
 
+    setThemeName(mSettings.value(KEY_THEME_NAME, Default.ThemeName).toString());
     setPieceStyleName(mSettings.value(KEY_PIECE_STYLE_NAME, Default.PieceStyleName).toString());
 }

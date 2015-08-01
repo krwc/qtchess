@@ -1,6 +1,6 @@
 #ifndef GAME_TREE_WIDGET_HPP
 #define GAME_TREE_WIDGET_HPP
-#include "game-tree.hpp"
+#include "game/game-tree.hpp"
 #include <QWidget>
 #include <QWebView>
 #include <QList>
