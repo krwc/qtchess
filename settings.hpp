@@ -1,5 +1,5 @@
-#ifndef SETTINGSMANAGER_HPP
-#define SETTINGSMANAGER_HPP
+#ifndef SETTINGS_HPP
+#define SETTINGS_HPP
 #include <piece-set.hpp>
 #include <gui/theme.hpp>
 #include <QSettings>
@@ -7,23 +7,23 @@
 #include <QDebug>
 #include <QList>
 
-struct Settings {
-    QString PieceStyleName;
-    QColor LightSquareColor;
-    QColor DarkSquareColor;
-    QColor SelectionColor;
-    bool ShouldDrawCoords;
-    int BorderSize;
-    int MarginSize;
-
-    QString EnginePath;
-    QString ThemeName;
-};
-
-class SettingsManager
+class Settings
 {
 public:
-    SettingsManager();
+    struct SettingsStruct {
+        QString PieceStyleName;
+        QColor LightSquareColor;
+        QColor DarkSquareColor;
+        QColor SelectionColor;
+        bool ShouldDrawCoords;
+        int BorderSize;
+        int MarginSize;
+
+        QString EnginePath;
+        QString ThemeName;
+    };
+
+    Settings();
 
     QString getPieceStyleName() const {
         return mConfig.PieceStyleName;
@@ -113,10 +113,10 @@ public:
     void save();
 private:
     void load();
-    Settings mConfig;
+    SettingsStruct mConfig;
     QSettings mSettings;
     PieceSet* mPieceSet;
     Theme* mTheme;
 };
 
-#endif // SETTINGSMANAGER_HPP
+#endif // SETTINGS_HPP

@@ -1,11 +1,11 @@
 #include <gui/main-window.hpp>
-#include <settings-manager.hpp>
+#include <settings.hpp>
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    SettingsManager mgr;
+    Settings mgr;
     MainWindow w(nullptr, mgr);
     w.show();
 

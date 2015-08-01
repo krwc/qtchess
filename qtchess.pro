@@ -17,7 +17,6 @@ QMAKE_CXXFLAGS += -O2 -march=native
 SOURCES += main.cpp\
         gui/main-window.cpp \
     gui/board-widget.cpp \
-    settings-manager.cpp \
     game/game-model.cpp \
     game/pieces.cpp \
     game/move.cpp \
@@ -30,11 +29,11 @@ SOURCES += main.cpp\
     gui/game-tree-widget.cpp \
     notation.cpp \
     gui/theme.cpp \
-    game/player.cpp
+    game/player.cpp \
+    settings.cpp
 
 HEADERS  += gui/main-window.hpp \
     gui/board-widget.hpp \
-    settings-manager.hpp \
     game/game-model.hpp \
     game/pieces.hpp \
     game/move.hpp \
@@ -47,7 +46,8 @@ HEADERS  += gui/main-window.hpp \
     gui/game-tree-widget.hpp \
     notation.hpp \
     gui/theme.hpp \
-    game/player.hpp
+    game/player.hpp \
+    settings.hpp
 
 FORMS    += gui/forms/main-window.ui \
     gui/forms/promotion-dialog.ui \

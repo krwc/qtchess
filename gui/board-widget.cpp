@@ -1,6 +1,6 @@
 #include "gui/board-widget.hpp"
 #include "gui/board-widget-state.hpp"
-#include "settings-manager.hpp"
+#include "settings.hpp"
 #include "game/game-model.hpp"
 #include "piece-set.hpp"
 #include <cstdlib>
@@ -14,7 +14,7 @@ static const int MinSize = 256;
 BoardWidget::BoardWidget(QWidget *parent)
     : QWidget(parent)
     , mState(new BoardWidgetStateNormal())
-    , mManager(nullptr)
+    , mSettings(nullptr)
     , mModel(nullptr)
     , mFlipped(false)
     , mDraggedField(-1, -1)
@@ -29,8 +29,8 @@ void BoardWidget::setModel(GameModel* Model) {
     redraw();
 }
 
-void BoardWidget::setManager(SettingsManager* Manager) {
-    mManager = Manager;
+void BoardWidget::setManager(Settings* Manager) {
+    mSettings = Manager;
 }
 
 void BoardWidget::flip() {
@@ -53,10 +53,10 @@ void BoardWidget::update() {
     int BorderSize = 0;
     int TotalMargin = 0;
 
-    if (mManager->getShouldDrawCoords())
-        BorderSize = mManager->getBorderSize();
+    if (mSettings->getShouldDrawCoords())
+        BorderSize = mSettings->getBorderSize();
 
-    Margin = mManager->getMarginSize();
+    Margin = mSettings->getMarginSize();
     TotalMargin = BorderSize + Margin;
 
     mFieldSize = (std::min(mWidth, mHeight) - 2. * TotalMargin) / 8.0;
@@ -125,10 +125,10 @@ void BoardWidget::drawBorder(QPainter& ctx) {
         "1", "2", "3", "4", "5", "6", "7", "8"
     };
 
-    if (!mManager->getShouldDrawCoords())
+    if (!mSettings->getShouldDrawCoords())
         return;
 
-    int size = mManager->getBorderSize();
+    int size = mSettings->getBorderSize();
     QPen Pen;
     // FIXME: Color should be controllable by the user
     Pen.setColor(QColor(48, 48, 48));
@@ -185,9 +185,9 @@ void BoardWidget::drawField(QPainter& ctx, int rank, int file) {
     QBrush Brush;
 
     if ((rank + file) % 2 == 0)
-        Brush = QBrush(mManager->getLSColor());
+        Brush = QBrush(mSettings->getLSColor());
     else
-        Brush = QBrush(mManager->getDSColor());
+        Brush = QBrush(mSettings->getDSColor());
 
     ctx.fillRect(getFileOffset(file), getRankOffset(rank),
                  mFieldSize, mFieldSize, Brush);
@@ -195,7 +195,7 @@ void BoardWidget::drawField(QPainter& ctx, int rank, int file) {
 
 void BoardWidget::drawPiece(QPainter& ctx, QRectF Dst, Piece Piece, Player Owner) {
     QRectF Src(0,0,mFieldSize,mFieldSize);
-    ctx.drawPixmap(Dst, mManager->getPieceSet().getPiecePixmap(Piece, Owner, mFieldSize), Src);
+    ctx.drawPixmap(Dst, mSettings->getPieceSet().getPiecePixmap(Piece, Owner, mFieldSize), Src);
 }
 
 void BoardWidget::drawPiece(QPainter& ctx, int rank, int file) {
@@ -219,7 +219,7 @@ void BoardWidget::drawSelection(QPainter& ctx) {
     int size = 2*int(double(std::min(mWidth,mHeight)) / MinSize);
     QBrush Brush = QBrush(QColor(0, 0, 0, 0));
     QPen Pen;
-    Pen.setColor(mManager->getSelectionColor());
+    Pen.setColor(mSettings->getSelectionColor());
     Pen.setWidth(size);
     Pen.setJoinStyle(Qt::MiterJoin);
 

@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-class SettingsManager;
+class Settings;
 
 namespace Ui {
 class SettingsDialog;
@@ -14,7 +14,7 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent, SettingsManager* Manager);
+    explicit SettingsDialog(QWidget *parent, Settings *Manager);
     ~SettingsDialog();
 private slots:
     void lightSquaresColorClicked();
@@ -29,7 +29,7 @@ signals:
 private:
     Ui::SettingsDialog *ui;
 
-    SettingsManager* mManager;
+    Settings* mManager;
     // Reads settings and updates widgets to represent current settings state.
     void readSettings();
 };

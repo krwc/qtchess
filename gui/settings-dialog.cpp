@@ -1,5 +1,5 @@
 #include "settings-dialog.hpp"
-#include "settings-manager.hpp"
+#include "settings.hpp"
 #include "ui_settings-dialog.h"
 #include <QColorDialog>
 #include <QDebug>
@@ -17,7 +17,7 @@ static bool SelectColor(QWidget* Parent, QColor& SelectedColor) {
     return true;
 }
 
-SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* Manager)
+SettingsDialog::SettingsDialog(QWidget *parent, Settings* Manager)
     : QDialog(parent)
     , ui(new Ui::SettingsDialog)
     , mManager(Manager)

@@ -2,6 +2,7 @@
 #define BOARDWIDGET_HPP
 
 #include "game/game-model.hpp"
+#include "settings.hpp"
 #include <QWidget>
 
 class SettingsManager;
@@ -19,7 +20,7 @@ public:
     explicit BoardWidget(QWidget *parent = 0);
 
     void setModel(GameModel*);
-    void setManager(SettingsManager*);
+    void setManager(Settings *);
     /* Reverses board view */
     void flip();
     /* Redraws entire board */
@@ -63,7 +64,7 @@ private:
     void setState(BoardWidgetState* State);
 private:
     BoardWidgetState* mState;
-    SettingsManager* mManager;
+    Settings* mSettings;
     GameModel* mModel;
     /* Geometry properties */
     bool mFlipped;

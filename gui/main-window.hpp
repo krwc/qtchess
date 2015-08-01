@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
-#include "settings-manager.hpp"
+#include "settings.hpp"
 #include "settings-dialog.hpp"
 #include "game/game-tree.hpp"
 #include <QMainWindow>
@@ -17,25 +17,25 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent, SettingsManager &Manager);
+    explicit MainWindow(QWidget *parent, Settings& settings);
     ~MainWindow();
 private slots:
-    void moveMade(Move move);
-    void showSettings();
-    void closeSettings();
-    void settingsChanged();
-    void flipBoard();
-    void resetBoard();
+    void onMoveMade(Move move);
+    void onSettingsShow();
+    void onSettingsClose();
+    void onSettingsChanged();
+    void onBoardFlip();
+    void onBoardReset();
 
-    void setPosition(GameTreeNode*);
+    void onPositionSet(GameTreeNode*);
 private:
     Ui::MainWindow *ui;
-    // Settings manager
-    SettingsManager& mManager;
+    // Settings
+    Settings& mSettings;
     // Game tree
     GameTree mGameTree;
     // Settings dialog
-    SettingsDialog* mSettings;
+    SettingsDialog* mSettingsDialog;
 
 };
 
