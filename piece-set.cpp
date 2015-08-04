@@ -43,6 +43,7 @@ QStringList PieceSet::getAvailableSets() {
 }
 
 PieceSet::PieceSet(QString PieceStyleName)
+  : mStyleName(PieceStyleName)
 {
     for (int i = 0; i < 6; i++) {
         auto white = std::make_pair(Piece(i), Player::white());
@@ -71,4 +72,8 @@ QPixmap& PieceSet::getPiecePixmap(Piece Piece, Player Owner, int Size) {
         mPixmap[R] = RenderPiece(R, Size);
     }
     return *mPixmap[R];
+}
+
+QString PieceSet::styleName() const {
+    return mStyleName;
 }

@@ -4,16 +4,14 @@
 #include "gui/settings-dialog.hpp"
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, Settings &settings)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , mSettings(settings)
     , mSettingsDialog(nullptr)
 {
     ui->setupUi(this);
     // Setup widgets
     ui->Board->setModel(&mGameTree.getLast()->Game);
-    ui->Board->setManager(&settings);
 
     // Connect board signals
     QObject::connect(ui->Board, SIGNAL(moveMade(Move)), this, SLOT(onMoveMade(Move)));
@@ -51,7 +49,7 @@ void MainWindow::onMoveMade(Move move) {
 
 void MainWindow::onSettingsShow() {
     if (!mSettingsDialog) {
-        mSettingsDialog = new SettingsDialog(this, &mSettings);
+        mSettingsDialog = new SettingsDialog(this);
         QObject::connect(mSettingsDialog, SIGNAL(rejected()), this, SLOT(onSettingsClose()));
         QObject::connect(mSettingsDialog, SIGNAL(settingsChanged()), this, SLOT(onSettingsChanged()));
     }
@@ -64,7 +62,7 @@ void MainWindow::onSettingsClose() {
 }
 
 void MainWindow::onSettingsChanged() {
-    qApp->setStyleSheet(mSettings.getTheme().getSource());
+    //qApp->setStyleSheet(mSettings.getTheme().getSource());
 
     ui->Board->update();
     ui->Board->redraw();

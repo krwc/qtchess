@@ -14,8 +14,8 @@ static const int MinSize = 256;
 BoardWidget::BoardWidget(QWidget *parent)
     : QWidget(parent)
     , mState(new BoardWidgetStateNormal())
-    , mSettings(nullptr)
     , mModel(nullptr)
+    , mPieceSet(nullptr)
     , mFlipped(false)
     , mDraggedField(-1, -1)
     , mSelectedField(-1, -1)
@@ -27,10 +27,6 @@ BoardWidget::BoardWidget(QWidget *parent)
 void BoardWidget::setModel(GameModel* Model) {
     mModel = Model;
     redraw();
-}
-
-void BoardWidget::setManager(Settings* Manager) {
-    mSettings = Manager;
 }
 
 void BoardWidget::flip() {
@@ -53,10 +49,10 @@ void BoardWidget::update() {
     int BorderSize = 0;
     int TotalMargin = 0;
 
-    if (mSettings->getShouldDrawCoords())
-        BorderSize = mSettings->getBorderSize();
+    if (Settings::instance().get(Settings::ShouldDrawCoords).toBool())
+        BorderSize = Settings::instance().get(Settings::BorderSize).toInt();
 
-    Margin = mSettings->getMarginSize();
+    Margin = Settings::instance().get(Settings::MarginSize).toInt();
     TotalMargin = BorderSize + Margin;
 
     mFieldSize = (std::min(mWidth, mHeight) - 2. * TotalMargin) / 8.0;
@@ -100,6 +96,15 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* Event) {
     setState(mState->onMouseMove(this, Event));
 }
 
+void BoardWidget::ensureValidPieceSet() {
+    QString currentName = Settings::instance().get(Settings::PieceStyleName).toString();
+
+    if (mPieceSet == nullptr || mPieceSet->styleName() != currentName) {
+        delete mPieceSet;
+        mPieceSet = new PieceSet(currentName);
+    }
+}
+
 void BoardWidget::draw(QPainter& ctx) {
     drawBorder(ctx);
     for (int rank = 0; rank < 8; rank++) {
@@ -120,10 +125,10 @@ void BoardWidget::drawBorder(QPainter& ctx) {
         "1", "2", "3", "4", "5", "6", "7", "8"
     };
 
-    if (!mSettings->getShouldDrawCoords())
+    if (!Settings::instance().get(Settings::ShouldDrawCoords).toBool())
         return;
 
-    int size = mSettings->getBorderSize();
+    int size = Settings::instance().get(Settings::BorderSize).toInt();
     QPen Pen;
     // FIXME: Color should be controllable by the user
     Pen.setColor(QColor(48, 48, 48));
@@ -180,17 +185,19 @@ void BoardWidget::drawField(QPainter& ctx, int rank, int file) {
     QBrush Brush;
 
     if ((rank + file) % 2 == 0)
-        Brush = QBrush(mSettings->getLSColor());
+        Brush = QBrush(Settings::instance().get(Settings::LightSquareColor).value<QColor>());
     else
-        Brush = QBrush(mSettings->getDSColor());
+        Brush = QBrush(Settings::instance().get(Settings::DarkSquareColor).value<QColor>());
 
     ctx.fillRect(getFileOffset(file), getRankOffset(rank),
                  mFieldSize, mFieldSize, Brush);
 }
 
 void BoardWidget::drawPiece(QPainter& ctx, QRectF Dst, Piece Piece, Player Owner) {
+    ensureValidPieceSet();
+
     QRectF Src(0,0,mFieldSize,mFieldSize);
-    ctx.drawPixmap(Dst, mSettings->getPieceSet().getPiecePixmap(Piece, Owner, mFieldSize), Src);
+    ctx.drawPixmap(Dst, mPieceSet->getPiecePixmap(Piece, Owner, mFieldSize), Src);
 }
 
 void BoardWidget::drawPiece(QPainter& ctx, int rank, int file) {
@@ -214,7 +221,7 @@ void BoardWidget::drawSelection(QPainter& ctx) {
     int size = 2*int(double(std::min(mWidth,mHeight)) / MinSize);
     QBrush Brush = QBrush(QColor(0, 0, 0, 0));
     QPen Pen;
-    Pen.setColor(mSettings->getSelectionColor());
+    Pen.setColor(Settings::instance().get(Settings::SelectionColor).value<QColor>());
     Pen.setWidth(size);
     Pen.setJoinStyle(Qt::MiterJoin);
 

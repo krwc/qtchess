@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent, Settings& settings);
+    explicit MainWindow(QWidget *parent);
     ~MainWindow();
 private slots:
     void onMoveMade(Move move);
@@ -30,8 +30,6 @@ private slots:
     void onPositionSet(GameTreeNode*);
 private:
     Ui::MainWindow *ui;
-    // Settings
-    Settings& mSettings;
     // Game tree
     GameTree mGameTree;
     // Settings dialog

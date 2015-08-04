@@ -25,7 +25,10 @@ public:
     }
     /* Returns pixmap of given size. */
     QPixmap& getPiecePixmap(Piece Piece, Player Owner, int Size);
+    /* Returns piece set style name */
+    QString styleName() const;
 private:
+    QString mStyleName;
     std::map<std::pair<Piece, Player>, QSvgRenderer*> mPieceRenderers;
     /* Cached, prerendered pixmaps */
     std::map<QSvgRenderer*, QPixmap*> mPixmap;

@@ -2,13 +2,13 @@
 #define BOARDWIDGET_HPP
 
 #include "game/game-model.hpp"
-#include "settings.hpp"
 #include <QWidget>
 
 class SettingsManager;
 class BoardWidgetState;
 class BoardWidgetStateDragging;
 class BoardWidgetStateNormal;
+class PieceSet;
 
 class BoardWidget : public QWidget
 {
@@ -20,7 +20,6 @@ public:
     explicit BoardWidget(QWidget *parent = 0);
 
     void setModel(GameModel*);
-    void setManager(Settings *);
     /* Reverses board view */
     void flip();
     /* Redraws entire board */
@@ -42,6 +41,8 @@ signals:
     void moveMade(Move);
 public slots:
 private:
+    /* Ensures valid piece set */
+    void ensureValidPieceSet();
     /* Draws board contents */
     void draw(QPainter& ctx);
     /* Draws piece at x,y in the canvas using SVG renderer */
@@ -66,8 +67,8 @@ private:
     int absolute(int coord) const;
 private:
     BoardWidgetState* mState;
-    Settings* mSettings;
     GameModel* mModel;
+    PieceSet* mPieceSet;
     /* Geometry properties */
     bool mFlipped;
     int mWidth;  /* width of the drawing area */
