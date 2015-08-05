@@ -28,7 +28,6 @@ SOURCES += main.cpp\
     game/game-tree.cpp \
     gui/game-tree-widget.cpp \
     notation.cpp \
-    gui/theme.cpp \
     game/player.cpp \
     settings.cpp
 
@@ -45,7 +44,6 @@ HEADERS  += gui/main-window.hpp \
     game/game-tree.hpp \
     gui/game-tree-widget.hpp \
     notation.hpp \
-    gui/theme.hpp \
     game/player.hpp \
     settings.hpp
 
