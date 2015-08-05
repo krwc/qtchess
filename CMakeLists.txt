@@ -20,5 +20,5 @@ file(COPY src/assets DESTINATION .)
 include_directories(src)
 qt5_wrap_ui(FORMS_HDR ${UI_FORMS})
 
-add_executable(qtchess src/main.cpp ${SRC_CPP})
+add_executable(qtchess src/main.cpp ${SRC_CPP} ${FORMS_HDR})
 target_link_libraries(qtchess Qt5::Widgets Qt5::Gui Qt5::WebKitWidgets Qt5::Svg Qt5::Core)
