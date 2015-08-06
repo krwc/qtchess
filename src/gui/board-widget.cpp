@@ -174,7 +174,7 @@ void BoardWidget::drawDraggedPiece(QPainter& context) {
                FieldY * mFieldSize + mFirstFieldY + mDragOffset.y,
                mFieldSize, mFieldSize);
 
-    Piece piece  = mModel->pieceAt(mDraggedField);
+    Piece piece = mModel->pieceAt(mDraggedField);
 
     if (piece.isNone())
         return;

@@ -60,14 +60,14 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>107</height>
+     <height>135</height>
     </size>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QScrollArea" name="scrollArea">
        <property name="widgetResizable">
@@ -78,7 +78,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>246</width>
+          <width>180</width>
           <height>576</height>
          </rect>
         </property>

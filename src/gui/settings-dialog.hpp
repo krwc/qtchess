@@ -14,9 +14,10 @@ public:
     explicit SettingsDialog(QWidget *parent);
     ~SettingsDialog();
 private slots:
-    void lightSquaresColorClicked();
-    void darkSquaresColorClicked();
-    void selectionColorClicked();
+    void onLsColorChanged(QColor);
+    void onDsColorChanged(QColor);
+    void onSelectionColorChanged(QColor);
+
     void checkBoxToggled(bool checked);
     void pieceSetChanged(const QString&);
     void saveClicked();

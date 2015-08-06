@@ -1,7 +1,7 @@
 #include "player.hpp"
 
 Player::Player()
-  : Player(PLAYER_NONE)
+  : Player(None)
 { }
 
 Player::Player(PlayerKind kind)
@@ -9,15 +9,15 @@ Player::Player(PlayerKind kind)
 { }
 
 Player Player::white() {
-    return Player(PLAYER_WHITE);
+    return Player(White);
 }
 
 Player Player::black() {
-    return Player(PLAYER_BLACK);
+    return Player(Black);
 }
 
 Player Player::none() {
-    return Player(PLAYER_NONE);
+    return Player(None);
 }
 
 Player Player::opponent() const {

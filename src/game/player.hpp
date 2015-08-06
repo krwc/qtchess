@@ -5,9 +5,9 @@ class Player {
 public:
     Player();
 
-    bool isWhite() const { return mKind == PLAYER_WHITE; }
-    bool isBlack() const { return mKind == PLAYER_BLACK; }
-    bool isNone() const { return mKind == PLAYER_NONE; }
+    bool isWhite() const { return mKind == White; }
+    bool isBlack() const { return mKind == Black; }
+    bool isNone() const { return mKind == None; }
     Player opponent() const;
 
     bool operator== (const Player& player) const {
@@ -26,7 +26,7 @@ public:
     static Player black();
     static Player none();
 private:
-    enum PlayerKind { PLAYER_WHITE = 0, PLAYER_BLACK, PLAYER_NONE };
+    enum PlayerKind { White = 0, Black, None };
     Player(PlayerKind);
 
     PlayerKind mKind;
