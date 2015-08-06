@@ -7,15 +7,15 @@
 
 static const QString PieceAssetsPathPrefix = "assets/pieces";
 static const QString PieceName[] = {
-    [PIECE_PAWN]    = "pawn",
-    [PIECE_KNIGHT]  = "knight",
-    [PIECE_BISHOP]  = "bishop",
-    [PIECE_ROOK]    = "rook",
-    [PIECE_KING]    = "king",
-    [PIECE_QUEEN]   = "queen"
+    [Piece::Pawn]    = "pawn",
+    [Piece::Knight]  = "knight",
+    [Piece::Bishop]  = "bishop",
+    [Piece::Rook]    = "rook",
+    [Piece::King]    = "king",
+    [Piece::Queen]   = "queen"
 };
 
-static QSvgRenderer* MakeSvgRenderer(std::pair<Piece, Player> Kind, QString Style) {
+static QSvgRenderer* MakeSvgRenderer(std::pair<Piece::Type, Player> Kind, QString Style) {
     QString Path = PieceAssetsPathPrefix + "/" + Style + "/";
 
     if (Kind.second.isWhite())
@@ -46,8 +46,8 @@ PieceSet::PieceSet(QString PieceStyleName)
   : mStyleName(PieceStyleName)
 {
     for (int i = 0; i < 6; i++) {
-        auto white = std::make_pair(Piece(i), Player::white());
-        auto black = std::make_pair(Piece(i), Player::black());
+        auto white = std::make_pair(Piece::Type(i), Player::white());
+        auto black = std::make_pair(Piece::Type(i), Player::black());
         mPieceRenderers[white] = MakeSvgRenderer(white, PieceStyleName);
         mPieceRenderers[black] = MakeSvgRenderer(black, PieceStyleName);
     }
@@ -63,13 +63,13 @@ PieceSet::~PieceSet()
         delete entry.second;
 }
 
-QPixmap& PieceSet::getPiecePixmap(Piece Piece, Player Owner, int Size) {
-    QSvgRenderer* R = &getPieceRenderer(Piece, Owner);
+QPixmap& PieceSet::getPiecePixmap(Piece piece, int size) {
+    QSvgRenderer* R = &getPieceRenderer(piece, piece.owner());
 
-    if (mPixmapSize[R] != Size) {
-        mPixmapSize[R] = Size;
+    if (mPixmapSize[R] != size) {
+        mPixmapSize[R] = size;
         delete mPixmap[R];
-        mPixmap[R] = RenderPiece(R, Size);
+        mPixmap[R] = RenderPiece(R, size);
     }
     return *mPixmap[R];
 }

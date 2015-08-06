@@ -15,16 +15,16 @@ public:
     explicit PromotionDialog(QWidget *parent = 0);
     ~PromotionDialog();
 
-    Piece getSelectedPiece() const {
-        return mSelectedPiece;
+    Piece::Type selectedPieceType() const {
+        return mSelectedPieceType;
     }
 private slots:
-    void selectedQueen()  { mSelectedPiece = PIECE_QUEEN; emit done(0); }
-    void selectedRook()   { mSelectedPiece = PIECE_ROOK;  emit done(0); }
-    void selectedBishop() { mSelectedPiece = PIECE_BISHOP; emit done(0); }
-    void selectedKnight() { mSelectedPiece = PIECE_KNIGHT; emit done(0); }
+    void selectedQueen()  { mSelectedPieceType = Piece::Queen; emit done(0); }
+    void selectedRook()   { mSelectedPieceType = Piece::Rook;  emit done(0); }
+    void selectedBishop() { mSelectedPieceType = Piece::Bishop; emit done(0); }
+    void selectedKnight() { mSelectedPieceType = Piece::Knight; emit done(0); }
 private:
-    Piece mSelectedPiece;
+    Piece::Type mSelectedPieceType;
     Ui::PromotionDialog *ui;
 };
 

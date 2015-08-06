@@ -2,13 +2,13 @@
 #define GAME_TREE_HPP
 #include <vector>
 #include <map>
-#include "game/game-model.hpp"
+#include "game/board.hpp"
 
 struct GameTreeNode {
     ~GameTreeNode();
     // Model will represent current state, as it encapsulates position
     // and logic behind it.
-    GameModel Game;
+    Board Game;
     // Parent node
     GameTreeNode* Parent;
     // Main line

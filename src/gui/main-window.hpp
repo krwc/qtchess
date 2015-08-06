@@ -23,8 +23,6 @@ private slots:
     void onMoveMade(Move move);
     void onSettingsShow();
     void onSettingsClose();
-    void onSettingsChanged();
-    void onBoardFlip();
     void onBoardReset();
 
     void onPositionSet(GameTreeNode*);

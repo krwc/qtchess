@@ -1,6 +1,7 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 #include <algorithm>
+#include <QVector>
 
 template<typename T>
 struct Coord2D {
@@ -29,15 +30,7 @@ struct Coord2D {
     }
 };
 
-template<typename Container, typename Needle>
-bool Contains(const Container& C, const Needle& N) {
-    for (const auto& Element : C)
-        if (Element == N)
-            return true;
-    return false;
-}
-
-typedef std::vector<Coord2D<int>> CoordsVector;
+typedef QVector<Coord2D<int>> CoordsVector;
 
 #endif // COMMON_HPP
 

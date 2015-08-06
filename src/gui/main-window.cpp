@@ -15,16 +15,18 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Connect board signals
     QObject::connect(ui->Board, SIGNAL(moveMade(Move)), this, SLOT(onMoveMade(Move)));
+    //QObject::connect(&Settings::instance(), SIGNAL(changed()), ui->Board, SLOT(update()));
+    QObject::connect(ui->actionFlip, SIGNAL(triggered()), ui->Board, SLOT(flip()));
     // Connect action signals
     QObject::connect(ui->actionSettings, SIGNAL(triggered()), this, SLOT(onSettingsShow()));
     QObject::connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(onBoardReset()));
-    QObject::connect(ui->actionFlip, SIGNAL(triggered()), this, SLOT(onBoardFlip()));
+
     // Connect text widget signals
     QObject::connect(ui->GameTextWidget, SIGNAL(positionSelected(GameTreeNode*)), this, SLOT(onPositionSet(GameTreeNode*)));
-    ui->GameTextWidget->setGameTree(&mGameTree);
+    QObject::connect(ui->Board, SIGNAL(moveMade(Move)), ui->GameTextWidget, SLOT(redraw()));
+    //QObject::connect(&Settings::instance(), SIGNAL(changed()), ui->GameTextWidget, SLOT(redraw()));
 
-    // Calling this method to load settings at startup automatically
-    onSettingsChanged();
+    ui->GameTextWidget->setGameTree(&mGameTree);
 }
 
 MainWindow::~MainWindow()
@@ -33,17 +35,18 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::onMoveMade(Move move) {
-    MoveType Type = MOVE_NONSPECIAL;
-    GameModel& Model = mGameTree.getLast()->Game;
+    MoveType moveType = MOVE_NONSPECIAL;
+    Board& board = mGameTree.getLast()->Game;
 
-    if (Model.isLegal(move, NULL, &Type)) {
-        if (Type == MOVE_PROMOTION) {
+    if (board.isLegal(move, nullptr, &moveType)) {
+        if (moveType == MOVE_PROMOTION) {
             PromotionDialog dialog(this);
             dialog.exec();
-            move.PromotionPiece = dialog.getSelectedPiece();
+
+            // Modify move, so that it knows about promoted piece
+            move = Move(move.from(), move.to(), dialog.selectedPieceType());
         }
         onPositionSet(mGameTree.addVariation(mGameTree.getLast(), move));
-        ui->GameTextWidget->redraw();
     }
 }
 
@@ -51,7 +54,6 @@ void MainWindow::onSettingsShow() {
     if (!mSettingsDialog) {
         mSettingsDialog = new SettingsDialog(this);
         QObject::connect(mSettingsDialog, SIGNAL(rejected()), this, SLOT(onSettingsClose()));
-        QObject::connect(mSettingsDialog, SIGNAL(settingsChanged()), this, SLOT(onSettingsChanged()));
     }
     mSettingsDialog->show();
 }
@@ -59,17 +61,6 @@ void MainWindow::onSettingsShow() {
 void MainWindow::onSettingsClose() {
     delete mSettingsDialog;
     mSettingsDialog = nullptr;
-}
-
-void MainWindow::onSettingsChanged() {
-    //qApp->setStyleSheet(mSettings.getTheme().getSource());
-
-    ui->Board->update();
-    ui->Board->redraw();
-}
-
-void MainWindow::onBoardFlip() {
-    ui->Board->flip();
 }
 
 void MainWindow::onBoardReset() {

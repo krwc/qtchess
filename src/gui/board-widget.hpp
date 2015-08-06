@@ -1,7 +1,7 @@
 #ifndef BOARDWIDGET_HPP
 #define BOARDWIDGET_HPP
 
-#include "game/game-model.hpp"
+#include "game/board.hpp"
 #include <QWidget>
 
 class SettingsManager;
@@ -19,11 +19,7 @@ class BoardWidget : public QWidget
 public:
     explicit BoardWidget(QWidget *parent = 0);
 
-    void setModel(GameModel*);
-    /* Reverses board view */
-    void flip();
-    /* Redraws entire board */
-    void redraw();
+    void setModel(Board*);
     /* Emits move signal */
     void emitMove(Move move);
     /* Handles settings change */
@@ -40,13 +36,17 @@ protected:
 signals:
     void moveMade(Move);
 public slots:
+    /* Reverses board view */
+    void flip();
+    /* Redraws entire board */
+    void redraw();
 private:
     /* Ensures valid piece set */
     void ensureValidPieceSet();
     /* Draws board contents */
     void draw(QPainter& ctx);
     /* Draws piece at x,y in the canvas using SVG renderer */
-    void drawPiece(QPainter& ctx, QRectF Dest, Piece Piece, Player Owner);
+    void drawPiece(QPainter& ctx, QRectF dest, Piece piece);
     /* Draws piece at given (rank, file) */
     void drawPiece(QPainter& ctx, int rank, int file);
     /* Draws floating / dragging piece if any */
@@ -67,7 +67,7 @@ private:
     int absolute(int coord) const;
 private:
     BoardWidgetState* mState;
-    GameModel* mModel;
+    Board* mModel;
     PieceSet* mPieceSet;
     /* Geometry properties */
     bool mFlipped;

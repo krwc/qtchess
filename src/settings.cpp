@@ -28,6 +28,7 @@ QVariant Settings::get(Settings::Key key) {
 
 void Settings::set(Settings::Key key, const QVariant& value) {
     mValues[key].setValue(value);
+    emit changed();
 }
 
 void Settings::reset() {
@@ -45,4 +46,6 @@ void Settings::load() {
         Entry& entry = mValues[key];
         entry.setValue(mSettings.value(entry.name(), entry.defaultValue()));
     }
+
+    emit changed();
 }

@@ -9,10 +9,10 @@ struct Move {
 
     Coord2D<int> From;
     Coord2D<int> To;
-    Piece PromotionPiece;
+    Piece::Type PromotionPiece;
 
     Move() {}
-    Move(Coord2D<int> From, Coord2D<int> To, Piece PromotionTo = PIECE_QUEEN)
+    Move(Coord2D<int> From, Coord2D<int> To, Piece::Type PromotionTo = Piece::None)
       : From(From)
       , To(To)
       , PromotionPiece(PromotionTo)
@@ -21,6 +21,18 @@ struct Move {
     bool operator== (const Move& Move) const {
         return Move.From == From && Move.To == To &&
                Move.PromotionPiece == PromotionPiece;
+    }
+
+    Coord2D<int> from() const {
+        return From;
+    }
+
+    Coord2D<int> to() const {
+        return To;
+    }
+
+    Piece::Type promotionPiece() const {
+        return PromotionPiece;
     }
 };
 

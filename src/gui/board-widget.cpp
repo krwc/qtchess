@@ -1,7 +1,7 @@
 #include "gui/board-widget.hpp"
 #include "gui/board-widget-state.hpp"
 #include "settings.hpp"
-#include "game/game-model.hpp"
+#include "game/board.hpp"
 #include "piece-set.hpp"
 #include <cstdlib>
 #include <cstdio>
@@ -22,9 +22,11 @@ BoardWidget::BoardWidget(QWidget *parent)
 {
     setMinimumSize(MinSize, MinSize);
     setMouseTracking(true);
+
+    QObject::connect(&Settings::instance(), SIGNAL(changed()), this, SLOT(update()));
 }
 
-void BoardWidget::setModel(GameModel* Model) {
+void BoardWidget::setModel(Board* Model) {
     mModel = Model;
     redraw();
 }
@@ -43,23 +45,23 @@ void BoardWidget::emitMove(Move move) {
 }
 
 void BoardWidget::update() {
-    mWidth  = width();
+    mWidth = width();
     mHeight = height();
-    int Margin = 0;
-    int BorderSize = 0;
-    int TotalMargin = 0;
+
+    int borderSize = 0;
 
     if (Settings::instance().get(Settings::ShouldDrawCoords).toBool())
-        BorderSize = Settings::instance().get(Settings::BorderSize).toInt();
+        borderSize = Settings::instance().get(Settings::BorderSize).toInt();
 
-    Margin = Settings::instance().get(Settings::MarginSize).toInt();
-    TotalMargin = BorderSize + Margin;
+    int margin = Settings::instance().get(Settings::MarginSize).toInt();
+    int totalMargin = borderSize + margin;
+    mFieldSize = (std::min(mWidth, mHeight) - 2. * totalMargin) / 8.0;
 
-    mFieldSize = (std::min(mWidth, mHeight) - 2. * TotalMargin) / 8.0;
-    double CenteringX = 0.5 * (mWidth - 2 * TotalMargin - 8 * mFieldSize);
-    double CenteringY = 0.5 * (mHeight - 2 * TotalMargin - 8 * mFieldSize);
-    mFirstFieldX = TotalMargin + CenteringX;
-    mFirstFieldY = TotalMargin + CenteringY;
+    double centeringX = 0.5 * (mWidth - 2 * totalMargin - 8 * mFieldSize);
+    double centeringY = 0.5 * (mHeight - 2 * totalMargin - 8 * mFieldSize);
+    mFirstFieldX = totalMargin + centeringX;
+    mFirstFieldY = totalMargin + centeringY;
+    redraw();
 }
 
 bool BoardWidget::isFieldAt(double x, double y, int* file, int* rank) {
@@ -105,19 +107,19 @@ void BoardWidget::ensureValidPieceSet() {
     }
 }
 
-void BoardWidget::draw(QPainter& ctx) {
-    drawBorder(ctx);
+void BoardWidget::draw(QPainter& context) {
+    drawBorder(context);
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
-            drawField(ctx, rank, file);
-            drawPiece(ctx, rank, file);
+            drawField(context, rank, file);
+            drawPiece(context, rank, file);
         }
     }
-    drawSelection(ctx);
-    drawDraggedPiece(ctx);
+    drawSelection(context);
+    drawDraggedPiece(context);
 }
 
-void BoardWidget::drawBorder(QPainter& ctx) {
+void BoardWidget::drawBorder(QPainter& context) {
     static const char* Files[] = {
         "A", "B", "C", "D", "E", "F", "G", "H"
     };
@@ -134,35 +136,35 @@ void BoardWidget::drawBorder(QPainter& ctx) {
     Pen.setColor(QColor(48, 48, 48));
     Pen.setWidth(size);
     Pen.setJoinStyle(Qt::MiterJoin);
-    ctx.setPen(Pen);
+    context.setPen(Pen);
     QPointF TopLeft(getFileOffset(0) - 0.5*size, getRankOffset(0) - 0.5*size);
     QPointF TopRight(getFileOffset(8) + 0.5*size, getRankOffset(0) - 0.5*size);
     QPointF BottomRight(getFileOffset(8) + 0.5*size, getRankOffset(8) + 0.5*size);
     QPointF BottomLeft(getFileOffset(0) - 0.5*size, getRankOffset(8) + 0.5*size);
     // Fill border with color
-    ctx.drawLine(TopLeft, TopRight);
-    ctx.drawLine(TopRight, BottomRight);
-    ctx.drawLine(BottomRight, BottomLeft);
-    ctx.drawLine(BottomLeft, TopLeft);
+    context.drawLine(TopLeft, TopRight);
+    context.drawLine(TopRight, BottomRight);
+    context.drawLine(BottomRight, BottomLeft);
+    context.drawLine(BottomLeft, TopLeft);
 
     QBrush Brush = QBrush(Qt::GlobalColor::white);
     QFont Font("Monospace", 10, QFont::Bold);
 
-    ctx.setBrush(Brush);
+    context.setBrush(Brush);
     // FIXME: Should also be configurable
-    ctx.setPen(Qt::GlobalColor::white);
-    ctx.setFont(Font);
+    context.setPen(Qt::GlobalColor::white);
+    context.setFont(Font);
 
     for (int i = 0; i < 8; i++) {
         int j = absolute(i);
         QRectF FileRect(getFileOffset(i), getRankOffset(8), mFieldSize, size);
         QRectF RankRect(getFileOffset(0) - size, getRankOffset(i), size, mFieldSize);
-        ctx.drawText(FileRect, Qt::AlignCenter, Files[j]);
-        ctx.drawText(RankRect, Qt::AlignCenter, Ranks[7-j]);
+        context.drawText(FileRect, Qt::AlignCenter, Files[j]);
+        context.drawText(RankRect, Qt::AlignCenter, Ranks[7-j]);
     }
 }
 
-void BoardWidget::drawDraggedPiece(QPainter& ctx) {
+void BoardWidget::drawDraggedPiece(QPainter& context) {
     if (mDraggedField == Coord2D<int>(-1, -1))
         return;
 
@@ -172,16 +174,15 @@ void BoardWidget::drawDraggedPiece(QPainter& ctx) {
                FieldY * mFieldSize + mFirstFieldY + mDragOffset.y,
                mFieldSize, mFieldSize);
 
-    Piece Piece  = mModel->piece(mDraggedField);
-    Player Owner = mModel->owner(mDraggedField);
+    Piece piece  = mModel->pieceAt(mDraggedField);
 
-    if (Piece == PIECE_NONE)
+    if (piece.isNone())
         return;
 
-    drawPiece(ctx, Dest, Piece, Owner);
+    drawPiece(context, Dest, piece);
 }
 
-void BoardWidget::drawField(QPainter& ctx, int rank, int file) {
+void BoardWidget::drawField(QPainter& context, int rank, int file) {
     QBrush Brush;
 
     if ((rank + file) % 2 == 0)
@@ -189,31 +190,30 @@ void BoardWidget::drawField(QPainter& ctx, int rank, int file) {
     else
         Brush = QBrush(Settings::instance().get(Settings::DarkSquareColor).value<QColor>());
 
-    ctx.fillRect(getFileOffset(file), getRankOffset(rank),
+    context.fillRect(getFileOffset(file), getRankOffset(rank),
                  mFieldSize, mFieldSize, Brush);
 }
 
-void BoardWidget::drawPiece(QPainter& ctx, QRectF Dst, Piece Piece, Player Owner) {
+void BoardWidget::drawPiece(QPainter& context, QRectF dest, Piece piece) {
     ensureValidPieceSet();
 
-    QRectF Src(0,0,mFieldSize,mFieldSize);
-    ctx.drawPixmap(Dst, mPieceSet->getPiecePixmap(Piece, Owner, mFieldSize), Src);
+    const QRectF source(0, 0, mFieldSize, mFieldSize);
+    context.drawPixmap(dest, mPieceSet->getPiecePixmap(piece, mFieldSize), source);
 }
 
-void BoardWidget::drawPiece(QPainter& ctx, int rank, int file) {
+void BoardWidget::drawPiece(QPainter& context, int rank, int file) {
     int x = absolute(file);
     int y = absolute(rank);
-    Piece Piece = mModel->piece(x, y);
-    Player Owner = mModel->owner(x, y);
+    Piece Piece = mModel->pieceAt(x, y);
 
-    if (Piece == PIECE_NONE || mDraggedField == Coord2D<int>(x, y))
+    if (Piece.isNone() || mDraggedField == Coord2D<int>(x, y))
         return;
 
     QRectF Dest(getFileOffset(file), getRankOffset(rank), mFieldSize, mFieldSize);
-    drawPiece(ctx, Dest, Piece, Owner);
+    drawPiece(context, Dest, Piece);
 }
 
-void BoardWidget::drawSelection(QPainter& ctx) {
+void BoardWidget::drawSelection(QPainter& context) {
     if (mSelectedField == Coord2D<int>(-1, -1))
         return;
     int file = absolute(mSelectedField.x);
@@ -225,9 +225,9 @@ void BoardWidget::drawSelection(QPainter& ctx) {
     Pen.setWidth(size);
     Pen.setJoinStyle(Qt::MiterJoin);
 
-    ctx.setPen(Pen);
-    ctx.setBrush(Brush);
-    ctx.drawRect(getFileOffset(file), getRankOffset(rank),
+    context.setPen(Pen);
+    context.setBrush(Brush);
+    context.drawRect(getFileOffset(file), getRankOffset(rank),
                  mFieldSize, mFieldSize);
 }
 

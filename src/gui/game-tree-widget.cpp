@@ -1,5 +1,5 @@
 #include "game-tree-widget.hpp"
-#include "notation.hpp"
+#include "settings.hpp"
 #include <QDebug>
 #include <QPainter>
 #include <QMenu>
@@ -54,7 +54,7 @@ void TreeToHtmlConverter::traverse(QString &Ret, GameTreeIterator It, int Varian
         // it requires previous game snapshot. This is why this ugly one step
         // in reverse direction is made. It should be designed better, I know.
         It.prev();
-        QString MoveString = MoveFormat.arg(Hash, Notation::moveToAlgebraicNotation(It.getNode()->Game, It.getLastMove()));
+        QString MoveString = MoveFormat.arg(Hash, It.getNode()->Game.algebraicNotationString(It.getLastMove()));
         It.next();
         QString MoveId = QString::number((HalfMoveNumber + 1) / 2);
         QString MoveNumber;
@@ -91,6 +91,7 @@ GameTreeWidget::GameTreeWidget(QWidget* parent)
     , mHoveredNode(nullptr)
 {
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    QObject::connect(&Settings::instance(), SIGNAL(changed()), this, SLOT(update()));
     QObject::connect(this, SIGNAL(linkClicked(QUrl)), this, SLOT(onMoveClick(QUrl)));
     QObject::connect(page(), SIGNAL(linkHovered(QString,QString,QString)), this,
                      SLOT(onLinkHover(QString)));

@@ -7,7 +7,8 @@
 #include <QMap>
 
 
-class Settings {
+class Settings : public QObject {
+    Q_OBJECT
 public:
     enum Key {
         PieceStyleName, LightSquareColor, DarkSquareColor,
@@ -63,6 +64,9 @@ public:
     void set(Settings::Key key, const QVariant& value);
     void reset();
     void save();
+signals:
+    /*! \brief signal emited whenever some setting is overwritten */
+    void changed();
 private:
     void load();
     QSettings mSettings;

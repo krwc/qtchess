@@ -12,7 +12,6 @@ class GameTreeWidget : public QWebView
 public:
     explicit GameTreeWidget(QWidget *parent = 0);
 
-    void redraw();
     void setGameTree(GameTree* Tree);
 
     virtual QSize sizeHint() const override {
@@ -20,6 +19,8 @@ public:
     }
 protected:
     virtual void contextMenuEvent(QContextMenuEvent *);
+public slots:
+    void redraw();
 private slots:
     void onMoveClick(const QUrl&);
     void onLinkHover(const QString& Url);

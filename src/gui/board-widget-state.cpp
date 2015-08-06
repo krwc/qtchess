@@ -1,6 +1,6 @@
 #include "gui/board-widget-state.hpp"
 #include "gui/board-widget.hpp"
-#include "game/game-model.hpp"
+#include "game/board.hpp"
 #include <iostream>
 
 BoardWidgetState*
@@ -39,7 +39,9 @@ BoardWidgetStateNormal::onMousePress(BoardWidget* Board, QMouseEvent* Event) {
     Coord2D<int> Field;
 
     if (Board->isFieldAt(Event->x(), Event->y(), &Field.x, &Field.y)) {
-        if (Board->mSelectedField == Coord2D<int>(-1,-1) || Board->mSelectedField != Field) {
+        if (Board->mSelectedField == Coord2D<int>(-1, -1))
+            Board->mSelectedField = Field;
+        else if (Board->mSelectedField != Field) {
             Move move(Board->mSelectedField, Field);
 
             if (Board->mModel->isLegal(move, NULL, NULL))

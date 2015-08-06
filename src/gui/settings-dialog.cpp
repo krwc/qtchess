@@ -35,7 +35,6 @@ void SettingsDialog::lightSquaresColorClicked() {
         SetColor(ui->LSColorButton, Ret);
         Settings::instance().instance().set(Settings::LightSquareColor, Ret);
     }
-    emit settingsChanged();
 }
 
 void SettingsDialog::darkSquaresColorClicked() {
@@ -44,7 +43,6 @@ void SettingsDialog::darkSquaresColorClicked() {
         SetColor(ui->DSColorButton, Ret);
         Settings::instance().set(Settings::DarkSquareColor, Ret);
     }
-    emit settingsChanged();
 }
 
 void SettingsDialog::selectionColorClicked() {
@@ -53,12 +51,10 @@ void SettingsDialog::selectionColorClicked() {
         SetColor(ui->SelectionColorButton, Ret);
         Settings::instance().set(Settings::SelectionColor, Ret);
     }
-    emit settingsChanged();
 }
 
 void SettingsDialog::checkBoxToggled(bool checked) {
     Settings::instance().set(Settings::ShouldDrawCoords, checked);
-    emit settingsChanged();
 }
 
 void SettingsDialog::saveClicked() {
@@ -78,7 +74,6 @@ void SettingsDialog::pieceSetChanged(const QString& Value)
         return;
 
     Settings::instance().set(Settings::PieceStyleName, Value);
-    emit settingsChanged();
 }
 
 void SettingsDialog::readSettings() {
@@ -95,6 +90,4 @@ void SettingsDialog::readSettings() {
     /*QStringList ThemesList = Theme::getAvailableThemes();
     ThemesList.swap(0, ThemesList.indexOf(Settings::instance().get(Settings::instance().ThemeNamegetThemeName()));
     ui->ThemeList->addItems(ThemesList);*/
-
-    emit settingsChanged();
 }
