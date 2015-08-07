@@ -5,44 +5,74 @@
 #include <QColorDialog>
 #include <QColor>
 
+AbstractEntry::AbstractEntry(Settings::Key key)
+    : m_key(key)
+{
+}
+
+Settings::Key AbstractEntry::key() const
+{
+    return m_key;
+}
+
+void AbstractEntry::onSetValue(const QVariant& value)
+{
+    Settings::instance().set(key(), value);
+}
+
+
+
+ColorEntry::ColorEntry(ColorButton *button, Settings::Key key)
+    : AbstractEntry(key)
+    , m_button(button)
+{
+    QObject::connect(m_button, &ColorButton::changed, this, &AbstractEntry::onSetValue);
+}
+
+void ColorEntry::reset()
+{
+    m_button->setColor(Settings::instance().get(key()).value<QColor>());
+}
+
+
+CheckBoxEntry::CheckBoxEntry(QCheckBox* box, Settings::Key key)
+    : AbstractEntry(key)
+    , m_box(box)
+{
+    QObject::connect(m_box, &QCheckBox::toggled, this, &AbstractEntry::onSetValue);
+}
+
+void CheckBoxEntry::reset()
+{
+    m_box->setChecked(Settings::instance().get(key()).toBool());
+}
+
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+    setWindowTitle("Settings");
 
-    QObject::connect(ui->lightSqColor, SIGNAL(changed(QColor)), this,
-                     SLOT(onLsColorChanged(QColor)));
-    QObject::connect(ui->darkSqColor, SIGNAL(changed(QColor)), this,
-                     SLOT(onDsColorChanged(QColor)));
-    QObject::connect(ui->selectionColor, SIGNAL(changed(QColor)), this,
-                     SLOT(onSelectionColorChanged(QColor)));
+    m_entries.push_back(new ColorEntry(ui->lightSqColor, Settings::LightSquareColor));
+    m_entries.push_back(new ColorEntry(ui->darkSqColor, Settings::DarkSquareColor));
+    m_entries.push_back(new ColorEntry(ui->selectionColor, Settings::SelectionColor));
+    m_entries.push_back(new ColorEntry(ui->pgnBgColor, Settings::PgnBackgroundColor));
+    m_entries.push_back(new ColorEntry(ui->pgnNoMoveColor, Settings::PgnMoveColor));
+    m_entries.push_back(new ColorEntry(ui->pgnHiMoveColor, Settings::PgnHiMoveColor));
+    m_entries.push_back(new ColorEntry(ui->pgnHiColor, Settings::PgnHiColor));
+    m_entries.push_back(new ColorEntry(ui->coordsBorderColor, Settings::CoordsBorderColor));
+    m_entries.push_back(new ColorEntry(ui->coordsTextColor, Settings::CoordsTextColor));
+    m_entries.push_back(new CheckBoxEntry(ui->coordsCheckBox, Settings::ShouldDrawCoords));
 
     readSettings();
 }
 
 SettingsDialog::~SettingsDialog()
 {
+    for (AbstractEntry* entry : m_entries)
+        delete entry;
     delete ui;
-}
-
-void SettingsDialog::onLsColorChanged(QColor color)
-{
-    Settings::instance().set(Settings::LightSquareColor, color);
-}
-
-void SettingsDialog::onDsColorChanged(QColor color)
-{
-    Settings::instance().set(Settings::DarkSquareColor, color);
-}
-
-void SettingsDialog::onSelectionColorChanged(QColor color)
-{
-    Settings::instance().set(Settings::SelectionColor, color);
-}
-
-void SettingsDialog::checkBoxToggled(bool checked) {
-    Settings::instance().set(Settings::ShouldDrawCoords, checked);
 }
 
 void SettingsDialog::saveClicked() {
@@ -67,11 +97,8 @@ void SettingsDialog::pieceSetChanged(const QString& Value)
 void SettingsDialog::readSettings() {
     ui->PieceSetList->clear();
 
-    ui->lightSqColor->setColor(Settings::instance().get(Settings::LightSquareColor).value<QColor>());
-    ui->darkSqColor->setColor(Settings::instance().get(Settings::DarkSquareColor).value<QColor>());
-    ui->selectionColor->setColor(Settings::instance().get(Settings::SelectionColor).value<QColor>());
-
-    ui->CoordsCheckBox->setChecked(Settings::instance().get(Settings::ShouldDrawCoords).toBool());
+    for (auto& entry : m_entries)
+        entry->reset();
 
     QStringList PiecesList = PieceSet::getAvailableSets();
     PiecesList.swap(0, PiecesList.indexOf(Settings::instance().get(Settings::PieceStyleName).toString()));

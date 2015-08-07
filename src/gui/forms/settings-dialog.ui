@@ -53,7 +53,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QCheckBox" name="CoordsCheckBox">
+             <widget class="QCheckBox" name="coordsCheckBox">
               <property name="text">
                <string/>
               </property>
@@ -67,14 +67,14 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="ColorButton" name="pushButton_3">
+             <widget class="ColorButton" name="coordsBorderColor">
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="ColorButton" name="pushButton_4">
+             <widget class="ColorButton" name="coordsTextColor">
               <property name="text">
                <string/>
               </property>
@@ -179,28 +179,28 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="ColorButton" name="pgnBgButton">
+             <widget class="ColorButton" name="pgnBgColor">
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="ColorButton" name="normalMoveButton">
+             <widget class="ColorButton" name="pgnNoMoveColor">
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="ColorButton" name="pushButton_7">
+             <widget class="ColorButton" name="pgnHiMoveColor">
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="ColorButton" name="pushButton_8">
+             <widget class="ColorButton" name="pgnHiColor">
               <property name="text">
                <string/>
               </property>
@@ -295,22 +295,6 @@
     <hint type="destinationlabel">
      <x>266</x>
      <y>199</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>CoordsCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>SettingsDialog</receiver>
-   <slot>checkBoxToggled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>154</x>
-     <y>240</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>265</x>
-     <y>239</y>
     </hint>
    </hints>
   </connection>

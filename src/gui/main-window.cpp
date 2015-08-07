@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     , mSettingsDialog(nullptr)
 {
     ui->setupUi(this);
+    setWindowTitle("QtChess");
     // Setup widgets
     ui->Board->setModel(&mGameTree.getLast()->Game);
 
@@ -24,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
     // Connect text widget signals
     QObject::connect(ui->GameTextWidget, SIGNAL(positionSelected(GameTreeNode*)), this, SLOT(onPositionSet(GameTreeNode*)));
     QObject::connect(ui->Board, SIGNAL(moveMade(Move)), ui->GameTextWidget, SLOT(redraw()));
-    //QObject::connect(&Settings::instance(), SIGNAL(changed()), ui->GameTextWidget, SLOT(redraw()));
 
     ui->GameTextWidget->setGameTree(&mGameTree);
 }

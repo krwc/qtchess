@@ -12,8 +12,9 @@ class Settings : public QObject {
 public:
     enum Key {
         PieceStyleName, LightSquareColor, DarkSquareColor,
-        SelectionColor, ShouldDrawCoords, BorderSize, MarginSize,
-        EnginePath, ThemeName
+        SelectionColor, PgnBackgroundColor, PgnMoveColor, PgnHiMoveColor,
+        PgnHiColor, CoordsBorderColor, CoordsTextColor, ShouldDrawCoords,
+        BorderSize, MarginSize, EnginePath, ThemeName
     };
 
     class Entry {

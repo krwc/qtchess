@@ -23,7 +23,7 @@ BoardWidget::BoardWidget(QWidget *parent)
     setMinimumSize(MinSize, MinSize);
     setMouseTracking(true);
 
-    QObject::connect(&Settings::instance(), SIGNAL(changed()), this, SLOT(update()));
+    QObject::connect(&Settings::instance(), &Settings::changed, this, &BoardWidget::update);
 }
 
 void BoardWidget::setModel(Board* Model) {
@@ -131,9 +131,10 @@ void BoardWidget::drawBorder(QPainter& context) {
         return;
 
     int size = Settings::instance().get(Settings::BorderSize).toInt();
+
     QPen Pen;
-    // FIXME: Color should be controllable by the user
-    Pen.setColor(QColor(48, 48, 48));
+
+    Pen.setColor(Settings::instance().get(Settings::CoordsBorderColor).value<QColor>());
     Pen.setWidth(size);
     Pen.setJoinStyle(Qt::MiterJoin);
     context.setPen(Pen);
@@ -147,12 +148,11 @@ void BoardWidget::drawBorder(QPainter& context) {
     context.drawLine(BottomRight, BottomLeft);
     context.drawLine(BottomLeft, TopLeft);
 
-    QBrush Brush = QBrush(Qt::GlobalColor::white);
+    QBrush Brush = QBrush(Qt::white);
     QFont Font("Monospace", 10, QFont::Bold);
 
     context.setBrush(Brush);
-    // FIXME: Should also be configurable
-    context.setPen(Qt::GlobalColor::white);
+    context.setPen(Settings::instance().get(Settings::CoordsTextColor).value<QColor>());
     context.setFont(Font);
 
     for (int i = 0; i < 8; i++) {

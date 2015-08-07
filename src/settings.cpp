@@ -5,14 +5,20 @@
 Settings::Settings()
   : mSettings("QtChess", "QtChess")
 {
-    mValues[Settings::PieceStyleName]   = Entry("piece_style_name", "default");
-    mValues[Settings::LightSquareColor] = Entry("light_square_color", QColor(255, 255, 255));
-    mValues[Settings::DarkSquareColor]  = Entry("dark_square_color", QColor(0, 0, 0));
-    mValues[Settings::SelectionColor]   = Entry("selection_color", QColor(10, 28, 160));
-    mValues[Settings::ShouldDrawCoords] = Entry("should_draw_coords", true);
-    mValues[Settings::BorderSize]       = Entry("border_size", 20);
-    mValues[Settings::MarginSize]       = Entry("margin_size", 5);
-    mValues[Settings::EnginePath]       = Entry("engine_path", "");
+    mValues[Settings::PieceStyleName]     = Entry("piece_style_name", "default");
+    mValues[Settings::LightSquareColor]   = Entry("light_square_color", QColor(Qt::white));
+    mValues[Settings::DarkSquareColor]    = Entry("dark_square_color", QColor(Qt::black));
+    mValues[Settings::SelectionColor]     = Entry("selection_color", QColor(10, 28, 160));
+    mValues[Settings::PgnBackgroundColor] = Entry("pgn_bg_color", QColor(Qt::white));
+    mValues[Settings::PgnMoveColor]       = Entry("pgn_move_color", QColor(Qt::black));
+    mValues[Settings::PgnHiMoveColor]     = Entry("png_hi_move_color", QColor(Qt::white));
+    mValues[Settings::PgnHiColor]         = Entry("png_hi_color", QColor(Qt::black));
+    mValues[Settings::CoordsBorderColor]  = Entry("coords_border_color", QColor(Qt::gray));
+    mValues[Settings::CoordsTextColor]    = Entry("coords_text_color", QColor(Qt::white));
+    mValues[Settings::ShouldDrawCoords]   = Entry("should_draw_coords", true);
+    mValues[Settings::BorderSize]         = Entry("border_size", 20);
+    mValues[Settings::MarginSize]         = Entry("margin_size", 5);
+    mValues[Settings::EnginePath]         = Entry("engine_path", "");
 
     load();
 }

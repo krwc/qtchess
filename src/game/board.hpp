@@ -8,6 +8,7 @@
 #include <cassert>
 #include <QString>
 
+// FIXME: This enumeration is ugly as hell, move specifics should be stored differently.
 enum MoveType {
     MOVE_NONSPECIAL,
     MOVE_CASTLE_SHORT,
@@ -17,6 +18,7 @@ enum MoveType {
     MOVE_PROMOTION
 };
 
+// FIXME: This structure should not be public.
 struct GameState {
     std::map<Player, bool> ShortCastlingRight;
     std::map<Player, bool> LongCastlingRight;
