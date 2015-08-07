@@ -15,7 +15,10 @@ const GameState Board::InitialGameState = {
     },
     .IsCheck = false,
     .WhoIsPlaying = Player::white(),
-    .EnPassantPlayer = Player::none()
+    .EnPassantPlayer = Player::none(),
+    .EnPassantCoords = { -1, -1 },
+    .HalfMoveClock = 0,
+    .FullMoveCounter = 1
 };
 
 const Coord2D<int> Board::A1 = Coord2D<int>(0, 7);
@@ -40,8 +43,63 @@ Board::Board()
 {
 }
 
-QString Board::toFen() const {
-    return "";
+QString Board::toFen() const
+{
+    QString fen;
+
+    for (int rank = 0; rank < 8; ++rank) {
+        QVector<char> fileString;
+
+        for (int file = 0; file < 8; ++file) {
+            const Piece& piece = pieceAt(file, rank);
+
+            if (!piece.isNone()) {
+                if (piece.owner().isBlack())
+                    fileString.append(piece.symbolString().toLower().at(0).toLatin1());
+                else
+                    fileString.append(piece.symbolString().toUpper().at(0).toLatin1());
+            } else {
+                // Last element is a number, and it is still empty, this means
+                // there is more empty squares.
+                if (fileString.size() && isdigit(fileString.last()))
+                    ++fileString.last();
+                else
+                    fileString.append('1');
+            }
+        }
+
+        for (char element : fileString)
+            fen += element;
+
+        fen += '/';
+    }
+    // Remove last slash
+    fen.chop(1);
+
+    // Side to move
+    fen += (currentPlayer().isWhite() ? " w " : " b ");
+
+    // Castling rights
+    if (!hasShortCastlingRights(Player::white()) && !hasShortCastlingRights(Player::black()) &&
+        !hasLongCastlingRights(Player::white()) && !hasLongCastlingRights(Player::black()))
+        fen += " - ";
+    else {
+        fen += hasShortCastlingRights(Player::white()) ? "K" : "";
+        fen += hasLongCastlingRights(Player::white()) ? "Q" : "";
+        fen += hasShortCastlingRights(Player::black()) ? "k" : "";
+        fen += hasLongCastlingRights(Player::black()) ? "q" : "";
+    }
+
+    // En passant
+    if (isLegalCoord(mState.EnPassantCoords.x, mState.EnPassantCoords.y))
+        fen += QString(" %1 ").arg(squareString(mState.EnPassantCoords));
+    else
+        fen += " - ";
+    // Move clocks
+    fen += QString("%1 %2").arg(QString::number(mState.HalfMoveClock),
+                                QString::number(mState.FullMoveCounter));
+
+    return fen;
 }
 
 QString Board::fileString(int file) const {
@@ -248,7 +306,7 @@ bool Board::isLegal(Move move, GameState* retState, MoveType* retType) const {
     bool legal = false;
     bool moveIsCastle = false;
     MoveType type = MOVE_NONSPECIAL;
-    Coord2D<int> enPassantCoords;
+    Coord2D<int> enPassantCoords = { -1, -1 };
 
     switch (pieceAt(move.From).type()) {
     case Piece::Pawn:   legal = isLegalPawnMove(move, type, enPassantCoords); break;
@@ -278,6 +336,22 @@ bool Board::isLegal(Move move, GameState* retState, MoveType* retType) const {
     }
     NextState.WhoIsPlaying = currentPlayer().opponent();
     NextState.IsCheck = isInCheckAfterTheMove(currentPlayer().opponent(), move, type);
+
+    // Half move clock update
+    if (pieceAt(move.from()).isPawn() || owner(move.to()) != Player::none() || type == MOVE_ENPASSANT_CAPTURE)
+        NextState.HalfMoveClock = 0;
+    else
+        ++NextState.HalfMoveClock;
+    // Full move counter update
+    if (pieceAt(move.from()).owner().isBlack())
+        ++NextState.FullMoveCounter;
+    // En-passant target update
+    if (enPassantCoords == mState.EnPassantCoords)
+        NextState.EnPassantCoords = { -1, -1 };
+    else {
+        NextState.EnPassantCoords = enPassantCoords;
+        NextState.EnPassantPlayer = currentPlayer().opponent();
+    }
 
     if (retState)
         *retState = NextState;
@@ -311,13 +385,13 @@ bool Board::isLegalPawnMove(Move move, MoveType& Type,
             if (!isLegalCoord(Neighbour[i]))
                 continue;
             if (pieceAt(Neighbour[i]).isPawn() && owner(Neighbour[i]) != currentPlayer()) {
-                EnPassantCoords.x = move.To.x;
-                EnPassantCoords.y = move.To.y +
-                                    (currentPlayer().isWhite() ? +1 : -1);
                 // Yes, we did
                 Type = MOVE_ENPASSANT_GENERATE;
             }
         }
+        EnPassantCoords.x = move.to().x;
+        EnPassantCoords.y = move.to().y + (currentPlayer().isWhite() ? +1 : -1);
+
         return true;
     } else if (Distance == 1) {
         CoordsVector Attacks = getPawnAttack(move.From.x, move.From.y,

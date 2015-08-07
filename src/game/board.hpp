@@ -26,6 +26,10 @@ struct GameState {
     Player EnPassantPlayer;
     // Coordinates of the field that will be a capturer destination
     Coord2D<int> EnPassantCoords;
+    // Number of half-moves since the last capture or pawn move
+    int HalfMoveClock;
+    // Number of full-moves
+    int FullMoveCounter;
 };
 
 class Board {
