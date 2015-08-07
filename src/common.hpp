@@ -28,6 +28,10 @@ struct Coord2D {
     bool operator!=(const Coord2D& rhs) const {
         return x != rhs.x || y != rhs.y;
     }
+
+    bool operator< (const Coord2D& rhs) const {
+        return x == rhs.x ? y < rhs.y : x < rhs.x;
+    }
 };
 
 typedef QVector<Coord2D<int>> CoordsVector;

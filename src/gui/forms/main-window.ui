@@ -46,7 +46,7 @@
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Fi&amp;le</string>
     </property>
     <addaction name="separator"/>
     <addaction name="actionReset"/>
@@ -73,7 +73,7 @@
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
-       <widget class="GameTreeWidget" name="GameTextWidget">
+       <widget class="MoveTreeWidget" name="GameTextWidget">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -90,52 +90,52 @@
   </widget>
   <action name="actionReset">
    <property name="text">
-    <string>Reset</string>
+    <string>&amp;Reset</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
   </action>
   <action name="actionSettings">
    <property name="text">
-    <string>Settings</string>
+    <string>&amp;Settings</string>
    </property>
   </action>
   <action name="actionPosition">
    <property name="text">
-    <string>Position</string>
+    <string>&amp;Position</string>
    </property>
   </action>
   <action name="actionPaste_PGN_from_clipboard">
    <property name="text">
-    <string>Paste PGN from clipboard</string>
+    <string>Paste PGN from &amp;clipboard</string>
    </property>
   </action>
   <action name="actionPaste_FEN_from_clipboard">
    <property name="text">
-    <string>Paste FEN from clipboard</string>
+    <string>Past&amp;e FEN from clipboard</string>
    </property>
   </action>
   <action name="actionFlip">
    <property name="text">
-    <string>Flip</string>
+    <string>&amp;Flip</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>GameTreeWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/game-tree-widget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>BoardWidget</class>
    <extends>QWidget</extends>
    <header>gui/board-widget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MoveTreeWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/move-tree-widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

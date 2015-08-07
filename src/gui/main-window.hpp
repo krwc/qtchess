@@ -3,10 +3,10 @@
 
 #include "settings.hpp"
 #include "settings-dialog.hpp"
-#include "game/game-tree.hpp"
+#include "game/tree.hpp"
 #include <QMainWindow>
 
-struct GameTreeNode;
+class TreeNode;
 
 namespace Ui {
 class MainWindow;
@@ -24,12 +24,12 @@ private slots:
     void onSettingsShow();
     void onSettingsClose();
     void onBoardReset();
-
-    void onPositionSet(GameTreeNode*);
+    void onPositionChanged();
+    void onPositionSet(size_t);
 private:
     Ui::MainWindow *ui;
     // Game tree
-    GameTree mGameTree;
+    Tree mTree;
     // Settings dialog
     SettingsDialog* mSettingsDialog;
 

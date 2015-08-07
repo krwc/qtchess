@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("QtChess");
     // Setup widgets
-    ui->Board->setModel(&mGameTree.getLast()->Game);
+    ui->Board->setModel(&mTree.currentNode()->board());
+    ui->GameTextWidget->setTree(&mTree);
 
     // Connect board signals
     QObject::connect(ui->Board, SIGNAL(moveMade(Move)), this, SLOT(onMoveMade(Move)));
@@ -23,10 +24,10 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(onBoardReset()));
 
     // Connect text widget signals
-    QObject::connect(ui->GameTextWidget, SIGNAL(positionSelected(GameTreeNode*)), this, SLOT(onPositionSet(GameTreeNode*)));
-    QObject::connect(ui->Board, SIGNAL(moveMade(Move)), ui->GameTextWidget, SLOT(redraw()));
+    QObject::connect(ui->GameTextWidget, &MoveTreeWidget::moveSelected, this, &MainWindow::onPositionSet);
 
-    ui->GameTextWidget->setGameTree(&mGameTree);
+    QObject::connect(&mTree, &Tree::changed, this, &MainWindow::onPositionChanged);
+    QObject::connect(&mTree, &Tree::changed, ui->GameTextWidget, &MoveTreeWidget::redraw);
 }
 
 MainWindow::~MainWindow()
@@ -36,7 +37,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::onMoveMade(Move move) {
     MoveType moveType = MOVE_NONSPECIAL;
-    Board& board = mGameTree.getLast()->Game;
+    const Board& board = mTree.currentNode()->board();
 
     if (board.isLegal(move, nullptr, &moveType)) {
         if (moveType == MOVE_PROMOTION) {
@@ -46,7 +47,7 @@ void MainWindow::onMoveMade(Move move) {
             // Modify move, so that it knows about promoted piece
             move = Move(move.from(), move.to(), dialog.selectedPieceType());
         }
-        onPositionSet(mGameTree.addVariation(mGameTree.getLast(), move));
+        mTree.addMove(move);
     }
 }
 
@@ -63,13 +64,17 @@ void MainWindow::onSettingsClose() {
     mSettingsDialog = nullptr;
 }
 
-void MainWindow::onBoardReset() {
-    mGameTree.delVariation(mGameTree.getRoot());
-    ui->Board->setModel(&mGameTree.getLast()->Game);
-    ui->GameTextWidget->redraw();
+void MainWindow::onBoardReset()
+{
+    mTree.clear();
 }
 
-void MainWindow::onPositionSet(GameTreeNode* Node) {
-    mGameTree.setLast(Node);
-    ui->Board->setModel(&mGameTree.getLast()->Game);
+void MainWindow::onPositionChanged()
+{
+    ui->Board->setModel(&mTree.currentNode()->board());
+}
+
+void MainWindow::onPositionSet(size_t uid)
+{
+    mTree.setCurrent(TreeNode::fromUid(uid));
 }

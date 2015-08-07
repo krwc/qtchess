@@ -11,8 +11,10 @@ Settings::Settings()
     mValues[Settings::SelectionColor]     = Entry("selection_color", QColor(10, 28, 160));
     mValues[Settings::PgnBackgroundColor] = Entry("pgn_bg_color", QColor(Qt::white));
     mValues[Settings::PgnMoveColor]       = Entry("pgn_move_color", QColor(Qt::black));
-    mValues[Settings::PgnHiMoveColor]     = Entry("png_hi_move_color", QColor(Qt::white));
-    mValues[Settings::PgnHiColor]         = Entry("png_hi_color", QColor(Qt::black));
+    mValues[Settings::PgnHiMoveColor]     = Entry("pgn_hi_move_color", QColor(Qt::white));
+    mValues[Settings::PgnHiColor]         = Entry("pgn_hi_color", QColor(Qt::black));
+    mValues[Settings::PgnNumberColor]     = Entry("pgn_number_color", QColor(Qt::black));
+    mValues[Settings::PgnVariationColor]  = Entry("pgn_number_color", QColor(Qt::black));
     mValues[Settings::CoordsBorderColor]  = Entry("coords_border_color", QColor(Qt::gray));
     mValues[Settings::CoordsTextColor]    = Entry("coords_text_color", QColor(Qt::white));
     mValues[Settings::ShouldDrawCoords]   = Entry("should_draw_coords", true);

@@ -13,8 +13,8 @@ public:
     enum Key {
         PieceStyleName, LightSquareColor, DarkSquareColor,
         SelectionColor, PgnBackgroundColor, PgnMoveColor, PgnHiMoveColor,
-        PgnHiColor, CoordsBorderColor, CoordsTextColor, ShouldDrawCoords,
-        BorderSize, MarginSize, EnginePath, ThemeName
+        PgnHiColor, PgnNumberColor, PgnVariationColor, CoordsBorderColor,
+        CoordsTextColor, ShouldDrawCoords, BorderSize, MarginSize, EnginePath, ThemeName
     };
 
     class Entry {

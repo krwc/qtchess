@@ -60,6 +60,9 @@ public:
     /*! \brief Returns algebraic notation string of the given move */
     QString algebraicNotationString(Move move) const;
 
+    /*! \brief Returns full move count */
+    int fullMoveCount() const;
+
     /*! \brief Gets piece reference.
      *
      * Returns piece reference located at given coordinate;

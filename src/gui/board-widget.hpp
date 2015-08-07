@@ -19,7 +19,7 @@ class BoardWidget : public QWidget
 public:
     explicit BoardWidget(QWidget *parent = 0);
 
-    void setModel(Board*);
+    void setModel(const Board*);
     /* Emits move signal */
     void emitMove(Move move);
     /* Handles settings change */
@@ -67,7 +67,7 @@ private:
     int absolute(int coord) const;
 private:
     BoardWidgetState* mState;
-    Board* mModel;
+    const Board* mModel;
     PieceSet* mPieceSet;
     /* Geometry properties */
     bool mFlipped;

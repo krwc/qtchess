@@ -61,6 +61,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_entries.push_back(new ColorEntry(ui->pgnNoMoveColor, Settings::PgnMoveColor));
     m_entries.push_back(new ColorEntry(ui->pgnHiMoveColor, Settings::PgnHiMoveColor));
     m_entries.push_back(new ColorEntry(ui->pgnHiColor, Settings::PgnHiColor));
+    m_entries.push_back(new ColorEntry(ui->pgnNumberColor, Settings::PgnNumberColor));
+    m_entries.push_back(new ColorEntry(ui->pgnVariationColor, Settings::PgnVariationColor));
     m_entries.push_back(new ColorEntry(ui->coordsBorderColor, Settings::CoordsBorderColor));
     m_entries.push_back(new ColorEntry(ui->coordsTextColor, Settings::CoordsTextColor));
     m_entries.push_back(new CheckBoxEntry(ui->coordsCheckBox, Settings::ShouldDrawCoords));

@@ -26,8 +26,8 @@ BoardWidget::BoardWidget(QWidget *parent)
     QObject::connect(&Settings::instance(), &Settings::changed, this, &BoardWidget::update);
 }
 
-void BoardWidget::setModel(Board* Model) {
-    mModel = Model;
+void BoardWidget::setModel(const Board* model) {
+    mModel = model;
     redraw();
 }
 

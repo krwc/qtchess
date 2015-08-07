@@ -23,6 +23,14 @@ struct Move {
                Move.PromotionPiece == PromotionPiece;
     }
 
+    bool operator!= (const Move& move) const {
+        return !(*this == move);
+    }
+
+    bool operator< (const Move& move) const {
+        return from() == move.from() ? to() < move.to() : from() < move.from();
+    }
+
     Coord2D<int> from() const {
         return From;
     }

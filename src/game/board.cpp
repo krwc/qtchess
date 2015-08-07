@@ -183,6 +183,11 @@ QString Board::algebraicNotationString(Move move) const {
     return (piece.isPawn() ? "" : piece.symbolString()) + uniqueFrom + squareString(move.to()) + check;
 }
 
+int Board::fullMoveCount() const
+{
+    return mState.FullMoveCounter;
+}
+
 const Piece& Board::pieceAt(const Coord2D<int>& coord) const {
     return pieceAt(coord.x, coord.y);
 }
