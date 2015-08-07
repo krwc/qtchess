@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QPainter>
 #include <QMenu>
-#include <QStack>
 #include <QContextMenuEvent>
 
 
@@ -95,6 +94,7 @@ QString TreeHtml::html(const Tree* tree)
     QString result;
 
     traverse(result, Move::NullMove, tree->rootNode(), tree);
+
     QString style = styleSheet.arg(
         Settings::instance().get(Settings::PgnMoveColor).value<QColor>().name(),
         Settings::instance().get(Settings::PgnVariationColor).value<QColor>().name(),
@@ -146,7 +146,6 @@ void MoveTreeWidget::contextMenuEvent(QContextMenuEvent* event)
     menu.exec(event->globalPos());
     redraw();
 }
-
 
 void MoveTreeWidget::redraw()
 {

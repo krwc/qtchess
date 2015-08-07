@@ -1,10 +1,9 @@
 #include "tree.hpp"
 #include <QDebug>
 
-TreeNode::TreeNode(const Board& board, TreeNode* parent, bool isPv)
+TreeNode::TreeNode(const Board& board, TreeNode* parent)
     : m_board(board)
     , m_parentLine(parent)
-    , m_isPv(isPv)
 {
 
 }
@@ -39,11 +38,6 @@ bool TreeNode::hasNext(Move move) const
 bool TreeNode::hasNeighbours() const
 {
     return m_moves.size();
-}
-
-bool TreeNode::isPrincipalVariation() const
-{
-    return m_isPv;
 }
 
 Move TreeNode::nextMove() const
@@ -83,10 +77,8 @@ void TreeNode::setMainLine(TreeNode* node)
 
 void TreeNode::addTransition(Move move, TreeNode* node)
 {
-    if (!hasNeighbours()) {
-        node->m_isPv = m_isPv;
+    if (!hasNeighbours())
         setMainLine(node);
-    }
 
     m_moves[move] = node;
 }

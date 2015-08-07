@@ -7,7 +7,7 @@
 /*! \brief Internal node structure representation */
 class TreeNode {
 public:
-    TreeNode(const Board& board = Board(), TreeNode* parent = nullptr, bool isPv = true);
+    TreeNode(const Board& board = Board(), TreeNode* parent = nullptr);
 
     /*! \brief Returns node current board */
     const Board& board() const;
@@ -26,9 +26,6 @@ public:
 
     /*! \brief Tests whether this node has neighbours */
     bool hasNeighbours() const;
-
-    /*! \brief Tests whether this node is not main variation */
-    bool isPrincipalVariation() const;
 
     /*! \brief Returns next move in the mainline */
     Move nextMove() const;
@@ -54,8 +51,6 @@ public:
     /*! \brief Removes transition */
     TreeNode* delTransition(Move move);
 private:
-    /*!< true if this is node from principal variation */
-    bool m_isPv;
     /*!< chess-board snapshot */
     Board m_board;
     /*!< main line in this line */
@@ -103,6 +98,5 @@ private:
     /*! \brief Currently active node */
     TreeNode* m_current;
 };
-
 
 #endif
