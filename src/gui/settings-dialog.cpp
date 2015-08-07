@@ -72,6 +72,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 SettingsDialog::~SettingsDialog()
 {
+    Settings::instance().reset();
+
     for (AbstractEntry* entry : m_entries)
         delete entry;
     delete ui;

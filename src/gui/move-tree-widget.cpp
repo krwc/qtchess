@@ -51,6 +51,7 @@ static QString styleSheet = R"(
         }
     </style>
 )";
+
 static QString numberFmt = "<span class='TreeMoveNumber'>%1</span>";
 static QString moveFmt = "<a class='TreeMove' href='%1'>%2</a>";
 static QString variantLiFmt = "<li class='TreeVariant'>(%1)</li>";
@@ -164,5 +165,3 @@ void MoveTreeWidget::onMoveHovered(const QString& url)
     else
         m_hoveredMoveUid = url.toULongLong();
 }
-
-#endif
