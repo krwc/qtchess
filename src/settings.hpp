@@ -14,46 +14,47 @@ public:
         PieceStyleName, LightSquareColor, DarkSquareColor,
         SelectionColor, PgnBackgroundColor, PgnMoveColor, PgnHiMoveColor,
         PgnHiColor, PgnNumberColor, PgnVariationColor, CoordsBorderColor,
-        CoordsTextColor, ShouldDrawCoords, BorderSize, MarginSize, EnginePath, ThemeName
+        CoordsTextColor, ShouldDrawCoords, BorderSize, MarginSize,
+        ThemeName, EngineList, CurrentEngine
     };
 
     class Entry {
     private:
-        QString mName;
-        QVariant mCurrentValue;
-        QVariant mDefaultValue;
+        QString m_name;
+        QVariant m_currentValue;
+        QVariant m_defaultValue;
     public:
         Entry()
-          : mName("")
-          , mCurrentValue(0)
-          , mDefaultValue(0)
+          : m_name("")
+          , m_currentValue(0)
+          , m_defaultValue(0)
         { }
 
         Entry(const QString& name, const QVariant& defaultValue) 
-          : mName(name)
-          , mCurrentValue(defaultValue)
-          , mDefaultValue(defaultValue)
+          : m_name(name)
+          , m_currentValue(defaultValue)
+          , m_defaultValue(defaultValue)
         { }
 
         QVariant currentValue() const {
-            return mCurrentValue;
+            return m_currentValue;
         }
 
         QVariant defaultValue() const {
-            return mDefaultValue;
+            return m_defaultValue;
         }
 
         QString name() const {
-            return mName;
+            return m_name;
         }
 
         void setValue(QVariant value) {
-            mCurrentValue = value;
+            m_currentValue = value;
         }
     };
 private:
     /** Loaded settings values from file */
-    QMap<Key, Entry> mValues;
+    QMap<Key, Entry> m_values;
     Settings();
 public:
     /** Returns settings singleton instance */
@@ -63,6 +64,12 @@ public:
     QVariant get(Settings::Key key);
     /** Sets value of an element of given key */
     void set(Settings::Key key, const QVariant& value);
+
+    /*! \brief Returns value of an element of the given string-key. */
+    QVariant get(const QString& key);
+    /*! \brief Sets value of an element of given key */
+    void set(const QString& key, const QVariant& value);
+
     void reset();
     void save();
 signals:
@@ -70,7 +77,7 @@ signals:
     void changed();
 private:
     void load();
-    QSettings mSettings;
+    QSettings m_settings;
 };
 
 #endif // SETTINGS_HPP
