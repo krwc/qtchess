@@ -6,14 +6,14 @@
 #include <QList>
 #include <QMap>
 
-
+class HtmlMoveTreeBuilder;
 class TreeHtml
 {
 public:
     /*! \brief Returns html representation of the tree */
     static QString html(const Tree*);
 private:
-    static void traverse(QString& result, Move lastMove, const TreeNode* node,
+    static void traverse(HtmlMoveTreeBuilder& builder, Move lastMove, const TreeNode* node,
                          const Tree* tree);
 };
 

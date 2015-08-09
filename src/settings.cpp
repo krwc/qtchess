@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QDir>
 
+
 Settings::Settings()
   : m_settings("QtChess", "QtChess")
 {

@@ -51,6 +51,12 @@ public:
     /*! \brief Returns rank string */
     QString rankString(int rank) const;
 
+    /*! \brief Returns rank code */
+    int charToRank(QChar rank) const;
+
+    /*! \brief Returns rank code */
+    int charToFile(QChar file) const;
+
     /*! \brief Returns field string */
     QString squareString(Coord2D<int> coord) const;
 
@@ -59,6 +65,9 @@ public:
 
     /*! \brief Returns algebraic notation string of the given move */
     QString algebraicNotationString(Move move) const;
+
+    /*! \brief Returns move from long algebraic notation */
+    Move longAlgebraicNotationToMove(const QString& lan) const;
 
     /*! \brief Returns full move count */
     int fullMoveCount() const;

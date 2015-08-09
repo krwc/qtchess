@@ -5,6 +5,7 @@
 #include <QColorDialog>
 #include <QColor>
 
+
 AbstractEntry::AbstractEntry(Settings::Key key)
     : m_key(key)
 {
@@ -47,6 +48,7 @@ void CheckBoxEntry::reset()
     m_box->setChecked(Settings::instance().get(key()).toBool());
 }
 
+
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::SettingsDialog)
@@ -66,6 +68,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_entries.push_back(new ColorEntry(ui->coordsBorderColor, Settings::CoordsBorderColor));
     m_entries.push_back(new ColorEntry(ui->coordsTextColor, Settings::CoordsTextColor));
     m_entries.push_back(new CheckBoxEntry(ui->coordsCheckBox, Settings::ShouldDrawCoords));
+
+    QObject::connect(ui->addEngine, &QPushButton::clicked, ui->engineList, &EngineList::addEngine);
+    QObject::connect(ui->delEngine, &QPushButton::clicked, ui->engineList, &EngineList::delEngine);
 
     readSettings();
 }

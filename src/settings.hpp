@@ -6,7 +6,6 @@
 #include <QList>
 #include <QMap>
 
-
 class Settings : public QObject {
     Q_OBJECT
 public:

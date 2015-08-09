@@ -102,20 +102,43 @@ QString Board::toFen() const
     return fen;
 }
 
-QString Board::fileString(int file) const {
+QString Board::fileString(int file) const
+{
     return QString(file + 'a');
 }
 
-QString Board::rankString(int rank) const {
+QString Board::rankString(int rank) const
+{
     return QString(rank + '1');
+}
+
+int Board::charToRank(QChar rank) const
+{
+    return '8' - rank.toLatin1();
+}
+
+int Board::charToFile(QChar file) const
+{
+    return file.toLatin1() - 'a';
 }
 
 QString Board::squareString(Coord2D<int> coord) const {
     return fileString(coord.x) + rankString(7 - coord.y);
 }
 
-QString Board::longAlgebraicNotationString(Move move) const {
-    return squareString(move.from()) + squareString(move.to());
+QString Board::longAlgebraicNotationString(Move move) const
+{
+    QString promotion;
+
+    switch (move.promotionPiece()) {
+    case Piece::Knight: promotion = "n"; break;
+    case Piece::Bishop: promotion = "b"; break;
+    case Piece::Rook:   promotion = "r"; break;
+    case Piece::Queen:  promotion = "q"; break;
+    default: break;
+    }
+
+    return squareString(move.from()) + squareString(move.to()) + promotion;
 }
 
 QString Board::algebraicNotationString(Move move) const {
@@ -183,6 +206,33 @@ QString Board::algebraicNotationString(Move move) const {
     return (piece.isPawn() ? "" : piece.symbolString()) + uniqueFrom + squareString(move.to()) + check;
 }
 
+Move Board::longAlgebraicNotationToMove(const QString& lan) const
+{
+    Move move;
+
+    move.From.x = charToFile(lan.at(0));
+    move.From.y = charToRank(lan.at(1));
+    move.To.x = charToFile(lan.at(2));
+    move.To.y = charToRank(lan.at(3));
+
+    // This is a promotion
+    if (lan.length() > 4) {
+        QChar piece = lan.at(4);
+
+        if (piece == 'b')
+            move.PromotionPiece = Piece::Bishop;
+        else if (piece == 'r')
+            move.PromotionPiece = Piece::Rook;
+        else if (piece == 'q')
+            move.PromotionPiece = Piece::Queen;
+        else
+            // Default promotion is funny.
+            move.PromotionPiece = Piece::Knight;
+    }
+
+    return move;
+}
+
 int Board::fullMoveCount() const
 {
     return mState.FullMoveCounter;
@@ -214,7 +264,7 @@ bool Board::makeMove(Move move) {
     movePieces(move, type);
     mState = nextState;
     // Made the move
-    return false;
+    return true;
 }
 
 bool Board::isCheck() const {
