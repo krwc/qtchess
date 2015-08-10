@@ -15,7 +15,7 @@ Settings::Settings()
     m_values[Settings::PgnHiMoveColor]     = Entry("pgn/hi_move_color", QColor(Qt::white));
     m_values[Settings::PgnHiColor]         = Entry("pgn/hi_color", QColor(Qt::black));
     m_values[Settings::PgnNumberColor]     = Entry("pgn/number_color", QColor(Qt::black));
-    m_values[Settings::PgnVariationColor]  = Entry("pgn/number_color", QColor(Qt::black));
+    m_values[Settings::PgnVariationColor]  = Entry("pgn/variation_color", QColor(Qt::darkGreen));
     m_values[Settings::CoordsBorderColor]  = Entry("coords/border_color", QColor("#282828"));
     m_values[Settings::CoordsTextColor]    = Entry("coords/text_color", QColor(Qt::white));
     m_values[Settings::ShouldDrawCoords]   = Entry("board/should_draw_coords", true);

@@ -27,6 +27,9 @@ signals:
 private slots:
     void onReadyRead();
 private:
+    /*! \brief Parses option */
+    void parseOption(const QString& line);
+
     /*! \brief Parses info */
     void parseInfo(const QString& line);
 

@@ -61,6 +61,22 @@ void Engine::onReadyRead()
     }
 }
 
+void Engine::parseOption(const QString& line)
+{
+    QStringList tokens = line.split(" ");
+    QString name;
+
+    for (int i = 0; i < tokens.size(); ++i) {
+        if (tokens[i] == "name") {
+            while (tokens[i+1] != "type")
+                name += tokens[i++] + " ";
+            name.chop(1);
+        } else if (tokens[i] == "type") {
+
+        }
+    }
+}
+
 void Engine::parseInfo(const QString& line)
 {
     // Currently we don't care about non-eval lines
@@ -105,6 +121,8 @@ Engine::State Engine::parseLine(const QString& line)
         // End of the initialization, engine is now idle
         if (line.startsWith("uciok"))
             return Engine::Idling;
+        else if (line.startsWith("option"))
+            parseOption(line);
         break;
     case Engine::Working:
         if (line.startsWith("info"))
