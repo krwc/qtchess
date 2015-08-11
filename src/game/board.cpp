@@ -373,10 +373,6 @@ bool Board::isLegal(Move move, GameState* retState, MoveType* retType) const {
     default: break;
     }
 
-    qDebug() << "Legal move: " << legal;
-    qDebug() << "Check after move: " << isInCheckAfterTheMove(currentPlayer(), move, type);
-    if (moveIsCastle)
-        qDebug() << "Can castle: " << canCastle(type);
     if (!legal || isInCheckAfterTheMove(currentPlayer(), move, type))
         return false;
     if (moveIsCastle && !canCastle(type))
@@ -513,7 +509,7 @@ bool Board::isLegalKingMove(Move move, bool& moveIsCastle, MoveType& side) const
     else if (move.To == G8)
         side = MOVE_CASTLE_SHORT, legal = hasShortCastlingRights(Player::black());
     else if (move.To == C8 && pieceAt(B8).isNone())
-        side = MOVE_CASTLE_LONG, legal = hasShortCastlingRights(Player::black());
+        side = MOVE_CASTLE_LONG, legal = hasLongCastlingRights(Player::black());
 
     // It is not enough to check if this is the right castle,
     // we need to see there is no blocking pieces on the way.
