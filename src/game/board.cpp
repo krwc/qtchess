@@ -157,7 +157,7 @@ QString Board::algebraicNotationString(Move move) const {
     case MOVE_ENPASSANT_CAPTURE:
         return fileString(move.from().x) + "x" + squareString(move.to()) + check;
     case MOVE_PROMOTION:
-        return squareString(move.to()) + "=" + piece.symbolString() + check;
+        return squareString(move.to()) + "=" + Piece(move.promotionPiece()).symbolString() + check;
     default:
         break;
     }
