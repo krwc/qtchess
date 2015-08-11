@@ -98,7 +98,7 @@ void EngineWidget::redraw()
             qDebug() << info.m_lineString;
 
             if (!board.makeMove(move)) {
-                qDebug() << "Engine passed an invalid move: " << board.toFen();
+                qDebug() << "Engine passed an invalid move: " << board.toFen() << "move: " << moveString;
                 exit(1);
             }
 
