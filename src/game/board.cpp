@@ -553,7 +553,7 @@ CoordsVector Board::getAttackedCoords(Piece piece, Player owner, Coord2D<int> po
     int y = position.y;
 
     switch (piece.type()) {
-    case Piece::Pawn:   return getPawnAttack(x, y, owner);
+    case Piece::Pawn:   return getPawnAttack(x, y, owner.opponent());
     case Piece::Knight: return getKnightAttack(x, y);
     case Piece::Bishop: return getBishopAttack(x, y);
     case Piece::Rook:   return getRookAttack(x, y);

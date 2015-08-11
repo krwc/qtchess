@@ -15,7 +15,6 @@ private:
                          const Tree* tree);
 };
 
-
 class MoveTreeWidget : public QWebView {
     Q_OBJECT
 public:

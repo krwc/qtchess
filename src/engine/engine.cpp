@@ -170,7 +170,7 @@ void Engine::parseInfo(const QString& line)
                 info.setNps(tokens[++i].toInt());
             }
         }
-        info.m_lineString = line;
+
         emit variantParsed(info);
     } else {
         // It is engine info.
