@@ -1,7 +1,7 @@
-#include "gui/board-widget-state.hpp"
-#include "gui/board-widget.hpp"
+#include "gui/board/board-widget-state.hpp"
+#include "gui/board/board-widget.hpp"
 #include "game/board.hpp"
-#include <iostream>
+
 
 BoardWidgetState*
 BoardWidgetStateDragging::onMouseRelease(BoardWidget* Board, QMouseEvent* Event) {

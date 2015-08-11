@@ -1,18 +1,15 @@
-#include "gui/board-widget.hpp"
-#include "gui/board-widget-state.hpp"
-#include "settings.hpp"
+#include "gui/board/board-widget.hpp"
+#include "gui/board/board-widget-state.hpp"
 #include "game/board.hpp"
 #include "piece-set.hpp"
-#include <cstdlib>
-#include <cstdio>
-#include <iostream>
 #include <algorithm>
 #include <QPainter>
 
 static const int MinSize = 256;
 
-BoardWidget::BoardWidget(QWidget *parent)
+BoardWidget::BoardWidget(QWidget* parent, BoardSettings& settings)
     : QWidget(parent)
+    , m_settings(settings)
     , mState(new BoardWidgetStateNormal())
     , mModel(nullptr)
     , mPieceSet(nullptr)
@@ -23,7 +20,7 @@ BoardWidget::BoardWidget(QWidget *parent)
     setMinimumSize(MinSize, MinSize);
     setMouseTracking(true);
 
-    QObject::connect(&Settings::instance(), &Settings::changed, this, &BoardWidget::update);
+    QObject::connect(&settings, &AbstractSettings::changed, this, &BoardWidget::update);
 }
 
 void BoardWidget::setModel(const Board* model) {
@@ -50,10 +47,10 @@ void BoardWidget::update() {
 
     int borderSize = 0;
 
-    if (Settings::instance().get(Settings::ShouldDrawCoords).toBool())
-        borderSize = Settings::instance().get(Settings::BorderSize).toInt();
+    if (m_settings.get("boolBorder").toBool())
+        borderSize = m_settings.get("intBorderSize").toInt();
 
-    int margin = Settings::instance().get(Settings::MarginSize).toInt();
+    int margin = m_settings.get("intMarginSize").toInt();
     int totalMargin = borderSize + margin;
     mFieldSize = (std::min(mWidth, mHeight) - 2. * totalMargin) / 8.0;
 
@@ -99,7 +96,7 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* Event) {
 }
 
 void BoardWidget::ensureValidPieceSet() {
-    QString currentName = Settings::instance().get(Settings::PieceStyleName).toString();
+    QString currentName = m_settings.get("stringPieceStyle").toString();
 
     if (mPieceSet == nullptr || mPieceSet->styleName() != currentName) {
         delete mPieceSet;
@@ -127,14 +124,14 @@ void BoardWidget::drawBorder(QPainter& context) {
         "1", "2", "3", "4", "5", "6", "7", "8"
     };
 
-    if (!Settings::instance().get(Settings::ShouldDrawCoords).toBool())
+    if (!m_settings.get("boolBorder").toBool())
         return;
 
-    int size = Settings::instance().get(Settings::BorderSize).toInt();
+    int size = m_settings.get("intBorderSize").toInt();
 
     QPen Pen;
 
-    Pen.setColor(Settings::instance().get(Settings::CoordsBorderColor).value<QColor>());
+    Pen.setColor(m_settings.get("colorBorder").value<QColor>());
     Pen.setWidth(size);
     Pen.setJoinStyle(Qt::MiterJoin);
     context.setPen(Pen);
@@ -152,7 +149,7 @@ void BoardWidget::drawBorder(QPainter& context) {
     QFont Font("Monospace", 10, QFont::Bold);
 
     context.setBrush(Brush);
-    context.setPen(Settings::instance().get(Settings::CoordsTextColor).value<QColor>());
+    context.setPen(m_settings.get("colorBorderText").value<QColor>());
     context.setFont(Font);
 
     for (int i = 0; i < 8; i++) {
@@ -186,9 +183,9 @@ void BoardWidget::drawField(QPainter& context, int rank, int file) {
     QBrush Brush;
 
     if ((rank + file) % 2 == 0)
-        Brush = QBrush(Settings::instance().get(Settings::LightSquareColor).value<QColor>());
+        Brush = QBrush(m_settings.get("colorSquareLight").value<QColor>());
     else
-        Brush = QBrush(Settings::instance().get(Settings::DarkSquareColor).value<QColor>());
+        Brush = QBrush(m_settings.get("colorSquareDark").value<QColor>());
 
     context.fillRect(getFileOffset(file), getRankOffset(rank),
                  mFieldSize, mFieldSize, Brush);
@@ -221,7 +218,7 @@ void BoardWidget::drawSelection(QPainter& context) {
     int size = 2*int(double(std::min(mWidth,mHeight)) / MinSize);
     QBrush Brush = QBrush(QColor(0, 0, 0, 0));
     QPen Pen;
-    Pen.setColor(Settings::instance().get(Settings::SelectionColor).value<QColor>());
+    Pen.setColor(m_settings.get("colorPicking").value<QColor>());
     Pen.setWidth(size);
     Pen.setJoinStyle(Qt::MiterJoin);
 

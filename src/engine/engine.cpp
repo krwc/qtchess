@@ -1,27 +1,34 @@
 #include "engine.hpp"
 #include "game/board.hpp"
 #include <QDebug>
-#include <QRegExp>
 #include <stdexcept>
-#include <cstdio>
-#include <cstdlib>
-#include <QThread>
-#include <QMutex>
+#include "settings/settings-factory.hpp"
 
-Engine::Engine(const QString& path, const int timeoutMs)
+Engine::Engine(EngineSettings& settings, const int timeoutMs)
     : m_timeoutMs(timeoutMs)
     , m_process(new QProcess())
     , m_state(Engine::Initializing)
+    , m_settings(settings)
 {
+    QObject::connect(m_process, &QProcess::started, this, &Engine::onStarted);
     QObject::connect(m_process, &QProcess::readyRead, this, &Engine::onReadyRead);
+    m_process->setProgram(m_settings.get("stringPathExec").toString());
+}
+
+Engine::~Engine()
+{
+}
+
+void Engine::start()
+{
     // Start the engine.
-    m_process->start(path);
-    // Say hello
-    send("uci");
+    m_process->start();
 }
 
 void Engine::startAnalysis(const Board& current)
 {
+    if (m_process->state() != QProcess::Running)
+        m_process->start();
     // FIXME: This is stupid and plain wrong.
     while (m_state != Engine::Idling) {
         if (!m_process->waitForReadyRead(m_timeoutMs))
@@ -30,6 +37,8 @@ void Engine::startAnalysis(const Board& current)
 
     setState(Engine::Working);
     send("ucinewgame");
+    for (const QString& key : m_settings.keys())
+        setOption(key, m_settings.get(key).toString());
     send("position fen " + current.toFen());
     send("go infinite");
 }
@@ -42,9 +51,19 @@ void Engine::stopAnalysis()
     send("stop");
 }
 
+void Engine::setOption(const QString& name, const QString& value)
+{
+    send(QString("setoption name %1 value %2").arg(name, value));
+}
+
 bool Engine::isAnalysing() const
 {
     return m_state == Engine::Working;
+}
+
+void Engine::onStarted()
+{
+    send("uci");
 }
 
 void Engine::onReadyRead()
@@ -63,16 +82,59 @@ void Engine::onReadyRead()
 
 void Engine::parseOption(const QString& line)
 {
+    static QStringList keywords = {
+        "option", "name", "type", "check",
+        "spin", "combo", "button", "string",
+        "default", "min", "max", "var"
+    };
+
     QStringList tokens = line.split(" ");
     QString name;
 
     for (int i = 0; i < tokens.size(); ++i) {
         if (tokens[i] == "name") {
-            while (tokens[i+1] != "type")
-                name += tokens[i++] + " ";
+            while (!keywords.contains(tokens[++i])) {
+                name.append(tokens[i]);
+                name.append(' ');
+            }
             name.chop(1);
+            --i;
         } else if (tokens[i] == "type") {
+            QString type = tokens[++i];
+            EngineOption option;
 
+            if (type == "check") {
+                ++i;
+                option = EngineOption::checkbox(name, tokens[++i] == "true");
+            } else if (type == "button") {
+                option = EngineOption::button(name);
+            } else if (type == "string") {
+                ++i;
+                QString value;
+                while (++i < tokens.size()) {
+                    value.append(tokens[i]);
+                    value.append(' ');
+                }
+                value.chop(1);
+                option = EngineOption::string(name, value);
+            } else if (type == "spin") {
+                int defaultValue;
+                int minValue;
+                int maxValue;
+                while (++i < tokens.size()) {
+                    if (tokens[i] == "default")
+                        defaultValue = tokens[++i].toInt();
+                    else if (tokens[i] == "min")
+                        minValue = tokens[++i].toInt();
+                    else if (tokens[i] == "max")
+                        maxValue = tokens[++i].toInt();
+                }
+                option = EngineOption::spinbox(name, minValue, maxValue, defaultValue);
+            } else {
+                qDebug() << "Warning: ignored option: " << line;
+                break;
+            }
+            m_parsedOptions.push_back(option);
         }
     }
 }
@@ -85,7 +147,7 @@ void Engine::parseInfo(const QString& line)
 
     QStringList tokens = line.split(" ");
     QStringList moves;
-    LineInfo info;
+    VariantInfo info;
 
     for (int i = 0; i < tokens.size(); i++) {
         const QString& token = tokens[i];
@@ -109,7 +171,7 @@ void Engine::parseInfo(const QString& line)
         }
     }
 
-    emit lineInfo(info);
+    emit variantParsed(info);
 }
 
 Engine::State Engine::parseLine(const QString& line)
@@ -119,9 +181,10 @@ Engine::State Engine::parseLine(const QString& line)
     switch (m_state) {
     case Engine::Initializing:
         // End of the initialization, engine is now idle
-        if (line.startsWith("uciok"))
+        if (line.startsWith("uciok")) {
+            emit optionsParsed(m_parsedOptions);
             return Engine::Idling;
-        else if (line.startsWith("option"))
+        } else if (line.startsWith("option"))
             parseOption(line);
         break;
     case Engine::Working:

@@ -1,10 +1,11 @@
 #ifndef BOARDWIDGET_HPP
 #define BOARDWIDGET_HPP
 
+#include "settings/settings-factory.hpp"
 #include "game/board.hpp"
 #include <QWidget>
 
-class SettingsManager;
+class BoardSettings;
 class BoardWidgetState;
 class BoardWidgetStateDragging;
 class BoardWidgetStateNormal;
@@ -17,7 +18,8 @@ class BoardWidget : public QWidget
 
     Q_OBJECT
 public:
-    explicit BoardWidget(QWidget *parent = 0);
+    explicit BoardWidget(QWidget* parent = 0,
+                         BoardSettings& settings = SettingsFactory::boardSettings());
 
     void setModel(const Board*);
     /* Emits move signal */
@@ -66,6 +68,7 @@ private:
     /* Returns absolute coordinate depending on board rotation. */
     int absolute(int coord) const;
 private:
+    BoardSettings& m_settings;
     BoardWidgetState* mState;
     const Board* mModel;
     PieceSet* mPieceSet;

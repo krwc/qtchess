@@ -1,9 +1,11 @@
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
 #include <QProcess>
-#include <string>
-#include "engine/line-info.hpp"
+#include <QVector>
+#include "engine/variant-info.hpp"
+#include "engine/engine-option.hpp"
 
+class EngineSettings;
 class Board;
 class Engine : public QObject
 {
@@ -11,7 +13,11 @@ class Engine : public QObject
 public:
     enum State { Working, Stopping, Idling, Initializing };
 
-    explicit Engine(const QString& path, const int timeoutMs = 2000);
+    explicit Engine(EngineSettings& settings, const int timeoutMs = 2000);
+    ~Engine();
+
+    /*! \brief Starts an engine */
+    void start();
 
     /*! \brief Puts an engine into an ifinite analysis mode */
     void startAnalysis(const Board& current);
@@ -19,12 +25,16 @@ public:
     /*! \brief Stops analysis and blocks until an engine shuts up. */
     void stopAnalysis();
 
+    /*! \brief Sets engine option */
+    void setOption(const QString& name, const QString& value);
+
     /*! \brief Returns true if engine is currently analysing the game */
     bool isAnalysing() const;
-
 signals:
-    void lineInfo(LineInfo);
+    void variantParsed(VariantInfo);
+    void optionsParsed(QList<EngineOption>);
 private slots:
+    void onStarted();
     void onReadyRead();
 private:
     /*! \brief Parses option */
@@ -49,6 +59,10 @@ private:
     const int m_timeoutMs;
     QProcess* m_process;
     State m_state;
+    EngineSettings& m_settings;
+
+    /*!< \brief List of parsed options declared by the engine. */
+    QList<EngineOption> m_parsedOptions;
 };
 
 #endif // ENGINE_HPP

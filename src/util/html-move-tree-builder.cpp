@@ -1,5 +1,5 @@
 #include "util/html-move-tree-builder.hpp"
-#include "settings.hpp"
+#include "settings/settings-factory.hpp"
 
 static QString styleSheet = R"(
     <style>
@@ -78,13 +78,15 @@ QString HtmlMoveTreeBuilder::html() const
 
 QString HtmlMoveTreeBuilder::htmlWithStyle() const
 {
+    HtmlSettings& settings = SettingsFactory::htmlSettings();
+
     QString style = styleSheet.arg(
-        Settings::instance().get(Settings::PgnMoveColor).value<QColor>().name(),
-        Settings::instance().get(Settings::PgnVariationColor).value<QColor>().name(),
-        Settings::instance().get(Settings::PgnHiColor).value<QColor>().name(),
-        Settings::instance().get(Settings::PgnHiMoveColor).value<QColor>().name(),
-        Settings::instance().get(Settings::PgnBackgroundColor).value<QColor>().name(),
-        Settings::instance().get(Settings::PgnNumberColor).value<QColor>().name()
+        settings.get("colorMove").value<QColor>().name(),
+        settings.get("colorVariant").value<QColor>().name(),
+        settings.get("colorHighlight").value<QColor>().name(),
+        settings.get("colorMoveHighlight").value<QColor>().name(),
+        settings.get("colorBackground").value<QColor>().name(),
+        settings.get("colorMoveNumber").value<QColor>().name()
     );
     return style + QString("<div class='TreeBody'>%1</div>").arg(m_html);
 }

@@ -1,6 +1,7 @@
-#include "gui/engine-widget.hpp"
-#include "game/tree.hpp"
+#include "gui/engine/engine-widget.hpp"
 #include "util/html-move-tree-builder.hpp"
+#include "settings/settings-factory.hpp"
+#include "game/tree.hpp"
 #include "ui_engine-widget.h"
 #include <QDebug>
 #include <QThread>
@@ -8,17 +9,12 @@
 EngineWidget::EngineWidget(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::EngineWidget)
-    , m_engine(new Engine("/usr/games/stockfish"))
 {
     ui->setupUi(this);
 
     QObject::connect(ui->analyzeButton, &QPushButton::clicked, this, &EngineWidget::onAnalyzeClicked);
     QObject::connect(ui->stopButton, &QPushButton::clicked, this, &EngineWidget::onStopClicked);
     ui->engineOutput->setHtml("");
-
-    QObject::connect(m_engine, &Engine::lineInfo, this, &EngineWidget::onLineInfo);
-    // TODO: This should not be a constant
-    m_lines.resize(2);
 }
 
 EngineWidget::~EngineWidget()
@@ -33,16 +29,20 @@ QSize EngineWidget::sizeHint() const
 
 void EngineWidget::setBoard(const Board& board)
 {
+    if (!m_engine) {
+        m_currentBoard = board;
+        return;
+    }
+
     bool isAnalysing = m_engine->isAnalysing();
 
     if (isAnalysing)
         m_engine->stopAnalysis();
-    m_lines.clear();
+    m_variants.clear();
     m_currentBoard = board;
-   // qDebug() << "setBoard to " << m_currentBoard.toFen();
 
     if (isAnalysing) {
-        m_lines.clear();
+        m_variants.clear();
         m_engine->startAnalysis(m_currentBoard);
     }
 }
@@ -56,7 +56,7 @@ void EngineWidget::redraw()
 
     QString lines;
 
-    for (const LineInfo& info : m_lines) {
+    for (const VariantInfo& info : m_variants) {
         HtmlMoveTreeBuilder builder;
         Board board = m_currentBoard;
         QString score;
@@ -73,7 +73,6 @@ void EngineWidget::redraw()
 
         for (int i = 0; i < info.moveList().size(); i++) {
             const QString& moveString = info.moveList()[i];
-            QString mate;
             Move move = board.longAlgebraicNotationToMove(moveString);
 
             if (board.currentPlayer().isWhite())
@@ -95,20 +94,30 @@ void EngineWidget::redraw()
     ui->engineOutput->setHtml(lines);
 }
 
-void EngineWidget::onLineInfo(LineInfo info)
+void EngineWidget::onVariantParsed(VariantInfo info)
 {
-    m_lines.resize(info.id());
-    m_lines[info.id()-1] = info;
+    m_variants.resize(info.id());
+    m_variants[info.id()-1] = info;
     redraw();
 }
 
 void EngineWidget::onAnalyzeClicked()
 {
-    m_lines.clear();
+    if (!m_engine) {
+        if (EngineSettings::engines().size()) {
+            QString name = EngineSettings::engines()[0];
+            m_engine = std::unique_ptr<Engine>(new Engine(SettingsFactory::engineSettings(name)));
+            QObject::connect(m_engine.get(), &Engine::variantParsed, this, &EngineWidget::onVariantParsed);
+        } else
+            return;
+    }
+    m_variants.clear();
     m_engine->startAnalysis(m_currentBoard);
 }
 
 void EngineWidget::onStopClicked()
 {
+    if (!m_engine)
+        return;
     m_engine->stopAnalysis();
 }

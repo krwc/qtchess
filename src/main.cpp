@@ -1,5 +1,4 @@
-#include <gui/main-window.hpp>
-#include <settings.hpp>
+#include "gui/main-window.hpp"
 #include <QApplication>
 
 int main(int argc, char *argv[])

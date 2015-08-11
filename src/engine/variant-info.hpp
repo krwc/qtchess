@@ -1,10 +1,10 @@
-#ifndef LINEINFO_HPP
-#define LINEINFO_HPP
+#ifndef VARIANT_INFO_HPP
+#define VARIANT_INFO_HPP
 #include <QStringList>
 
-class LineInfo {
+class VariantInfo {
 public:
-    LineInfo();
+    VariantInfo();
 
     void setMoveList(const QStringList& moveList);
     void setId(const int id);
@@ -25,4 +25,4 @@ private:
     int m_mate;
 };
 
-#endif // LINEINFO_HPP
+#endif

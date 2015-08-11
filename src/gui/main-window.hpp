@@ -1,8 +1,6 @@
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
-
-#include "settings.hpp"
-#include "settings-dialog.hpp"
+#ifndef MAIN_WINDOW_HPP
+#define MAIN_WINDOW_HPP
+#include "gui/settings/settings-dialog.hpp"
 #include "game/tree.hpp"
 #include <QMainWindow>
 
@@ -35,4 +33,4 @@ private:
 
 };
 
-#endif // MAINWINDOW_HPP
+#endif // MAIN_WINDOW_HPP

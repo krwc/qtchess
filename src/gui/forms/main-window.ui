@@ -79,7 +79,7 @@
           <x>0</x>
           <y>0</y>
           <width>180</width>
-          <height>438</height>
+          <height>540</height>
          </rect>
         </property>
        </widget>
@@ -133,21 +133,21 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>BoardWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/board-widget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>MoveTreeWidget</class>
    <extends>QWidget</extends>
    <header>gui/move-tree-widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>BoardWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/board/board-widget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>EngineWidget</class>
    <extends>QWidget</extends>
-   <header>gui/engine-widget.hpp</header>
+   <header>gui/engine/engine-widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

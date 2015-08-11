@@ -1,8 +1,7 @@
 #include "gui/main-window.hpp"
 #include "ui_main-window.h"
 #include "gui/promotion-dialog.hpp"
-#include "gui/settings-dialog.hpp"
-#include <QMutex>
+#include "gui/settings/settings-dialog.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -29,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(&mTree, &Tree::changed, this, &MainWindow::onPositionChanged);
     // XXX: Watch out, this can be a potential race condition if Tree is modified by other thread.
     QObject::connect(&mTree, &Tree::changed, ui->GameTextWidget, &MoveTreeWidget::redraw);
-    //QObject::connect(&mTree, &Tree::changed, ui->engineWidget, &EngineWidget::setPosition);
 }
 
 MainWindow::~MainWindow()

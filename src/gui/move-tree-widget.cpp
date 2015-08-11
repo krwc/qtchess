@@ -1,8 +1,6 @@
 #include "gui/move-tree-widget.hpp"
 #include "util/html-move-tree-builder.hpp"
-#include "settings.hpp"
-#include <QDebug>
-#include <QPainter>
+#include "settings/settings-factory.hpp"
 #include <QMenu>
 #include <QContextMenuEvent>
 
@@ -50,7 +48,9 @@ MoveTreeWidget::MoveTreeWidget(QWidget* parent)
 {
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-    QObject::connect(&Settings::instance(), &Settings::changed, this, &MoveTreeWidget::redraw);
+    QObject::connect(&SettingsFactory::htmlSettings(), &HtmlSettings::changed,
+                     this, &MoveTreeWidget::redraw);
+
     QObject::connect(this, &QWebView::linkClicked, this, &MoveTreeWidget::onMoveClicked);
     QObject::connect(page(), &QWebPage::linkHovered, this, &MoveTreeWidget::onMoveHovered);
 }

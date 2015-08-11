@@ -3,8 +3,6 @@
 #include "game/tree.hpp"
 #include <QWidget>
 #include <QWebView>
-#include <QList>
-#include <QMap>
 
 class HtmlMoveTreeBuilder;
 class TreeHtml
@@ -17,8 +15,8 @@ private:
                          const Tree* tree);
 };
 
-class MoveTreeWidget : public QWebView
-{
+
+class MoveTreeWidget : public QWebView {
     Q_OBJECT
 public:
     explicit MoveTreeWidget(QWidget* parent = nullptr);

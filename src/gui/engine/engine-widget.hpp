@@ -3,9 +3,9 @@
 
 #include <QWidget>
 #include <QVector>
-#include <QMutex>
 #include "engine/engine.hpp"
 #include "game/board.hpp"
+#include <memory>
 
 namespace Ui {
 class EngineWidget;
@@ -25,16 +25,16 @@ public slots:
     /*! \brief Sets current board position */
     void setBoard(const Board& board);
 private slots:
-    void onLineInfo(LineInfo);
+    void onVariantParsed(VariantInfo);
     void onAnalyzeClicked();
     void onStopClicked();
 public slots:
     void redraw();
 private:
     Ui::EngineWidget *ui;
-    Engine* m_engine;
+    std::unique_ptr<Engine> m_engine;
     Board m_currentBoard;
-    QVector<LineInfo> m_lines;
+    QVector<VariantInfo> m_variants;
 };
 
 #endif // ENGINE_WIDGET_HPP
