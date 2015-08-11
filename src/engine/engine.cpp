@@ -29,7 +29,7 @@ void Engine::startAnalysis(const Board& current)
 {
     if (m_process->state() != QProcess::Running)
         m_process->start();
-    // FIXME: This is stupid and plain wrong.
+    // FIXME: This is stupid and plain wrong. And doesn't even do what it is supposed to.
     while (m_state != Engine::Idling) {
         if (!m_process->waitForReadyRead(m_timeoutMs))
             throw new std::runtime_error("Engine did not stop in time.");
@@ -141,37 +141,40 @@ void Engine::parseOption(const QString& line)
 
 void Engine::parseInfo(const QString& line)
 {
-    // Currently we don't care about non-eval lines
-    if (!line.contains("score"))
-        return;
+    // It is variant info
+    if (line.contains("score")) {
+        QStringList tokens = line.split(" ");
+        QStringList moves;
+        VariantInfo info;
 
-    QStringList tokens = line.split(" ");
-    QStringList moves;
-    VariantInfo info;
+        for (int i = 0; i < tokens.size(); i++) {
+            const QString& token = tokens[i];
 
-    for (int i = 0; i < tokens.size(); i++) {
-        const QString& token = tokens[i];
+            if (token == "score") {
+                const QString& type = tokens[++i];
+                if (type == "cp")
+                    info.setScore(tokens[++i].toInt());
+                else if (type == "mate")
+                    info.setMate(tokens[++i].toInt());
+            } else if (token == "depth") {
+                info.setDepth(tokens[++i].toInt());
+            } else if (token == "multipv") {
+                info.setId(tokens[++i].toInt());
+            } else if (token == "pv") {
+                ++i;
+                while (i < tokens.size())
+                    moves.append(tokens[i++]);
 
-        if (token == "score") {
-            const QString& type = tokens[++i];
-            if (type == "cp")
-                info.setScore(tokens[++i].toInt());
-            else if (type == "mate")
-                info.setMate(tokens[++i].toInt());
-        } else if (token == "depth") {
-            info.setDepth(tokens[++i].toInt());
-        } else if (token == "multipv") {
-            info.setId(tokens[++i].toInt());
-        } else if (token == "pv") {
-            ++i;
-            while (i < tokens.size())
-                moves.append(tokens[i++]);
-
-            info.setMoveList(moves);
+                info.setMoveList(moves);
+            } else if (token == "nps") {
+                info.setNps(tokens[++i].toInt());
+            }
         }
-    }
 
-    emit variantParsed(info);
+        emit variantParsed(info);
+    } else {
+        // It is engine info.
+    }
 }
 
 Engine::State Engine::parseLine(const QString& line)

@@ -57,13 +57,18 @@ void EngineWidget::redraw()
     static const QString evalFmt = "<td><strong>(%1%2)</strong></td>";
     static const QString movesFmt = "<td>%1</td>";
     static const QString lineFmt = "<tr>%1%2</tr>";
-
+    static const QString statusFmt = "<b>Depth: %1 (%2 kN/s)</b>";
     QString lines;
 
+
     for (const VariantInfo& info : m_variants) {
+        double kiloNodes = info.nps() / 1000.0;
+        QString status = statusFmt.arg(QString::number(info.depth()), QString::number(kiloNodes));
         HtmlMoveTreeBuilder builder;
         Board board = m_currentBoard;
         QString score;
+
+        ui->status->setText(status);
 
         if (info.mate()) {
             score = evalFmt.arg("#", QString::number(info.mate()));
@@ -108,7 +113,7 @@ void EngineWidget::onVariantParsed(VariantInfo info)
 void EngineWidget::onAnalyzeClicked()
 {
     // No engine and no engine was selected by the user.
-    if (!m_engine && onSelectClicked())
+    if (!m_engine && !onSelectClicked())
         return;
 
     m_variants.clear();

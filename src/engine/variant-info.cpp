@@ -5,6 +5,7 @@ VariantInfo::VariantInfo()
     , m_score(0)
     , m_depth(0)
     , m_mate(0)
+    , m_nps(0)
 {
 }
 
@@ -33,6 +34,11 @@ void VariantInfo::setScore(const int score)
     m_score = score;
 }
 
+void VariantInfo::setNps(const int nodesPerSecond)
+{
+    m_nps = nodesPerSecond;
+}
+
 const QStringList& VariantInfo::moveList() const
 {
     return m_moveList;
@@ -46,6 +52,11 @@ int VariantInfo::id() const
 int VariantInfo::depth() const
 {
     return m_depth;
+}
+
+int VariantInfo::nps() const
+{
+    return m_nps;
 }
 
 int VariantInfo::score() const
