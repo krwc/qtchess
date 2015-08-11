@@ -2,6 +2,7 @@
 #define ENGINELISTWIDGET_HPP
 
 #include <QWidget>
+#include <QListWidget>
 
 namespace Ui {
 class EngineListWidget;

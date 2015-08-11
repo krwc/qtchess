@@ -1,4 +1,5 @@
 #include "gui/engine/engine-widget.hpp"
+#include "gui/engine/engine-selection-dialog.hpp"
 #include "util/html-move-tree-builder.hpp"
 #include "settings/settings-factory.hpp"
 #include "game/tree.hpp"
@@ -9,11 +10,14 @@
 EngineWidget::EngineWidget(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::EngineWidget)
+    , m_engine(nullptr)
 {
     ui->setupUi(this);
 
     QObject::connect(ui->analyzeButton, &QPushButton::clicked, this, &EngineWidget::onAnalyzeClicked);
     QObject::connect(ui->stopButton, &QPushButton::clicked, this, &EngineWidget::onStopClicked);
+    QObject::connect(ui->select, &QPushButton::clicked, this, &EngineWidget::onSelectClicked);
+
     ui->engineOutput->setHtml("");
 }
 
@@ -103,14 +107,10 @@ void EngineWidget::onVariantParsed(VariantInfo info)
 
 void EngineWidget::onAnalyzeClicked()
 {
-    if (!m_engine) {
-        if (EngineSettings::engines().size()) {
-            QString name = EngineSettings::engines()[0];
-            m_engine = std::unique_ptr<Engine>(new Engine(SettingsFactory::engineSettings(name)));
-            QObject::connect(m_engine.get(), &Engine::variantParsed, this, &EngineWidget::onVariantParsed);
-        } else
-            return;
-    }
+    // No engine and no engine was selected by the user.
+    if (!m_engine && onSelectClicked())
+        return;
+
     m_variants.clear();
     m_engine->startAnalysis(m_currentBoard);
 }
@@ -120,4 +120,26 @@ void EngineWidget::onStopClicked()
     if (!m_engine)
         return;
     m_engine->stopAnalysis();
+}
+
+bool EngineWidget::onSelectClicked()
+{
+    EngineSelectionDialog dialog(this);
+    if (dialog.exec() != QDialog::Accepted)
+        return false;
+
+    setEngine(dialog.selectedEngine());
+
+    return true;
+}
+
+void EngineWidget::setEngine(QString name)
+{
+    if (m_engine)
+        delete m_engine;
+    m_engine = new Engine(SettingsFactory::engineSettings(name));
+    QObject::connect(m_engine, &Engine::variantParsed, this, &EngineWidget::onVariantParsed);
+
+    // Update name of the selected engine;
+    ui->name->setText(name);
 }

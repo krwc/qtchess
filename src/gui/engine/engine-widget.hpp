@@ -28,11 +28,14 @@ private slots:
     void onVariantParsed(VariantInfo);
     void onAnalyzeClicked();
     void onStopClicked();
+    bool onSelectClicked();
 public slots:
     void redraw();
 private:
+    void setEngine(QString name);
+
     Ui::EngineWidget *ui;
-    std::unique_ptr<Engine> m_engine;
+    Engine* m_engine;
     Board m_currentBoard;
     QVector<VariantInfo> m_variants;
 };
