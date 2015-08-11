@@ -97,7 +97,6 @@ void EngineWidget::redraw()
             Q_ASSERT(board.makeMove(move) && "Engine passed an invalid move.");
         }
         lines.append(outputFmt.arg(lineFmt.arg(score, movesFmt.arg(builder.htmlWithStyle()))));
-        lines.append("<br/>");
     }
 
     ui->engineOutput->setHtml(lines);
