@@ -44,6 +44,7 @@ void EngineWidget::setBoard(const Board& board)
         m_engine->stopAnalysis();
     m_variants.clear();
     m_currentBoard = board;
+    qDebug() << "Position set to: " << board.toFen();
 
     if (isAnalysing) {
         m_variants.clear();
