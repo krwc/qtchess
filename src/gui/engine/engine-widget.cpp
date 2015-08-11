@@ -74,7 +74,7 @@ void EngineWidget::redraw()
             score = evalFmt.arg("#", QString::number(info.mate()));
         } else {
             int whiteCp = board.currentPlayer().isBlack() ? -info.score() : info.score();
-            score = evalFmt.arg(whiteCp > 0 ? "+" : "", QString::number(whiteCp / 100.0, 'g', 2));
+            score = evalFmt.arg(whiteCp > 0 ? "+" : "", QString::number(whiteCp / 100.0, 'f', 2));
         }
 
         if (board.currentPlayer().isBlack())
