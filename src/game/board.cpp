@@ -373,6 +373,10 @@ bool Board::isLegal(Move move, GameState* retState, MoveType* retType) const {
     default: break;
     }
 
+    qDebug() << "Legal move: " << legal;
+    qDebug() << "Check after move: " << isInCheckAfterTheMove(currentPlayer(), move, type);
+    if (moveIsCastle)
+        qDebug() << "Can castle: " << canCastle(type);
     if (!legal || isInCheckAfterTheMove(currentPlayer(), move, type))
         return false;
     if (moveIsCastle && !canCastle(type))
@@ -532,7 +536,7 @@ int Board::countAttacksFor(Coord2D<int> coord, Player attacker) const {
     for (int i = 0; i < 8; i++) {
         if (pieceAt(i,j).isNone() || owner(i,j) != attacker)
             continue;
-        if (getAttackedCoords(pieceAt(i,j), attacker.opponent(), Coord2D<int>(i,j)).contains(coord))
+        if (getAttackedCoords(pieceAt(i,j), attacker, Coord2D<int>(i,j)).contains(coord))
             ++numAttacks;
     }}
     return numAttacks;
@@ -553,7 +557,7 @@ CoordsVector Board::getAttackedCoords(Piece piece, Player owner, Coord2D<int> po
     int y = position.y;
 
     switch (piece.type()) {
-    case Piece::Pawn:   return getPawnAttack(x, y, owner.opponent());
+    case Piece::Pawn:   return getPawnAttack(x, y, owner);
     case Piece::Knight: return getKnightAttack(x, y);
     case Piece::Bishop: return getBishopAttack(x, y);
     case Piece::Rook:   return getRookAttack(x, y);
