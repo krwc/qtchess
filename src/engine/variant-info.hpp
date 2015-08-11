@@ -19,6 +19,8 @@ public:
     int mate() const;
     int depth() const;
     int nps() const;
+// for debug purposes
+    QString m_lineString;
 private:
     QStringList m_moveList;
     int m_id;

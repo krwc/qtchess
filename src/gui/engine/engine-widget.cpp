@@ -94,7 +94,14 @@ void EngineWidget::redraw()
             }
             builder.addMove(algebraicMove);
 
-            Q_ASSERT(board.makeMove(move) && "Engine passed an invalid move.");
+            qDebug() << info.m_lineString;
+
+            if (!board.makeMove(move)) {
+                qDebug() << "Engine passed an invalid move: " << board.toFen();
+                exit(1);
+            }
+
+            //Q_ASSERT(board.makeMove(move) && "Engine passed an invalid move.");
         }
         lines.append(outputFmt.arg(lineFmt.arg(score, movesFmt.arg(builder.htmlWithStyle()))));
     }
