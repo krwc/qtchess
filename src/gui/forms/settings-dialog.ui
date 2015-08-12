@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>298</width>
-    <height>366</height>
+    <width>275</width>
+    <height>363</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,7 +25,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="LookNFeelTab">
         <attribute name="title">
@@ -246,28 +246,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="EngineTab">
-        <attribute name="title">
-         <string>Engine integration</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="EngineListWidget" name="engineList" native="true"/>
-         </item>
-        </layout>
-       </widget>
       </widget>
      </item>
     </layout>
@@ -297,12 +275,6 @@
    <class>ColorButton</class>
    <extends>QPushButton</extends>
    <header>gui/color-button.hpp</header>
-  </customwidget>
-  <customwidget>
-   <class>EngineListWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/settings/engine-list-widget.hpp</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

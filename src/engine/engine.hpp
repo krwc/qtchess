@@ -4,8 +4,9 @@
 #include <QVector>
 #include "engine/variant-info.hpp"
 #include "engine/engine-option.hpp"
+#include "engine/engine-config.hpp"
 
-class EngineSettings;
+
 class Board;
 class Engine : public QObject
 {
@@ -13,7 +14,7 @@ class Engine : public QObject
 public:
     enum State { Working, Stopping, Idling, Initializing };
 
-    explicit Engine(EngineSettings& settings, const int timeoutMs = 2000);
+    explicit Engine(const EngineConfig& config, const int timeoutMs = 2000);
     ~Engine();
 
     /*! \brief Starts an engine */
@@ -30,6 +31,15 @@ public:
 
     /*! \brief Returns true if engine is currently analysing the game */
     bool isAnalysing() const;
+
+    /*! \brief Returns true when engine process is started */
+    bool started() const;
+
+    /*! \brief Returns copy of the engine config. */
+    EngineConfig config();
+
+    /*! \brief Returns parsed options. */
+    const QList<EngineOption>& options();
 signals:
     void variantParsed(VariantInfo);
     void optionsParsed(QList<EngineOption>);
@@ -62,7 +72,7 @@ private:
     const int m_timeoutMs;
     QProcess* m_process;
     State m_state;
-    EngineSettings& m_settings;
+    EngineConfig m_config;
 
     /*!< \brief List of parsed options declared by the engine. */
     QList<EngineOption> m_parsedOptions;

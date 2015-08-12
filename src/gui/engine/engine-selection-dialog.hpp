@@ -3,21 +3,23 @@
 #include <QDialog>
 #include <QListWidget>
 #include <QPushButton>
+#include "engine/engine-config.hpp"
+#include "gui/engine-list-widget.hpp"
 
 class EngineSelectionDialog : public QDialog {
     Q_OBJECT
 public:
     explicit EngineSelectionDialog(QWidget* parent = nullptr);
 
-    QString selectedEngine() const {
-        return m_selectedEngine;
+    QString engineName() const {
+        return m_engineName;
     }
 private slots:
-    void onDoubleClicked(QListWidgetItem*);
+    void onDoubleClicked();
 private:
-    QListWidget* m_listWidget;
+    EngineListWidget* m_list;
     QPushButton* m_cancelButton;
-    QString m_selectedEngine;
+    QString m_engineName;
 };
 
 #endif // ENGINE_SELECTION_DIALOG_HPP

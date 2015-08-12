@@ -44,7 +44,6 @@ void EngineWidget::setBoard(const Board& board)
         m_engine->stopAnalysis();
     m_variants.clear();
     m_currentBoard = board;
-    qDebug() << "Position set to: " << board.toFen();
 
     if (isAnalysing) {
         m_variants.clear();
@@ -136,7 +135,7 @@ bool EngineWidget::onSelectClicked()
     if (dialog.exec() != QDialog::Accepted)
         return false;
 
-    setEngine(dialog.selectedEngine());
+    setEngine(dialog.engineName());
 
     return true;
 }
@@ -145,7 +144,8 @@ void EngineWidget::setEngine(QString name)
 {
     if (m_engine)
         delete m_engine;
-    m_engine = new Engine(SettingsFactory::engineSettings(name));
+
+    m_engine = new Engine(SettingsFactory::engines().config(name));
     QObject::connect(m_engine, &Engine::variantParsed, this, &EngineWidget::onVariantParsed);
 
     // Update name of the selected engine;

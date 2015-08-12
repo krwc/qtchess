@@ -19,7 +19,7 @@ class BoardWidget : public QWidget
     Q_OBJECT
 public:
     explicit BoardWidget(QWidget* parent = 0,
-                         BoardSettings& settings = SettingsFactory::boardSettings());
+                         BoardSettings& settings = SettingsFactory::board());
 
     void setModel(const Board*);
     /* Emits move signal */

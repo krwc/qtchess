@@ -2,6 +2,7 @@
 #include "ui_main-window.h"
 #include "gui/promotion-dialog.hpp"
 #include "gui/settings/settings-dialog.hpp"
+#include "gui/settings/engine-settings-dialog.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->actionFlip, SIGNAL(triggered()), ui->Board, SLOT(flip()));
     // Connect action signals
     QObject::connect(ui->actionSettings, SIGNAL(triggered()), this, SLOT(onSettingsShow()));
+    QObject::connect(ui->actionEngines, SIGNAL(triggered()), this, SLOT(onEnginesShow()));
     QObject::connect(ui->actionReset, SIGNAL(triggered()), this, SLOT(onBoardReset()));
 
     // Connect text widget signals
@@ -62,6 +64,11 @@ void MainWindow::onSettingsShow() {
 void MainWindow::onSettingsClose() {
     delete mSettingsDialog;
     mSettingsDialog = nullptr;
+}
+
+void MainWindow::onEnginesShow()
+{
+    QScopedPointer<EngineSettingsDialog>(new EngineSettingsDialog(this))->exec();
 }
 
 void MainWindow::onBoardReset()

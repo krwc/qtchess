@@ -20,6 +20,7 @@ public:
 private slots:
     void onMoveMade(Move move);
     void onSettingsShow();
+    void onEnginesShow();
     void onSettingsClose();
     void onBoardReset();
     void onPositionChanged();

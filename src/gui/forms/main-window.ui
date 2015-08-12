@@ -37,6 +37,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actionSettings"/>
+    <addaction name="actionEngines"/>
     <addaction name="separator"/>
     <addaction name="actionPosition"/>
     <addaction name="actionPaste_PGN_from_clipboard"/>
@@ -127,6 +128,11 @@
   <action name="actionFlip">
    <property name="text">
     <string>&amp;Flip</string>
+   </property>
+  </action>
+  <action name="actionEngines">
+   <property name="text">
+    <string>Engines</string>
    </property>
   </action>
  </widget>

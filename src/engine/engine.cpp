@@ -2,17 +2,17 @@
 #include "game/board.hpp"
 #include <QDebug>
 #include <stdexcept>
-#include "settings/settings-factory.hpp"
 
-Engine::Engine(EngineSettings& settings, const int timeoutMs)
+
+Engine::Engine(const EngineConfig& config, const int timeoutMs)
     : m_timeoutMs(timeoutMs)
     , m_process(new QProcess())
     , m_state(Engine::Initializing)
-    , m_settings(settings)
+    , m_config(config)
 {
     QObject::connect(m_process, &QProcess::started, this, &Engine::onStarted);
     QObject::connect(m_process, &QProcess::readyRead, this, &Engine::onReadyRead);
-    m_process->setProgram(m_settings.get("stringPathExec").toString());
+    m_process->setProgram(m_config.command());
 }
 
 Engine::~Engine()
@@ -23,19 +23,24 @@ void Engine::start()
 {
     // Start the engine.
     m_process->start();
+
+    if (!m_process->waitForStarted(m_timeoutMs))
+        throw std::runtime_error("Cannot start engine.");
+
+    waitForStateOrThrow(Engine::Idling);
 }
 
 void Engine::startAnalysis(const Board& current)
 {
-    if (m_process->state() != QProcess::Running)
-        m_process->start();
+    if (!started())
+        start();
 
     waitForStateOrThrow(Engine::Idling);
 
     setState(Engine::Working);
     // Set all options.
-    for (const QString& key : m_settings.keys())
-        setOption(key, m_settings.get(key).toString());
+    for (const QString& key : m_config.options())
+        setOption(key, m_config.option(key));
 
     send("position fen " + current.toFen());
     send("go infinite");
@@ -59,6 +64,21 @@ void Engine::setOption(const QString& name, const QString& value)
 bool Engine::isAnalysing() const
 {
     return m_state == Engine::Working;
+}
+
+bool Engine::started() const
+{
+    return m_process->state() == QProcess::Running;
+}
+
+EngineConfig Engine::config()
+{
+    return m_config;
+}
+
+const QList<EngineOption>& Engine::options()
+{
+    return m_parsedOptions;
 }
 
 void Engine::onStarted()

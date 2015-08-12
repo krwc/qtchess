@@ -48,7 +48,7 @@ MoveTreeWidget::MoveTreeWidget(QWidget* parent)
 {
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-    QObject::connect(&SettingsFactory::htmlSettings(), &HtmlSettings::changed,
+    QObject::connect(&SettingsFactory::html(), &HtmlSettings::changed,
                      this, &MoveTreeWidget::redraw);
 
     QObject::connect(this, &QWebView::linkClicked, this, &MoveTreeWidget::onMoveClicked);

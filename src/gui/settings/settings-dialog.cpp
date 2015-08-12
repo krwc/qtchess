@@ -1,5 +1,4 @@
 #include "gui/settings/settings-dialog.hpp"
-#include "gui/settings/engine-options-dialog.hpp"
 #include "settings/settings-factory.hpp"
 #include "piece-set.hpp"
 #include "ui_settings-dialog.h"
@@ -15,8 +14,8 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     ui->setupUi(this);
     setWindowTitle("Settings");
 
-    BoardSettings& board = SettingsFactory::boardSettings();
-    HtmlSettings& html = SettingsFactory::htmlSettings();
+    BoardSettings& board = SettingsFactory::board();
+    HtmlSettings& html = SettingsFactory::html();
 
     mapWithSetting(board, "colorSquareLight", ui->lightSqColor);
     mapWithSetting(board, "colorSquareDark", ui->darkSqColor);
@@ -38,22 +37,22 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 SettingsDialog::~SettingsDialog()
 {
     // Restore saved settings.
-    SettingsFactory::boardSettings().reset();
-    SettingsFactory::htmlSettings().reset();
+    SettingsFactory::board().reset();
+    SettingsFactory::html().reset();
 
     delete ui;
 }
 
 void SettingsDialog::saveClicked() {
-    SettingsFactory::boardSettings().save();
-    SettingsFactory::htmlSettings().save();
+    SettingsFactory::board().save();
+    SettingsFactory::html().save();
     close();
 }
 
 void SettingsDialog::resetClicked() {
     // Reset and re-read
-    SettingsFactory::boardSettings().reset();
-    SettingsFactory::htmlSettings().reset();
+    SettingsFactory::board().reset();
+    SettingsFactory::html().reset();
 
     readSettings();
 }
@@ -63,7 +62,7 @@ void SettingsDialog::pieceSetChanged(const QString& value)
     if (value == "")
         return;
 
-    SettingsFactory::boardSettings().set("stringPieceStyle", value);
+    SettingsFactory::board().set("stringPieceStyle", value);
 }
 
 void SettingsDialog::mapWithSetting(AbstractSettings& settings, QString key,
@@ -84,7 +83,7 @@ void SettingsDialog::readSettings()
 {
     QComboBox* comboPieces = ui->PieceSetList;
     QStringList pieces = PieceSet::getAvailableSets();
-    pieces.swap(0, pieces.indexOf(SettingsFactory::boardSettings().get("stringPieceStyle").toString()));
+    pieces.swap(0, pieces.indexOf(SettingsFactory::board().get("stringPieceStyle").toString()));
 
     comboPieces->clear();
     comboPieces->addItems(pieces);

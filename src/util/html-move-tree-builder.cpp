@@ -78,7 +78,7 @@ QString HtmlMoveTreeBuilder::html() const
 
 QString HtmlMoveTreeBuilder::htmlWithStyle() const
 {
-    HtmlSettings& settings = SettingsFactory::htmlSettings();
+    HtmlSettings& settings = SettingsFactory::html();
 
     QString style = styleSheet.arg(
         settings.get("colorMove").value<QColor>().name(),
