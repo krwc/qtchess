@@ -115,16 +115,20 @@ const TreeNode* Tree::currentNode() const
 
 bool Tree::addMove(Move move)
 {
-    if (m_current->hasNext(move) || !m_current->board().isLegal(move))
+    if (!m_current->board().isLegal(move))
         return false;
 
-    Board board = m_current->board();
-    board.makeMove(move);
+    if (!m_current->hasNext(move)) {
+        Board board = m_current->board();
+        board.makeMove(move);
 
-    TreeNode* node = new TreeNode(board, m_current);
+        TreeNode* node = new TreeNode(board, m_current);
 
-    m_current->addTransition(move, node);
-    m_current = node;
+        m_current->addTransition(move, node);
+        m_current = node;
+    } else
+        // Next move exists. Just set it as a current move.
+        m_current = const_cast<TreeNode*>(m_current->next(move));
 
     emit changed();
 

@@ -29,16 +29,14 @@ void Engine::startAnalysis(const Board& current)
 {
     if (m_process->state() != QProcess::Running)
         m_process->start();
-    // FIXME: This is stupid and plain wrong. And doesn't even do what it is supposed to.
-    while (m_state != Engine::Idling) {
-        if (!m_process->waitForReadyRead(m_timeoutMs))
-            throw new std::runtime_error("Engine did not stop in time.");
-    }
+
+    waitForStateOrThrow(Engine::Idling);
 
     setState(Engine::Working);
-    send("ucinewgame");
+    // Set all options.
     for (const QString& key : m_settings.keys())
         setOption(key, m_settings.get(key).toString());
+
     send("position fen " + current.toFen());
     send("go infinite");
 }
@@ -49,6 +47,8 @@ void Engine::stopAnalysis()
         return;
     setState(Engine::Stopping);
     send("stop");
+
+    waitForStateOrThrow(Engine::Idling);
 }
 
 void Engine::setOption(const QString& name, const QString& value)
@@ -77,6 +77,14 @@ void Engine::onReadyRead()
             line.chop(1);
 
         setState(parseLine(line));
+    }
+}
+
+void Engine::waitForStateOrThrow(State expectedState)
+{
+    while (m_state != expectedState) {
+        if (!m_process->waitForReadyRead(m_timeoutMs))
+            throw std::runtime_error("Engine stopped responding.");
     }
 }
 

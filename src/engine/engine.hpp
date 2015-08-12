@@ -25,7 +25,7 @@ public:
     /*! \brief Stops analysis and blocks until an engine shuts up. */
     void stopAnalysis();
 
-    /*! \brief Sets engine option */
+    /*! \brief Sets engine option. */
     void setOption(const QString& name, const QString& value);
 
     /*! \brief Returns true if engine is currently analysing the game */
@@ -37,6 +37,9 @@ private slots:
     void onStarted();
     void onReadyRead();
 private:
+    /*! \brief Waits for state change to a specific one or throws. */
+    void waitForStateOrThrow(State expectedState);
+
     /*! \brief Parses option */
     void parseOption(const QString& line);
 
