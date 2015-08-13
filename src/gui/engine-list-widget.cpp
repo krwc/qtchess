@@ -1,6 +1,5 @@
 #include "gui/engine-list-widget.hpp"
 #include "settings/settings-factory.hpp"
-#include "ui_engine-list-widget.h"
 #include <QDebug>
 
 EngineListWidget::EngineListWidget(QWidget* parent)
