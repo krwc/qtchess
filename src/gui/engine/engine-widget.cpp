@@ -107,7 +107,13 @@ void EngineWidget::redraw()
 
 void EngineWidget::reset()
 {
-    ui->engineOutput->setHtml("");
+    ui->status->setText("");
+    ui->status->repaint();
+
+    if (!m_engine) {
+        ui->status->setText("");
+        ui->status->repaint();
+    }
 }
 
 void EngineWidget::onVariantParsed(VariantInfo info)
