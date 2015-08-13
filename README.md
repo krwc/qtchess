@@ -1,6 +1,6 @@
 # Chess gui written in C++ and Qt.
 
-Currently it supports UCI engines and importing positions from FEN strings, and it is not finished.
+Currently it supports UCI engines (but it was not tested extensively) and importing positions from FEN strings.
 
 # Compilation & run instructions:
 1. cd build
