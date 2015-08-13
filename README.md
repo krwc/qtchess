@@ -14,5 +14,6 @@ Currently it supports UCI engines and importing positions from FEN strings, and 
 3. Importing games from PGN.
 4. Possibility of removing variants and moves in general from the tree.
 5. Possibility of adding annotations.
-6. ???
+6. Layout management.
+7. ???
 
