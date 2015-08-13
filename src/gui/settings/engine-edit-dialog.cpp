@@ -25,6 +25,8 @@ EngineEditDialog::EngineEditDialog(EngineConfig config, QWidget* parent)
     ui->command->setText(config.command());
     ui->workdir->setText(config.workdir());
     ui->arguments->setText(config.arguments());
+
+    m_registeredEngines.removeOne(config.name());
 }
 
 EngineEditDialog::~EngineEditDialog()
@@ -61,9 +63,11 @@ void EngineEditDialog::onConfigureClicked()
 bool EngineEditDialog::settingsValid()
 {
     // Already registered. Cannot create such an engine.
-    if (m_registeredEngines.contains(ui->name->text()) && ui->name->text() != m_config.name())
+    if (m_registeredEngines.contains(ui->name->text()))
         QMessageBox::warning(this, tr("Engine duplication"), tr("Engine with such name already exists."));
-    else {
+    else if (ui->name->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Engine name empty"), tr("Engine must have a name."));
+    } else {
         m_config.setName(ui->name->text());
         m_config.setCommand(ui->command->text());
         m_config.setWorkdir(ui->workdir->text());
