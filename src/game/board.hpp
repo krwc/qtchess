@@ -42,6 +42,11 @@ public:
 
     Board();
 
+    /*! \brief Sets board position from fen if it is valid.
+     * \returns true if fen position is valid, false otherwise
+     */
+    bool setFen(QString fen);
+
     /*! \brief Returns FEN representation of current position */
     QString toFen() const;
 
@@ -144,8 +149,8 @@ private:
     int countAttacksFor(Coord2D<int> coord, Player attacker) const;
     int countChecksFor(Player player) const;
 private:
-    GameState mState;
-    mutable Position mPosition;
+    GameState m_state;
+    mutable Position m_position;
 };
 
 #endif // GAME_MODEL_HPP

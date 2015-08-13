@@ -98,6 +98,11 @@ TreeNode* TreeNode::delTransition(Move move)
     return node;
 }
 
+void TreeNode::setBoard(const Board& board)
+{
+    m_board = board;
+}
+
 Tree::Tree()
     : m_current(&m_root)
 {
@@ -162,3 +167,9 @@ void Tree::setCurrent(TreeNode* node)
     emit changed();
 }
 
+void Tree::setRootBoard(const Board& board)
+{
+    clear();
+    m_current->setBoard(board);
+    emit changed();
+}

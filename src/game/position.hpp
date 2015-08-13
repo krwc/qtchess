@@ -16,6 +16,9 @@ public:
 
     /*! \brief constructs default position */
     static Position defaultPosition();
+
+    /*! \brief constructs empty position */
+    static Position emptyPosition();
 private:
     Piece mSquares[8][8];
 };

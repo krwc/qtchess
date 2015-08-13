@@ -37,3 +37,13 @@ Position Position::defaultPosition() {
 
     return position;
 }
+
+Position Position::emptyPosition()
+{
+    Position position;
+
+    for (int i = 0; i < 8; i++)
+    for (int j = 0; j < 8; j++)
+        position.setPieceAt(i, j, Piece());
+    return position;
+}

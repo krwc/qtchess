@@ -11,6 +11,8 @@ namespace Ui {
 class EngineWidget;
 }
 
+typedef std::unique_ptr<Engine> EnginePtr;
+
 class Tree;
 class EngineWidget : public QWidget
 {
@@ -29,13 +31,14 @@ private slots:
     void onAnalyzeClicked();
     void onStopClicked();
     bool onSelectClicked();
+    void onEnginesChanged();
 public slots:
     void redraw();
 private:
     void setEngine(QString name);
 
     Ui::EngineWidget *ui;
-    Engine* m_engine;
+    EnginePtr m_engine;
     Board m_currentBoard;
     QVector<VariantInfo> m_variants;
 };

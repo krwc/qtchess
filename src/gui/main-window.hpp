@@ -4,16 +4,13 @@
 #include "game/tree.hpp"
 #include <QMainWindow>
 
-class TreeNode;
-
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class TreeNode;
+class MainWindow : public QMainWindow {
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget *parent);
     ~MainWindow();
@@ -25,12 +22,13 @@ private slots:
     void onBoardReset();
     void onPositionChanged();
     void onPositionSet(size_t);
+    void onSetFen();
 private:
     Ui::MainWindow *ui;
     // Game tree
-    Tree mTree;
+    Tree m_tree;
     // Settings dialog
-    SettingsDialog* mSettingsDialog;
+    SettingsDialog* m_settingsDialog;
 
 };
 

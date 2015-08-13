@@ -40,8 +40,8 @@
     <addaction name="actionEngines"/>
     <addaction name="separator"/>
     <addaction name="actionPosition"/>
-    <addaction name="actionPaste_PGN_from_clipboard"/>
-    <addaction name="actionPaste_FEN_from_clipboard"/>
+    <addaction name="actionSetPgn"/>
+    <addaction name="actionSetFen"/>
     <addaction name="separator"/>
     <addaction name="actionFlip"/>
    </widget>
@@ -115,14 +115,14 @@
     <string>&amp;Position</string>
    </property>
   </action>
-  <action name="actionPaste_PGN_from_clipboard">
+  <action name="actionSetPgn">
    <property name="text">
-    <string>Paste PGN from &amp;clipboard</string>
+    <string>Set position from PGN</string>
    </property>
   </action>
-  <action name="actionPaste_FEN_from_clipboard">
+  <action name="actionSetFen">
    <property name="text">
-    <string>Past&amp;e FEN from clipboard</string>
+    <string>Set position from FEN</string>
    </property>
   </action>
   <action name="actionFlip">
@@ -132,7 +132,7 @@
   </action>
   <action name="actionEngines">
    <property name="text">
-    <string>Engines</string>
+    <string>E&amp;ngines</string>
    </property>
   </action>
  </widget>

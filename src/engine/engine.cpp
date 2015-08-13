@@ -17,6 +17,8 @@ Engine::Engine(const EngineConfig& config, const int timeoutMs)
 
 Engine::~Engine()
 {
+    if (isAnalysing())
+        stopAnalysis();
 }
 
 void Engine::start()

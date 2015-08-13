@@ -11,6 +11,9 @@ public:
     /*! \brief returns one-character string piece representation */
     QString symbolString() const;
 
+    /*! \brief Constructs piece from symbol. */
+    explicit Piece(QChar symbol);
+
     /*! \brief constructs piece owned by given player */
     explicit Piece(Piece::Type type = Piece::Type::None, Player owner = Player::none());
 

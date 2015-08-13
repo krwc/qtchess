@@ -5,7 +5,9 @@
 #include "game/board.hpp"
 
 /*! \brief Internal node structure representation */
+class Tree;
 class TreeNode {
+    friend class Tree;
 public:
     TreeNode(const Board& board = Board(), TreeNode* parent = nullptr);
 
@@ -51,6 +53,9 @@ public:
     /*! \brief Removes transition */
     TreeNode* delTransition(Move move);
 private:
+    /*! \brief Sets current board */
+    void setBoard(const Board& board);
+private:
     /*!< chess-board snapshot */
     Board m_board;
     /*!< main line in this line */
@@ -89,6 +94,9 @@ public:
 
     /*! \brief Sets current node to be the given node */
     void setCurrent(TreeNode* node);
+
+    /*! \brief Sets current root board. And clears the tree. */
+    void setRootBoard(const Board& board);
 signals:
     /*! \brief Emited when tree is changed */
     void changed();

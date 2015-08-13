@@ -10,13 +10,13 @@
 EngineWidget::EngineWidget(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::EngineWidget)
-    , m_engine(nullptr)
 {
     ui->setupUi(this);
 
     QObject::connect(ui->analyzeButton, &QPushButton::clicked, this, &EngineWidget::onAnalyzeClicked);
     QObject::connect(ui->stopButton, &QPushButton::clicked, this, &EngineWidget::onStopClicked);
     QObject::connect(ui->select, &QPushButton::clicked, this, &EngineWidget::onSelectClicked);
+    QObject::connect(&SettingsFactory::engines(), SIGNAL(changed()), this, SLOT(onEnginesChanged()));
 
     ui->engineOutput->setHtml("");
 }
@@ -140,14 +140,26 @@ bool EngineWidget::onSelectClicked()
     return true;
 }
 
+void EngineWidget::onEnginesChanged()
+{
+    if (!m_engine)
+        return;
+
+    // Selected engine has been removed.
+    if (!SettingsFactory::engines().names().contains(m_engine->config().name())) {
+        m_engine.reset();
+
+        ui->name->setText("");
+        ui->name->repaint();
+    }
+}
+
 void EngineWidget::setEngine(QString name)
 {
-    if (m_engine)
-        delete m_engine;
-
-    m_engine = new Engine(SettingsFactory::engines().config(name));
-    QObject::connect(m_engine, &Engine::variantParsed, this, &EngineWidget::onVariantParsed);
+    m_engine.reset(new Engine(SettingsFactory::engines().config(name)));
+    QObject::connect(m_engine.get(), &Engine::variantParsed, this, &EngineWidget::onVariantParsed);
 
     // Update name of the selected engine;
     ui->name->setText(name);
+    ui->name->repaint();
 }

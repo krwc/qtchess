@@ -38,9 +38,105 @@ const Coord2D<int> Board::H8 = Coord2D<int>(7, 0);
 const Coord2D<int> Board::B8 = Coord2D<int>(1, 0);
 
 Board::Board()
-  : mState(Board::InitialGameState)
-  , mPosition(Position::defaultPosition())
+  : m_state(Board::InitialGameState)
+  , m_position(Position::defaultPosition())
 {
+}
+
+bool Board::setFen(QString fen)
+{
+    QStringList tokens = fen.split(' ');
+
+    if (tokens.size() != 6)
+        return false;
+
+    // Start with empty position
+    Position position = Position::emptyPosition();
+    GameState state;
+
+    // And no castling rights.
+    state.LongCastlingRight[Player::white()] = false;
+    state.LongCastlingRight[Player::black()] = false;
+    state.ShortCastlingRight[Player::white()] = false;
+    state.ShortCastlingRight[Player::black()] = false;
+
+    QString positionStr = tokens[0];
+    QString sideToMove = tokens[1];
+    QString castling  = tokens[2];
+    QString enpassant = tokens[3];
+    QString halfMoves = tokens[4];
+    QString fullMoves = tokens[5];
+    int processedSquares = 0;
+
+    for (int rank = 0, i = 0; rank < 8; ++rank, ++i) {
+        for (int file = 0; file < 8; ++file, ++i) {
+            if (positionStr[i].isDigit()) {
+                int skip = positionStr[i].digitValue() - 1;
+                file += skip;
+                processedSquares += skip + 1;
+            } else {
+                ++processedSquares;
+                Piece piece(positionStr[i]);
+
+                // Invalid piece symbol
+                if (piece.isNone())
+                    return false;
+
+                position.setPieceAt(file, rank, piece);
+            }
+        }
+    }
+
+    if (processedSquares != 64)
+        return false;
+
+    if (sideToMove == "b")
+        state.WhoIsPlaying = Player::black();
+    else if (sideToMove == "w")
+        state.WhoIsPlaying = Player::white();
+    else
+        return false;
+
+    for (int i = 0; i < castling.length(); ++i) {
+        if (castling[i] == '-')
+            break;
+        Player player = castling[i].isLower() ? Player::black() : Player::white();
+
+        if (castling[i].toLower() == 'k')
+            state.ShortCastlingRight[player] = true;
+        else if (castling[i].toLower() == 'q')
+            state.LongCastlingRight[player] = true;
+        else
+            return false;
+    }
+
+    if (enpassant != "-") {
+        if (enpassant.length() < 2)
+            return false;
+
+        int file = charToFile(enpassant[0]);
+        int rank = charToRank(enpassant[1]);
+
+        if (!isLegalCoord(file, rank))
+            return false;
+
+        state.EnPassantCoords = { file, rank };
+        state.EnPassantPlayer = state.WhoIsPlaying.opponent();
+    }
+
+    int numHalfMoves = halfMoves.toInt();
+    int numFullMoves = fullMoves.toInt();
+
+    if (numHalfMoves < 0 || numFullMoves < 1)
+        return false;
+
+    state.HalfMoveClock = numHalfMoves;
+    state.FullMoveCounter = numFullMoves;
+
+    m_position = position;
+    m_state = state;
+
+    return true;
 }
 
 QString Board::toFen() const
@@ -91,13 +187,13 @@ QString Board::toFen() const
     }
 
     // En passant
-    if (isLegalCoord(mState.EnPassantCoords.x, mState.EnPassantCoords.y))
-        fen += QString(" %1 ").arg(squareString(mState.EnPassantCoords));
+    if (isLegalCoord(m_state.EnPassantCoords.x, m_state.EnPassantCoords.y))
+        fen += QString(" %1 ").arg(squareString(m_state.EnPassantCoords));
     else
         fen += " - ";
     // Move clocks
-    fen += QString("%1 %2").arg(QString::number(mState.HalfMoveClock),
-                                QString::number(mState.FullMoveCounter));
+    fen += QString("%1 %2").arg(QString::number(m_state.HalfMoveClock),
+                                QString::number(m_state.FullMoveCounter));
 
     return fen;
 }
@@ -128,17 +224,8 @@ QString Board::squareString(Coord2D<int> coord) const {
 
 QString Board::longAlgebraicNotationString(Move move) const
 {
-    QString promotion;
-
-    switch (move.promotionPiece()) {
-    case Piece::Knight: promotion = "n"; break;
-    case Piece::Bishop: promotion = "b"; break;
-    case Piece::Rook:   promotion = "r"; break;
-    case Piece::Queen:  promotion = "q"; break;
-    default: break;
-    }
-
-    return squareString(move.from()) + squareString(move.to()) + promotion;
+    return squareString(move.from()) + squareString(move.to()) +
+           Piece(move.promotionPiece()).symbolString().toLower();
 }
 
 QString Board::algebraicNotationString(Move move) const {
@@ -235,7 +322,7 @@ Move Board::longAlgebraicNotationToMove(const QString& lan) const
 
 int Board::fullMoveCount() const
 {
-    return mState.FullMoveCounter;
+    return m_state.FullMoveCounter;
 }
 
 const Piece& Board::pieceAt(const Coord2D<int>& coord) const {
@@ -244,7 +331,7 @@ const Piece& Board::pieceAt(const Coord2D<int>& coord) const {
 
 const Piece& Board::pieceAt(int x, int y) const {
     assert(isLegalCoord(x, y));
-    return mPosition.pieceAt(x, y);
+    return m_position.pieceAt(x, y);
 }
 
 Player Board::owner(const Coord2D<int>& coord) const {
@@ -253,7 +340,7 @@ Player Board::owner(const Coord2D<int>& coord) const {
 
 Player Board::owner(int x, int y) const {
     assert(isLegalCoord(x, y));
-    return mPosition.pieceAt(x, y).owner();
+    return m_position.pieceAt(x, y).owner();
 }
 
 bool Board::makeMove(Move move) {
@@ -262,7 +349,7 @@ bool Board::makeMove(Move move) {
     if (!isLegal(move, &nextState, &type))
         return false;
     movePieces(move, type);
-    mState = nextState;
+    m_state = nextState;
     // Made the move
     return true;
 }
@@ -278,11 +365,11 @@ bool Board::isCheckmate() const {
 }
 
 bool Board::hasShortCastlingRights(const Player& player) const {
-    return mState.ShortCastlingRight.at(player);
+    return m_state.ShortCastlingRight.at(player);
 }
 
 bool Board::hasLongCastlingRights(const Player& player) const {
-    return mState.LongCastlingRight.at(player);
+    return m_state.LongCastlingRight.at(player);
 }
 
 void Board::movePieces(Move move, MoveType type) {
@@ -290,22 +377,22 @@ void Board::movePieces(Move move, MoveType type) {
     int dx = move.To.x, dy = move.To.y;
 
     if (type == MOVE_CASTLE_SHORT) {
-        mPosition.setPieceAt(dx-1, dy, mPosition.pieceAt(dx+1, dy));
-        mPosition.setPieceAt(dx+1, dy, Piece());
+        m_position.setPieceAt(dx-1, dy, m_position.pieceAt(dx+1, dy));
+        m_position.setPieceAt(dx+1, dy, Piece());
     } else if (type == MOVE_CASTLE_LONG) {
-        mPosition.setPieceAt(dx+1, dy, mPosition.pieceAt(dx-2, dy));
-        mPosition.setPieceAt(dx-2, dy, Piece());
+        m_position.setPieceAt(dx+1, dy, m_position.pieceAt(dx-2, dy));
+        m_position.setPieceAt(dx-2, dy, Piece());
     } else if (type == MOVE_ENPASSANT_CAPTURE) {
-        int y = mState.EnPassantCoords.y + (currentPlayer().isWhite() ? +1 : -1);
-        int x = mState.EnPassantCoords.x;
-        mPosition.setPieceAt(x, y, Piece());
+        int y = m_state.EnPassantCoords.y + (currentPlayer().isWhite() ? +1 : -1);
+        int x = m_state.EnPassantCoords.x;
+        m_position.setPieceAt(x, y, Piece());
     }
     
-    mPosition.setPieceAt(dx, dy, mPosition.pieceAt(sx, sy));
-    mPosition.setPieceAt(sx, sy, Piece());
+    m_position.setPieceAt(dx, dy, m_position.pieceAt(sx, sy));
+    m_position.setPieceAt(sx, sy, Piece());
 
     if (type == MOVE_PROMOTION)
-        mPosition.setPieceAt(dx, dy, Piece(move.PromotionPiece, currentPlayer()));
+        m_position.setPieceAt(dx, dy, Piece(move.PromotionPiece, currentPlayer()));
 }
 
 bool Board::canCastle(MoveType castleType) const {
@@ -338,18 +425,18 @@ bool Board::canCastle(MoveType castleType) const {
 }
 
 bool Board::isInCheckAfterTheMove(Player victim, Move move, MoveType type) const {
-    Position backup = mPosition;
+    Position backup = m_position;
     // Yes, I call a non-const method, but after this I restore saved
     // state.
     const_cast<Board*>(this)->movePieces(move, type);
     int numChecks = countChecksFor(victim);
     // Restore board position
-    mPosition = backup;
+    m_position = backup;
     return numChecks > 0;
 }
 
 bool Board::isLegal(Move move, GameState* retState, MoveType* retType) const {
-    GameState NextState = mState;
+    GameState NextState = m_state;
 
     // Cannot take your own piece
     if (owner(move.To) == currentPlayer())
@@ -401,7 +488,7 @@ bool Board::isLegal(Move move, GameState* retState, MoveType* retType) const {
     if (pieceAt(move.from()).owner().isBlack())
         ++NextState.FullMoveCounter;
     // En-passant target update
-    if (enPassantCoords == mState.EnPassantCoords)
+    if (enPassantCoords == m_state.EnPassantCoords)
         NextState.EnPassantCoords = { -1, -1 };
     else {
         NextState.EnPassantCoords = enPassantCoords;
@@ -463,8 +550,8 @@ bool Board::isLegalPawnMove(Move move, MoveType& Type,
                 return true;
             }
             // En-passant
-            else if (mState.EnPassantPlayer == currentPlayer() &&
-                     mState.EnPassantCoords == move.To) {
+            else if (m_state.EnPassantPlayer == currentPlayer() &&
+                     m_state.EnPassantCoords == move.To) {
                 Type = MOVE_ENPASSANT_CAPTURE;
                 return true;
             }
@@ -565,7 +652,7 @@ CoordsVector Board::getAttackedCoords(Piece piece, Player owner, Coord2D<int> po
 }
 
 Player Board::currentPlayer() const {
-    return mState.WhoIsPlaying;
+    return m_state.WhoIsPlaying;
 }
 
 CoordsVector Board::getPawnAttack(int x, int y, Player owner) const {

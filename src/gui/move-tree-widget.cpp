@@ -9,14 +9,16 @@ void TreeHtml::traverse(HtmlMoveTreeBuilder& builder, Move lastMove,
 {
     if (lastMove != Move::NullMove) {
         const Board& board = node->parent()->board();
-        QString prefix;
         QString notation = board.algebraicNotationString(lastMove);
         QString number = QString::number(board.fullMoveCount());
-        QString uid = QString::number(node->uid());
 
         if (board.currentPlayer().isWhite())
             builder.addMoveNumber(number + ". ");
+        // It is variant.
         else if (node->parent()->next() != node)
+            builder.addMoveNumber(number + "... ");
+        // It is position where we are starting from black move.
+        else if (board.currentPlayer().isBlack() && !node->parent()->parent())
             builder.addMoveNumber(number + "... ");
 
         builder.addMove(notation, node->uid(), node->uid() == tree->currentNode()->uid());
