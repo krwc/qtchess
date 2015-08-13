@@ -5,7 +5,7 @@
 #include "game/tree.hpp"
 #include "ui_engine-widget.h"
 #include <QDebug>
-#include <QThread>
+
 
 EngineWidget::EngineWidget(QWidget* parent)
     : QWidget(parent)
@@ -18,7 +18,7 @@ EngineWidget::EngineWidget(QWidget* parent)
     QObject::connect(ui->select, &QPushButton::clicked, this, &EngineWidget::onSelectClicked);
     QObject::connect(&SettingsFactory::engines(), SIGNAL(changed()), this, SLOT(onEnginesChanged()));
 
-    ui->engineOutput->setHtml("");
+    reset();
 }
 
 EngineWidget::~EngineWidget()
@@ -105,6 +105,11 @@ void EngineWidget::redraw()
     ui->engineOutput->setHtml(lines);
 }
 
+void EngineWidget::reset()
+{
+    ui->engineOutput->setHtml("");
+}
+
 void EngineWidget::onVariantParsed(VariantInfo info)
 {
     m_variants.resize(info.id());
@@ -127,6 +132,8 @@ void EngineWidget::onStopClicked()
     if (!m_engine)
         return;
     m_engine->stopAnalysis();
+
+    reset();
 }
 
 bool EngineWidget::onSelectClicked()

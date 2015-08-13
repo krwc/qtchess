@@ -9,7 +9,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , mSettingsDialog(nullptr)
+    , m_settingsDialog(nullptr)
 {
     ui->setupUi(this);
     setWindowTitle("QtChess");
@@ -57,16 +57,16 @@ void MainWindow::onMoveMade(Move move) {
 }
 
 void MainWindow::onSettingsShow() {
-    if (!mSettingsDialog) {
-        mSettingsDialog = new SettingsDialog(this);
-        QObject::connect(mSettingsDialog, SIGNAL(rejected()), this, SLOT(onSettingsClose()));
+    if (!m_settingsDialog) {
+        m_settingsDialog = new SettingsDialog(this);
+        QObject::connect(m_settingsDialog, SIGNAL(rejected()), this, SLOT(onSettingsClose()));
     }
-    mSettingsDialog->show();
+    m_settingsDialog->show();
 }
 
 void MainWindow::onSettingsClose() {
-    delete mSettingsDialog;
-    mSettingsDialog = nullptr;
+    delete m_settingsDialog;
+    m_settingsDialog = nullptr;
 }
 
 void MainWindow::onEnginesShow()

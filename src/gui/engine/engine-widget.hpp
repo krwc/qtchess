@@ -34,6 +34,7 @@ private slots:
     void onEnginesChanged();
 public slots:
     void redraw();
+    void reset();
 private:
     void setEngine(QString name);
 
