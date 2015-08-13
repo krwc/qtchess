@@ -57,7 +57,7 @@ void EngineWidget::redraw()
     static const QString evalFmt = "<td><strong>(%1%2)</strong></td>";
     static const QString movesFmt = "<td>%1</td>";
     static const QString lineFmt = "<tr>%1%2</tr>";
-    static const QString statusFmt = "<b>Depth: %1 (%2 kN/s)</b>";
+    static const QString statusFmt = "<b>Depth: %1 (%2 kn/s)</b>";
     QString lines;
 
 
