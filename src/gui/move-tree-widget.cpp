@@ -47,6 +47,7 @@ MoveTreeWidget::MoveTreeWidget(QWidget* parent)
     : QWebView(parent)
     , m_tree(nullptr)
     , m_hoveredMoveUid(0)
+    , m_actionMoveUid(0)
 {
     page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
@@ -70,24 +71,39 @@ QSize MoveTreeWidget::sizeHint() const
 
 void MoveTreeWidget::contextMenuEvent(QContextMenuEvent* event)
 {
+    m_actionMoveUid = m_hoveredMoveUid;
     // Don't care if no node has been hovered.
-    if (!m_hoveredMoveUid)
+    if (!m_actionMoveUid)
         return;
 
-    // TODO: Make this work.
     QMenu menu;
-    menu.addAction("Promote up");
-    menu.addAction("Promote to mainline");
+    menu.addAction("Promote up", this, SLOT(onPromoteUp()));
+    menu.addAction("Promote to mainline", this, SLOT(onPromoteToMainline()));
     menu.addSeparator();
-    menu.addAction("Delete branch from this move");
-
+    menu.addAction("Remove", this, SLOT(onRemove()));
     menu.exec(event->globalPos());
+
     redraw();
 }
 
 void MoveTreeWidget::redraw()
 {
     setHtml(TreeHtml::html(m_tree));
+}
+
+void MoveTreeWidget::onPromoteUp()
+{
+    m_tree->promote(TreeNode::fromUid(m_actionMoveUid));
+}
+
+void MoveTreeWidget::onPromoteToMainline()
+{
+
+}
+
+void MoveTreeWidget::onRemove()
+{
+    m_tree->remove(TreeNode::fromUid(m_actionMoveUid));
 }
 
 void MoveTreeWidget::onMoveClicked(const QUrl&)

@@ -9,7 +9,10 @@ class Tree;
 class TreeNode {
     friend class Tree;
 public:
-    TreeNode(const Board& board = Board(), TreeNode* parent = nullptr);
+    ~TreeNode();
+
+    TreeNode(const Board& board = Board(), TreeNode* parent = nullptr,
+             TreeNode* parentLine = nullptr);
 
     /*! \brief Returns node current board */
     const Board& board() const;
@@ -22,6 +25,9 @@ public:
 
     /*! \brief Returns parent node */
     const TreeNode* parent() const;
+
+    /*! \brief Returns parent line node */
+    const TreeNode* parentLine() const;
 
     /*! \brief Checks whether \a move is one of the next moves. */
     bool hasNext(Move move) const;
@@ -52,14 +58,32 @@ public:
 
     /*! \brief Removes transition */
     TreeNode* delTransition(Move move);
+
+    /*! \brief Checks whether given node is a child node of this node */
+    bool isChildNode(TreeNode* node) const;
+
+    /*! \brief Sets parent line pointer */
+    void setParentLine(TreeNode* node);
+
+    /*! \brief Sets parent pointer */
+    void setParent(TreeNode* node);
 private:
     /*! \brief Sets current board */
     void setBoard(const Board& board);
+
+    /** Same set of methods as above but for internal / friend class usage only,
+     * to avoid stupid const_casting everywhere */
+    TreeNode* next();
+    TreeNode* next(Move move);
+    TreeNode* parent();
+    TreeNode* parentLine();
 private:
     /*!< chess-board snapshot */
     Board m_board;
     /*!< main line in this line */
     TreeNode* m_mainLine = nullptr;
+    /*!< parent node */
+    TreeNode* m_parent = nullptr;
     /*!< parent line */
     TreeNode* m_parentLine = nullptr;
     /*!< all moves from this node */
@@ -97,6 +121,12 @@ public:
 
     /*! \brief Sets current root board. And clears the tree. */
     void setRootBoard(const Board& board);
+
+    /*! \brief Removes current node. */
+    void remove(TreeNode* node);
+
+    /*! \brief Promotes up given node if it is not already a main-line node. */
+    void promote(TreeNode* node);
 signals:
     /*! \brief Emited when tree is changed */
     void changed();

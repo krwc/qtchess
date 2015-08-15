@@ -21,7 +21,7 @@ public:
     explicit BoardWidget(QWidget* parent = 0,
                          BoardSettings& settings = SettingsFactory::board());
 
-    void setModel(const Board*);
+    void setBoard(Board board);
     /* Emits move signal */
     void emitMove(Move move);
     /* Handles settings change */
@@ -69,22 +69,22 @@ private:
     int absolute(int coord) const;
 private:
     BoardSettings& m_settings;
-    BoardWidgetState* mState;
-    const Board* mModel;
-    PieceSet* mPieceSet;
+    BoardWidgetState* m_state;
+    Board m_board;
+    PieceSet* m_pieceSet;
     /* Geometry properties */
-    bool mFlipped;
-    int mWidth;  /* width of the drawing area */
-    int mHeight; /* height of the drawing area */
-    int mFieldSize;
+    bool m_flipped;
+    int m_width;  /* width of the drawing area */
+    int m_height; /* height of the drawing area */
+    int m_fieldSize;
     /* Beginning of the chessboard squares */
-    int mFirstFieldX;
-    int mFirstFieldY;
+    int m_firstFieldX;
+    int m_firstFieldY;
 
-    Coord2D<int> mDraggedField;
-    Coord2D<int> mDragOffset;
-    Coord2D<int> mDragStart;
-    Coord2D<int> mSelectedField;
+    Coord2D<int> m_draggedField;
+    Coord2D<int> m_dragOffset;
+    Coord2D<int> m_dragStart;
+    Coord2D<int> m_selectedField;
 };
 
 #endif // BOARDWIDGET_HPP

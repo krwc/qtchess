@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("QtChess");
     // Setup widgets
-    ui->Board->setModel(&m_tree.currentNode()->board());
+    //ui->Board->setModel(&m_tree.currentNode()->board());
     ui->GameTextWidget->setTree(&m_tree);
 
     // Connect board signals
@@ -81,7 +81,7 @@ void MainWindow::onBoardReset()
 
 void MainWindow::onPositionChanged()
 {
-    ui->Board->setModel(&m_tree.currentNode()->board());
+    ui->Board->setBoard(m_tree.currentNode()->board());
     ui->engineWidget->setBoard(m_tree.currentNode()->board());
 }
 

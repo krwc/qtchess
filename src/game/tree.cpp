@@ -1,11 +1,18 @@
 #include "tree.hpp"
 #include <QDebug>
 
-TreeNode::TreeNode(const Board& board, TreeNode* parent)
+TreeNode::TreeNode(const Board& board, TreeNode* parent, TreeNode* parentLine)
     : m_board(board)
-    , m_parentLine(parent)
+    , m_parent(parent)
+    , m_parentLine(parentLine)
 {
 
+}
+
+TreeNode::~TreeNode()
+{
+    for (TreeNode* next : m_moves.values())
+        delete next;
 }
 
 const Board& TreeNode::board() const
@@ -26,6 +33,11 @@ const TreeNode* TreeNode::next(Move move) const
 }
 
 const TreeNode* TreeNode::parent() const
+{
+    return m_parent;
+}
+
+const TreeNode* TreeNode::parentLine() const
 {
     return m_parentLine;
 }
@@ -98,9 +110,50 @@ TreeNode* TreeNode::delTransition(Move move)
     return node;
 }
 
+bool TreeNode::isChildNode(TreeNode* node) const
+{
+    if (m_moves.values().contains(node))
+        return true;
+
+    for (const Move& move : m_moves.keys())
+        if (m_moves[move]->isChildNode(node))
+            return true;
+    return false;
+}
+
 void TreeNode::setBoard(const Board& board)
 {
     m_board = board;
+}
+
+void TreeNode::setParentLine(TreeNode* node)
+{
+    m_parentLine = node;
+}
+
+void TreeNode::setParent(TreeNode* node)
+{
+    m_parent = node;
+}
+
+TreeNode* TreeNode::next()
+{
+    return const_cast<TreeNode*>(const_cast<const TreeNode*>(this)->next());
+}
+
+TreeNode* TreeNode::next(Move move)
+{
+    return const_cast<TreeNode*>(const_cast<const TreeNode*>(this)->next(move));
+}
+
+TreeNode* TreeNode::parent()
+{
+    return const_cast<TreeNode*>(const_cast<const TreeNode*>(this)->parent());
+}
+
+TreeNode* TreeNode::parentLine()
+{
+    return const_cast<TreeNode*>(const_cast<const TreeNode*>(this)->parentLine());
 }
 
 Tree::Tree()
@@ -125,9 +178,13 @@ bool Tree::addMove(Move move)
 
     if (!m_current->hasNext(move)) {
         Board board = m_current->board();
-        board.makeMove(move);
+        board.makeMove(move);     
+        TreeNode* node;
 
-        TreeNode* node = new TreeNode(board, m_current);
+        if (m_current->hasNeighbours())
+            node = new TreeNode(board, m_current, m_current);
+        else
+            node = new TreeNode(board, m_current, const_cast<TreeNode*>(m_current->parentLine()));
 
         m_current->addTransition(move, node);
         m_current = node;
@@ -147,7 +204,7 @@ bool Tree::delMove(Move move)
 
     delete m_current->delTransition(move);
 
-    emit changed();
+    //emit changed();
     return true;
 }
 
@@ -163,6 +220,8 @@ void Tree::clear()
 
 void Tree::setCurrent(TreeNode* node)
 {
+    Q_ASSERT(node && "Setting null node.");
+
     m_current = node;
     emit changed();
 }
@@ -171,5 +230,74 @@ void Tree::setRootBoard(const Board& board)
 {
     clear();
     m_current->setBoard(board);
+    emit changed();
+}
+
+void Tree::remove(TreeNode* node)
+{
+    if (node == &m_root)
+        clear();
+    else {
+        TreeNode* current = m_current;
+        TreeNode* parent = const_cast<TreeNode*>(node->parent());
+
+        // If current was not a child node of the removed node, then
+        // do not change m_current pointer to parent.
+        if (!current->isChildNode(node))
+            current = parent;
+
+        m_current = parent;
+
+        for (const Move& nextMove : parent->nextMoves()) {
+            if (parent->next(nextMove) == node) {
+                delMove(nextMove);
+                break;
+            }
+        }
+        // Restore m_current pointer
+        m_current = current;
+
+        emit changed();
+    }
+}
+
+void Tree::promote(TreeNode* node)
+{
+    Q_ASSERT(node && "Promoting null node.");
+
+    // Lets assume it the tree looks like this and consider segments:
+    // 1. d4 d5 2. Nf3 Nf6 3. c4 ( 3. b4 b5 4. a4 a5 ) Be7 4. Be2 O-O
+    // [-----------1-----------] [---------2---------] [------3------]
+
+    // Main line cannot be promoted.
+    if (!node->parentLine())
+        return;
+
+    // First element in the line containing a node. We can imagine this
+    // by assuming that node points for example to 4. a4, then firstInLine
+    // will point at 3.b4 as it is the first node in this variant line.
+    TreeNode* firstInLine = node;
+    TreeNode* lineParent;
+    while (firstInLine->parent() != node->parentLine())
+        firstInLine = firstInLine->parent();
+
+    // Points to 2... Nf6
+    lineParent = firstInLine->parent();
+
+    // Update next moves. Next moves like 3. c4 Be7 4. Be2 O-O will be
+    // demoted to a variant, and we have to remember their new parentLine.
+    for (TreeNode* next = lineParent->next(); next; next = next->next())
+        next->setParentLine(firstInLine->parentLine());
+
+    // Now going back, (2) has to be updated so that every move from there
+    // has parentLine equal to the (1) parent line, as this will be the new
+    // main line.
+    for (TreeNode* next = firstInLine; next; next = next->next())
+        next->setParentLine(lineParent->parentLine());
+
+    // The last thing that is left is to set lineParent main line, that is
+    // to set 2... Nf6 main line to 3. b4.
+    lineParent->setMainLine(firstInLine);
+
     emit changed();
 }

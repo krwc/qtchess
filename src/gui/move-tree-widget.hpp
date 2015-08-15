@@ -34,12 +34,17 @@ public slots:
 private slots:
     void onMoveClicked(const QUrl&);
     void onMoveHovered(const QString&);
+    void onPromoteUp();
+    void onPromoteToMainline();
+    void onRemove();
 signals:
     void moveSelected(size_t);
 private:
     Tree* m_tree;
     /*!< Currently hovered node uid or 0. */
     size_t m_hoveredMoveUid;
+    /*!< Uid used for action */
+    size_t m_actionMoveUid;
 };
 
 #endif // GAME_TREE_WIDGET_HPP
