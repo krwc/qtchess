@@ -13,6 +13,8 @@ public:
                                  bool isCurrentMove = false);
     /*! \brief Puts \a variant inside brackets ( ) with proper styling */
     HtmlMoveTreeBuilder& addVariant(const QString& variant);
+    /*! \brief Puts annotation */
+    HtmlMoveTreeBuilder& addAnnotation(const QString& annotation);
     /*! \brief Returns builded html string without style-sheet. */
     QString html() const;
     /*! \brief Returns builded html string with style-sheet. */

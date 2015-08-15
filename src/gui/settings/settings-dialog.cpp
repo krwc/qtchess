@@ -30,6 +30,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     mapWithSetting(html, "colorMoveNumber", ui->pgnNumberColor);
     mapWithSetting(html, "colorMoveHighlight", ui->pgnHiMoveColor);
     mapWithSetting(html, "colorVariant", ui->pgnVariationColor);
+    mapWithSetting(html, "colorAnnotation", ui->pgnAnnotationColor);
 
     readSettings();
 }

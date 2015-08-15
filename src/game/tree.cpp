@@ -42,6 +42,11 @@ const TreeNode* TreeNode::parentLine() const
     return m_parentLine;
 }
 
+const QString& TreeNode::annotation() const
+{
+    return m_annotation;
+}
+
 bool TreeNode::hasNext(Move move) const
 {
     return m_moves.contains(move);
@@ -134,6 +139,11 @@ void TreeNode::setParentLine(TreeNode* node)
 void TreeNode::setParent(TreeNode* node)
 {
     m_parent = node;
+}
+
+void TreeNode::setAnnotation(const QString& annotation)
+{
+    m_annotation = annotation;
 }
 
 TreeNode* TreeNode::next()
@@ -261,7 +271,7 @@ void Tree::remove(TreeNode* node)
     }
 }
 
-void Tree::promote(TreeNode* node)
+bool Tree::promote(TreeNode* node)
 {
     Q_ASSERT(node && "Promoting null node.");
 
@@ -271,7 +281,7 @@ void Tree::promote(TreeNode* node)
 
     // Main line cannot be promoted.
     if (!node->parentLine())
-        return;
+        return false;
 
     // First element in the line containing a node. We can imagine this
     // by assuming that node points for example to 4. a4, then firstInLine
@@ -298,6 +308,21 @@ void Tree::promote(TreeNode* node)
     // The last thing that is left is to set lineParent main line, that is
     // to set 2... Nf6 main line to 3. b4.
     lineParent->setMainLine(firstInLine);
+
+    emit changed();
+    return true;
+}
+
+void Tree::promoteToMainline(TreeNode* node)
+{
+    while (promote(node));
+}
+
+void Tree::annotate(TreeNode* node, const QString& annotation)
+{
+    Q_ASSERT(node && "Annotated null node");
+
+    node->setAnnotation(annotation);
 
     emit changed();
 }

@@ -3,6 +3,7 @@
 #include "settings/settings-factory.hpp"
 #include <QMenu>
 #include <QContextMenuEvent>
+#include <QInputDialog>
 
 void TreeHtml::traverse(HtmlMoveTreeBuilder& builder, Move lastMove,
                         const TreeNode* node, const Tree* tree)
@@ -22,6 +23,9 @@ void TreeHtml::traverse(HtmlMoveTreeBuilder& builder, Move lastMove,
             builder.addMoveNumber(number + "... ");
 
         builder.addMove(notation, node->uid(), node->uid() == tree->currentNode()->uid());
+
+        if (!node->annotation().isEmpty())
+            builder.addAnnotation(node->annotation());
 
         HtmlMoveTreeBuilder childBuilder;
         for (const Move& next : node->nonMainMoves())
@@ -77,10 +81,13 @@ void MoveTreeWidget::contextMenuEvent(QContextMenuEvent* event)
         return;
 
     QMenu menu;
+    menu.addAction("Annotate", this, SLOT(onAnnotate()));
+    menu.addSeparator();
     menu.addAction("Promote up", this, SLOT(onPromoteUp()));
     menu.addAction("Promote to mainline", this, SLOT(onPromoteToMainline()));
     menu.addSeparator();
     menu.addAction("Remove", this, SLOT(onRemove()));
+    menu.addAction("Remove annotation", this, SLOT(onRemoveAnnotation()));
     menu.exec(event->globalPos());
 
     redraw();
@@ -91,6 +98,17 @@ void MoveTreeWidget::redraw()
     setHtml(TreeHtml::html(m_tree));
 }
 
+void MoveTreeWidget::onAnnotate()
+{
+    QString annotation = QInputDialog::getMultiLineText(this, tr("Edit annotation"), tr("Text:"));
+    m_tree->annotate(TreeNode::fromUid(m_actionMoveUid), annotation);
+}
+
+void MoveTreeWidget::onRemoveAnnotation()
+{
+    m_tree->annotate(TreeNode::fromUid(m_actionMoveUid), QString());
+}
+
 void MoveTreeWidget::onPromoteUp()
 {
     m_tree->promote(TreeNode::fromUid(m_actionMoveUid));
@@ -98,7 +116,7 @@ void MoveTreeWidget::onPromoteUp()
 
 void MoveTreeWidget::onPromoteToMainline()
 {
-
+    m_tree->promoteToMainline(TreeNode::fromUid(m_actionMoveUid));
 }
 
 void MoveTreeWidget::onRemove()

@@ -29,6 +29,9 @@ public:
     /*! \brief Returns parent line node */
     const TreeNode* parentLine() const;
 
+    /*! \brief Returns node annotation. */
+    const QString& annotation() const;
+
     /*! \brief Checks whether \a move is one of the next moves. */
     bool hasNext(Move move) const;
 
@@ -67,6 +70,9 @@ public:
 
     /*! \brief Sets parent pointer */
     void setParent(TreeNode* node);
+
+    /*! \brief Sets annotation */
+    void setAnnotation(const QString& annotation);
 private:
     /*! \brief Sets current board */
     void setBoard(const Board& board);
@@ -88,6 +94,8 @@ private:
     TreeNode* m_parentLine = nullptr;
     /*!< all moves from this node */
     QMap<Move, TreeNode*> m_moves = {};
+    /*!< Move annotation. */
+    QString m_annotation;
 };
 
 class Tree : public QObject
@@ -125,8 +133,16 @@ public:
     /*! \brief Removes current node. */
     void remove(TreeNode* node);
 
-    /*! \brief Promotes up given node if it is not already a main-line node. */
-    void promote(TreeNode* node);
+    /*! \brief Promotes up given node if it is not already a main-line node.
+     * \returns true if any promotion has occured, false otherwise
+     */
+    bool promote(TreeNode* node);
+
+    /*! \brief Promotes line containing node to the main line */
+    void promoteToMainline(TreeNode* node);
+
+    /*! \brief Annotates given node */
+    void annotate(TreeNode* node, const QString& annotation);
 signals:
     /*! \brief Emited when tree is changed */
     void changed();

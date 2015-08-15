@@ -192,10 +192,10 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_12">
+            <item row="2" column="1">
+             <widget class="ColorButton" name="pgnHiMoveColor">
               <property name="text">
-               <string>Number color:</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -206,10 +206,10 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="ColorButton" name="pgnHiMoveColor">
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_12">
               <property name="text">
-               <string/>
+               <string>Number color:</string>
               </property>
              </widget>
             </item>
@@ -236,6 +236,20 @@
             </item>
             <item row="4" column="1">
              <widget class="ColorButton" name="pgnNumberColor">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>Annotation color:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="ColorButton" name="pgnAnnotationColor">
               <property name="text">
                <string/>
               </property>

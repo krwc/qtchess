@@ -1,5 +1,6 @@
 #include "util/html-move-tree-builder.hpp"
 #include "settings/settings-factory.hpp"
+#include <QTextDocument>
 
 static QString styleSheet = R"(
     <style>
@@ -17,6 +18,10 @@ static QString styleSheet = R"(
             font-size: 14px;
             line-height: 140%;
             font-family: monospace;
+        }
+
+        .Annotation {
+            color: %7;
         }
 
         .TreeMove {
@@ -71,6 +76,16 @@ HtmlMoveTreeBuilder& HtmlMoveTreeBuilder::addVariant(const QString& variant)
     return *this;
 }
 
+HtmlMoveTreeBuilder& HtmlMoveTreeBuilder::addAnnotation(const QString& annotation)
+{
+    // This makes that annotation is safe.
+    QTextDocument doc;
+    doc.setHtml(annotation);
+
+    m_html.append(QString("<span class='Annotation'> { %1 } </span>").arg(doc.toPlainText()));
+    return *this;
+}
+
 QString HtmlMoveTreeBuilder::html() const
 {
     return m_html;
@@ -86,7 +101,8 @@ QString HtmlMoveTreeBuilder::htmlWithStyle() const
         settings.get("colorHighlight").value<QColor>().name(),
         settings.get("colorMoveHighlight").value<QColor>().name(),
         settings.get("colorBackground").value<QColor>().name(),
-        settings.get("colorMoveNumber").value<QColor>().name()
+        settings.get("colorMoveNumber").value<QColor>().name(),
+        settings.get("colorAnnotation").value<QColor>().name()
     );
     return style + QString("<div class='TreeBody'>%1</div>").arg(m_html);
 }

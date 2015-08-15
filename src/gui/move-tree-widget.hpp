@@ -34,6 +34,8 @@ public slots:
 private slots:
     void onMoveClicked(const QUrl&);
     void onMoveHovered(const QString&);
+    void onAnnotate();
+    void onRemoveAnnotation();
     void onPromoteUp();
     void onPromoteToMainline();
     void onRemove();
