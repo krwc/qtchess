@@ -12,8 +12,6 @@ Currently it supports UCI engines (but it was not tested extensively) and import
 1. Fixing all FIXME / TODO in source code.
 2. Exporting games to PGN.
 3. Importing games from PGN.
-4. Possibility of removing variants and moves in general from the tree.
-5. Possibility of adding annotations.
-6. Layout management.
-7. ???
+4. Layout management.
+5. ???
 
