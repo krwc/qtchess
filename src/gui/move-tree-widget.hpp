@@ -32,6 +32,8 @@ public slots:
     /*! \brief Issues redraw */
     void redraw();
 private slots:
+    void onMoveNext();
+    void onMovePrev();
     void onMoveClicked(const QUrl&);
     void onMoveHovered(const QString&);
     void onAnnotate();

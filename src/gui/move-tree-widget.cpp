@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QContextMenuEvent>
 #include <QInputDialog>
+#include <QShortcut>
 
 void TreeHtml::traverse(HtmlMoveTreeBuilder& builder, Move lastMove,
                         const TreeNode* node, const Tree* tree)
@@ -60,6 +61,9 @@ MoveTreeWidget::MoveTreeWidget(QWidget* parent)
 
     QObject::connect(this, &QWebView::linkClicked, this, &MoveTreeWidget::onMoveClicked);
     QObject::connect(page(), &QWebPage::linkHovered, this, &MoveTreeWidget::onMoveHovered);
+
+    new QShortcut(QKeySequence(Qt::Key_Left), this, SLOT(onMovePrev()));
+    new QShortcut(QKeySequence(Qt::Key_Right), this, SLOT(onMoveNext()));
 }
 
 void MoveTreeWidget::setTree(Tree* tree)
@@ -96,6 +100,20 @@ void MoveTreeWidget::contextMenuEvent(QContextMenuEvent* event)
 void MoveTreeWidget::redraw()
 {
     setHtml(TreeHtml::html(m_tree));
+}
+
+void MoveTreeWidget::onMovePrev()
+{
+    // FIXME: Ugly casts!
+    if (m_tree->currentNode()->parent())
+        m_tree->setCurrent(const_cast<TreeNode*>(m_tree->currentNode()->parent()));
+}
+
+void MoveTreeWidget::onMoveNext()
+{
+    // FIXME: Ugly casts!
+    if (m_tree->currentNode()->next())
+        m_tree->setCurrent(const_cast<TreeNode*>(m_tree->currentNode()->next()));
 }
 
 void MoveTreeWidget::onAnnotate()

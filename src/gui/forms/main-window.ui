@@ -57,7 +57,7 @@
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
   </widget>
-  <widget class="QDockWidget" name="rightDock">
+  <widget class="QDockWidget" name="pgnDock">
    <property name="minimumSize">
     <size>
      <width>200</width>
@@ -80,7 +80,7 @@
           <x>0</x>
           <y>0</y>
           <width>180</width>
-          <height>540</height>
+          <height>539</height>
          </rect>
         </property>
        </widget>
@@ -89,9 +89,9 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="bottomDock">
+  <widget class="QDockWidget" name="engineDock">
    <attribute name="dockWidgetArea">
-    <number>8</number>
+    <number>2</number>
    </attribute>
    <widget class="EngineWidget" name="engineWidget"/>
   </widget>
@@ -117,12 +117,12 @@
   </action>
   <action name="actionSetPgn">
    <property name="text">
-    <string>Set position from PGN</string>
+    <string>S&amp;et position from PGN</string>
    </property>
   </action>
   <action name="actionSetFen">
    <property name="text">
-    <string>Set position from FEN</string>
+    <string>Set p&amp;osition from FEN</string>
    </property>
   </action>
   <action name="actionFlip">
