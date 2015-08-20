@@ -15,10 +15,10 @@ void TreeHtml::traverse(HtmlMoveTreeBuilder& builder, Move lastMove,
 
         if (board.currentPlayer().isWhite())
             builder.addMoveNumber(number + ". ");
-        // It is variant.
+        // It is a variant.
         else if (node->parent()->next() != node)
             builder.addMoveNumber(number + "... ");
-        // It is position where we are starting from black move.
+        // It is a position where we are starting from black move.
         else if (board.currentPlayer().isBlack() && !node->parent()->parent())
             builder.addMoveNumber(number + "... ");
 

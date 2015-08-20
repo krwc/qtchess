@@ -45,6 +45,9 @@ void EngineSettingsDialog::onEditClicked()
     EngineConfig config = SettingsFactory::engines().config(ui->list->engineName());
     QScopedPointer<EngineEditDialog> dialog(new EngineEditDialog(config, this));
 
-    if (dialog->exec() == QDialog::Accepted)
+    if (dialog->exec() == QDialog::Accepted) {
+        // Removing to avoid duplication.
+        SettingsFactory::engines().remove(ui->list->engineName());
         SettingsFactory::engines().saveConfig(dialog->engineConfig());
+    }
 }

@@ -23,6 +23,9 @@ Engine::~Engine()
 
 void Engine::start()
 {
+    if (started())
+        return;
+
     // Start the engine.
     m_process->start();
 
@@ -34,9 +37,11 @@ void Engine::start()
 
 void Engine::startAnalysis(const Board& current)
 {
+    if (isAnalysing())
+        return;
+
     if (!started())
         start();
-
     waitForStateOrThrow(Engine::Idling);
 
     setState(Engine::Working);
