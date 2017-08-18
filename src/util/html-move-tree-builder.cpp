@@ -15,7 +15,7 @@ static QString styleSheet = R"(
         }
 
         .TreeBody {
-            font-size: 14px;
+            font-size: 16px;
             line-height: 140%;
             font-family: monospace;
         }
@@ -30,7 +30,7 @@ static QString styleSheet = R"(
         }
 
         ul.TreeVariant {
-            font-size: 12px;
+            font-size: 14px;
             color: %2;
             padding-left: 15px;
             list-style-type: none;
