@@ -205,7 +205,7 @@ QString Board::fileString(int file) const
 
 QString Board::rankString(int rank) const
 {
-    return QString(rank + '1');
+    return QString(7 - rank + '1');
 }
 
 int Board::charToRank(QChar rank) const
@@ -219,7 +219,7 @@ int Board::charToFile(QChar file) const
 }
 
 QString Board::squareString(Coord2D<int> coord) const {
-    return fileString(coord.x) + rankString(7 - coord.y);
+    return fileString(coord.x) + rankString(coord.y);
 }
 
 QString Board::longAlgebraicNotationString(Move move) const
@@ -252,7 +252,8 @@ QString Board::algebraicNotationString(Move move) const {
     // String that helps avoid move ambiguity
     QString uniqueFrom = "";
 
-    // Now have to take care of the notational ambiguity
+    // Now have to take care of the notational ambiguity (e.g. one of two
+    // knights on the same file jump to a position reachable for both of them)
     if (!piece.isKing() && !piece.isPawn()) {
         CoordsVector attackingPieces;
         for (int rank = 0; rank < 8; ++rank) {
