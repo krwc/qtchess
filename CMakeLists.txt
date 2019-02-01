@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(qtchess)
 set(CMAKE_CXX_COMPILER "clang++")
-set(CMAKE_CXX_FLAGS "-std=c++11 -march=native -Wall -Wextra")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "-march=native -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
 set(CMAKE_BUILD_TYPE Debug)
 
