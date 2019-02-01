@@ -11,5 +11,6 @@ HtmlSettings::HtmlSettings()
     set("colorMoveHighlight" , QColor(Qt::white));
     set("colorHighlight"     , QColor(Qt::black));
     set("colorAnnotation"    , QColor(Qt::blue));
+    set("fontScaling"        , 1.0);
     reset();
 }

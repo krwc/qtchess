@@ -15,7 +15,7 @@ static QString styleSheet = R"(
         }
 
         .TreeBody {
-            font-size: 16px;
+            font-size: %8px;
             line-height: 140%;
             font-family: monospace;
         }
@@ -94,6 +94,7 @@ QString HtmlMoveTreeBuilder::html() const
 QString HtmlMoveTreeBuilder::htmlWithStyle() const
 {
     HtmlSettings& settings = SettingsFactory::html();
+    const auto defaultFontSizePx = 16;
 
     QString style = styleSheet.arg(
         settings.get("colorMove").value<QColor>().name(),
@@ -102,7 +103,9 @@ QString HtmlMoveTreeBuilder::htmlWithStyle() const
         settings.get("colorMoveHighlight").value<QColor>().name(),
         settings.get("colorBackground").value<QColor>().name(),
         settings.get("colorMoveNumber").value<QColor>().name(),
-        settings.get("colorAnnotation").value<QColor>().name()
+        settings.get("colorAnnotation").value<QColor>().name(),
+        QString::number(defaultFontSizePx *
+                        settings.get("fontScaling").value<double>())
     );
     return style + QString("<div class='TreeBody'>%1</div>").arg(m_html);
 }

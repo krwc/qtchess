@@ -4,9 +4,6 @@
 #include "ui_settings-dialog.h"
 
 
-// Useful macro for mapWithSetting() method.
-#define SETTER_FUNCTOR(type,settings) [&, key](type value) { (settings).set(key, value); }
-
 SettingsDialog::SettingsDialog(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::SettingsDialog)
@@ -24,6 +21,12 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     mapWithSetting(board, "colorBorderText", ui->coordsTextColor);
     mapWithSetting(board, "boolBorder", ui->coordsCheckBox);
 
+    const auto minFontScaling = 1.0;
+    const auto maxFontScaling = 10.0;
+    const auto decimalDigits = 2;
+    ui->pgnFontScaling->setValidator(
+        new QDoubleValidator(minFontScaling, maxFontScaling, decimalDigits));
+    mapWithSetting(html, "fontScaling", ui->pgnFontScaling);
     mapWithSetting(html, "colorBackground", ui->pgnBgColor);
     mapWithSetting(html, "colorHighlight", ui->pgnHiColor);
     mapWithSetting(html, "colorMove", ui->pgnNoMoveColor);
@@ -70,14 +73,24 @@ void SettingsDialog::mapWithSetting(AbstractSettings& settings, QString key,
                                     ColorButton* button)
 {
     button->setColor(settings.get(key).value<QColor>());
-    QObject::connect(button, &ColorButton::changed, SETTER_FUNCTOR(QColor, settings));
+    QObject::connect(button, &ColorButton::changed,
+                     [&, key](auto value) { settings.set(key, value); });
 }
 
 void SettingsDialog::mapWithSetting(AbstractSettings& settings, QString key,
                                     QCheckBox* box)
 {
     box->setChecked(settings.get(key).toBool());
-    QObject::connect(box, &QCheckBox::clicked, SETTER_FUNCTOR(bool, settings));
+    QObject::connect(box, &QCheckBox::clicked,
+                     [&, key](auto value) { settings.set(key, value); });
+}
+
+void SettingsDialog::mapWithSetting(AbstractSettings& settings, QString key,
+                                    QLineEdit* line)
+{
+    line->setText(settings.get(key).toString());
+    QObject::connect(line, &QLineEdit::editingFinished,
+                     [&, key, line]() { settings.set(key, line->text()); });
 }
 
 void SettingsDialog::readSettings()
