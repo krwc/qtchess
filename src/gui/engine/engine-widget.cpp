@@ -54,12 +54,13 @@ void EngineWidget::setBoard(const Board& board)
 void EngineWidget::redraw()
 {
     static const QString outputFmt = "<table><th></th><th></th>%1</table>";
-    static const QString evalFmt = "<td><strong>(%1%2)</strong></td>";
+    static const QString evalFmt = "<td style='font-size: %3px'><strong>(%1%2)</strong></td>";
     static const QString movesFmt = "<td>%1</td>";
     static const QString lineFmt = "<tr>%1%2</tr>";
     static const QString statusFmt = "<b>Depth: %1 (%2 kn/s)</b>";
     QString lines;
 
+    HtmlSettings& settings = SettingsFactory::html();
 
     for (const VariantInfo& info : m_variants) {
         double kiloNodes = info.nps() / 1000.0;
@@ -73,8 +74,14 @@ void EngineWidget::redraw()
         if (info.mate()) {
             score = evalFmt.arg("#", QString::number(info.mate()));
         } else {
+            const auto defaultScoreFontSizePx = 16;
+
             int whiteCp = board.currentPlayer().isBlack() ? -info.score() : info.score();
-            score = evalFmt.arg(whiteCp > 0 ? "+" : "", QString::number(whiteCp / 100.0, 'f', 2));
+            score = evalFmt.arg(
+                whiteCp > 0 ? "+" : "",
+                QString::number(whiteCp / 100.0, 'f', 2),
+                QString::number(defaultScoreFontSizePx *
+                                settings.get("fontScaling").value<double>()));
         }
 
         if (board.currentPlayer().isBlack())
