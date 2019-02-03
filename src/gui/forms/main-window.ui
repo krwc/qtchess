@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>942</width>
-     <height>19</height>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuEdit">
@@ -39,7 +39,6 @@
     <addaction name="actionSettings"/>
     <addaction name="actionEngines"/>
     <addaction name="separator"/>
-    <addaction name="actionPosition"/>
     <addaction name="actionSetPgn"/>
     <addaction name="actionSetFen"/>
     <addaction name="separator"/>
@@ -61,7 +60,7 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>135</height>
+     <height>137</height>
     </size>
    </property>
    <attribute name="dockWidgetArea">
@@ -79,8 +78,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>180</width>
-          <height>539</height>
+          <width>178</width>
+          <height>412</height>
          </rect>
         </property>
        </widget>
