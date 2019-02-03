@@ -23,6 +23,7 @@ private slots:
     void onPositionChanged();
     void onPositionSet(size_t);
     void onSetFen();
+    void closeEvent(QCloseEvent *);
 private:
     Ui::MainWindow *ui;
     // Game tree

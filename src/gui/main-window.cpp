@@ -3,6 +3,7 @@
 #include "gui/promotion-dialog.hpp"
 #include "gui/settings/settings-dialog.hpp"
 #include "gui/settings/engine-settings-dialog.hpp"
+#include "settings/settings-factory.hpp"
 #include <QInputDialog>
 #include <QMessageBox>
 
@@ -14,8 +15,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("QtChess");
     // Setup widgets
-    //ui->Board->setModel(&m_tree.currentNode()->board());
     ui->GameTextWidget->setTree(&m_tree);
+
+    auto &layout = SettingsFactory::layout();
+    restoreGeometry(layout.get(LayoutSettings::MAIN_WINDOW_GEOMETRY).toByteArray());
+    restoreState(layout.get(LayoutSettings::MAIN_WINDOW_STATE).toByteArray());
 
     // Connect board signals
     QObject::connect(ui->Board, SIGNAL(moveMade(Move)), this, SLOT(onMoveMade(Move)));
@@ -103,4 +107,11 @@ void MainWindow::onSetFen()
         } else
             m_tree.setRootBoard(board);
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *) {
+    auto &layout = SettingsFactory::layout();
+    layout.set(LayoutSettings::MAIN_WINDOW_GEOMETRY, saveGeometry());
+    layout.set(LayoutSettings::MAIN_WINDOW_STATE, saveState());
+    layout.save();
 }

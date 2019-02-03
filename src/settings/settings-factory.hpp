@@ -1,8 +1,9 @@
 #ifndef SETTINGS_FACTORY_HPP
 #define SETTINGS_FACTORY_HPP
-#include "settings/engines-settings.hpp"
 #include "settings/board-settings.hpp"
+#include "settings/engines-settings.hpp"
 #include "settings/html-settings.hpp"
+#include "settings/layout-settings.hpp"
 #include <memory>
 
 class SettingsFactory
@@ -26,14 +27,11 @@ public:
     {
         static EnginesSettings settings;
         return settings;
-        /*
-        static QMap<QString, std::shared_ptr<EngineSettings>> settings;
+    }
 
-        if (!settings.contains(engineName))
-            // Cannot use make_shared because of constructor privateness.
-            settings[engineName] = std::shared_ptr<EngineSettings>(new EngineSettings(engineName));
-
-        return *settings[engineName];*/
+    static LayoutSettings &layout() {
+        static LayoutSettings settings;
+        return settings;
     }
 };
 
