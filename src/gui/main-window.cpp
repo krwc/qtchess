@@ -98,14 +98,18 @@ void MainWindow::onSetFen()
 {
     Board board;
     QInputDialog dialog(this);
+    dialog.setWindowTitle("Enter position");
+    dialog.setLabelText("FEN string:");
 
-    if (dialog.exec() == QDialog::Accepted) {
+    while (dialog.exec() == QDialog::Accepted) {
         // Invalid FEN.
         if (!board.setFen(dialog.textValue())) {
             QMessageBox::information(this, "Fen string invalid",
                                      tr("Passed string '%1' is not a valid FEN string").arg(dialog.textValue()));
-        } else
+        } else {
             m_tree.setRootBoard(board);
+            break;
+        }
     }
 }
 
