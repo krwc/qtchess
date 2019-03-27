@@ -1,5 +1,7 @@
 # Chess gui written in C++ and Qt.
 
+![Main window](https://github.com/sznaider/qtchess/blob/master/qtchess.png)
+
 Currently it supports UCI engines (but it was not tested extensively) and importing positions from FEN strings.
 
 # Compilation & run instructions:
